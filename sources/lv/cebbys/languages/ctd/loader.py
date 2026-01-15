@@ -104,6 +104,9 @@ class CtdLoader:
         for enum in visitor.collection.enums:
             collection.add_enum(enum)
         
+        for flag in visitor.collection.flags:
+            collection.add_flag(flag)
+        
         for structure in visitor.collection.structures:
             collection.add_structure(structure)
         

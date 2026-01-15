@@ -12,7 +12,8 @@ useDeclaration: 'use' qualifiedName;
 
 declaration: 
     typedefDeclaration 
-    | enumDeclaration 
+    | enumDeclaration
+    | flagDeclaration
     | structureDeclaration
     | functionDeclaration;
 
@@ -21,9 +22,16 @@ typedefDeclaration: 'typedef' typeSpec IDENTIFIER;
 enumDeclaration:
     'enum' IDENTIFIER (':' typeSpec)? '{' enumMemberList? '}';
 
+flagDeclaration:
+    'flag' IDENTIFIER (':' typeSpec)? '{' flagMemberList? '}';
+
 enumMemberList: enumMember enumMember*;
 
 enumMember: IDENTIFIER ('=' INTEGER_LITERAL)?;
+
+flagMemberList: flagMember flagMember*;
+
+flagMember: IDENTIFIER ('=' HEX_LITERAL)?;
 
 structureDeclaration:
     'structure' IDENTIFIER '{' structureMemberList? '}';
@@ -39,7 +47,7 @@ annotation: '@' IDENTIFIER;
 
 parameterList: parameter (',' parameter)*;
 
-parameter: typeSpec IDENTIFIER;
+parameter: annotation? typeSpec IDENTIFIER;
 
 typeSpec:
     signModifier? primitiveType pointerModifier?
@@ -59,6 +67,8 @@ qualifiedName: IDENTIFIER ('::' IDENTIFIER)*;
 IDENTIFIER: [a-zA-Z_] [a-zA-Z0-9_]*;
 
 INTEGER_LITERAL: [0-9]+;
+
+HEX_LITERAL: '0x' [0-9a-fA-F]+;
 
 STRING_LITERAL: '"' ~["\r\n]* '"';
 

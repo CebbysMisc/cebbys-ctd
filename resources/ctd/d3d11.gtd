@@ -5,7 +5,8 @@ namespace com::microsoft::direct::graphics::d3d11 {
     use com::microsoft::direct::graphics::dxgi
     use std::lib
 
-    typedef Int4 HResult
+    typedef Int4 ResultCode
+    typedef Any ModuleHandle
 
     enum DriverType : Int4 {
         UNKNOWN
@@ -16,17 +17,28 @@ namespace com::microsoft::direct::graphics::d3d11 {
         WARP
     }
 
+    flag CreateDeviceFlag : Unt4 {
+        SINGLETHREADED
+        DEBUG
+        SWITCH_TO_REF
+        PREVENT_INTERNAL_THREADING_OPTIMIZATIONS
+        BGRA_SUPPORT = 0x20
+        DEBUGGABLE
+        PREVENT_ALTERING_LAYER_SETTINGS_FROM_REGISTRY
+        DISABLE_GPU_TIMEOUT
+        VIDEO_SUPPORT
+    }
+
     @WinApi
-    HResult D3D11CreateDeviceAndSwapChain(
-        Adapter*    adapter,
-        DriverType  driverType
+    ResultCode D3D11CreateDeviceAndSwapChain(
+        @Nullable Adapter*  adapter,
+        DriverType          driverType,
+        ModuleHandle        software,
+        CreateDeviceFlag    flags
     )
 
     /*
-    typedef HResult Int4
-
-    @WinApi
-    HResult D3D11CreateDeviceAndSwapChain(
+    HRESULT D3D11CreateDeviceAndSwapChain(
         _In_opt_ IDXGIAdapter* pAdapter,
         DriverType driverType,
         HMODULE Software,

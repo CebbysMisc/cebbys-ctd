@@ -22,15 +22,19 @@ def test_new_syntax_parsing() -> None:
         for td in visitor.collection.typedefs:
             TestLogger.info(f"{td.name}: {td.type_spec}", indent=2)
     TestLogger.info(f"Parsed {len(visitor.collection.enums)} enums")
+    TestLogger.info(f"Parsed {len(visitor.collection.flags)} flags")
     TestLogger.info(f"Parsed {len(visitor.collection.structures)} structures")
     TestLogger.info(f"Parsed {len(visitor.collection.functions)} functions")
     
-    # Check typedef
-    assert len(visitor.collection.typedefs) == 1
-    hresult = visitor.collection.typedefs[0]
-    assert hresult.name == "HResult"
+    # Check typedefs
+    assert len(visitor.collection.typedefs) == 2
+    resultcode = visitor.collection.typedefs[0]
+    assert resultcode.name == "ResultCode"
+    modulehandle = visitor.collection.typedefs[1]
+    assert modulehandle.name == "ModuleHandle"
     TestLogger.section_break()
-    TestLogger.success(f"Typedef: {hresult.name} = {hresult.type_spec}")
+    TestLogger.success(f"Typedef: {resultcode.name} = {resultcode.type_spec}")
+    TestLogger.success(f"Typedef: {modulehandle.name} = {modulehandle.type_spec}")
     
     # Check enum
     assert len(visitor.collection.enums) == 1
@@ -38,6 +42,13 @@ def test_new_syntax_parsing() -> None:
     assert driver_type.name == "DriverType"
     assert len(driver_type.members) == 6
     TestLogger.success(f"Enum: {driver_type.name} with {len(driver_type.members)} members")
+    
+    # Check flag
+    assert len(visitor.collection.flags) == 1
+    create_device_flag = visitor.collection.flags[0]
+    assert create_device_flag.name == "CreateDeviceFlag"
+    assert len(create_device_flag.members) == 9
+    TestLogger.success(f"Flag: {create_device_flag.name} with {len(create_device_flag.members)} members")
     
     # Parse dxgi.gtd to check structure
     TestLogger.header("Parsing DXGI Definitions")
@@ -66,9 +77,10 @@ def test_new_syntax_parsing() -> None:
     func = visitor.collection.functions[0]
     assert func.name == "D3D11CreateDeviceAndSwapChain"
     assert func.annotation == "WinApi"
-    assert len(func.parameters) == 2
+    assert len(func.parameters) == 4
     TestLogger.success(f"Function: @{func.annotation} {func.return_type} {func.name}(...)")
     for param in func.parameters:
-        TestLogger.info(f"{param.type_spec} {param.name}", indent=4)
+        annot_str = f"@{param.annotation} " if param.annotation else ""
+        TestLogger.info(f"{annot_str}{param.type_spec} {param.name}", indent=4)
     
     TestLogger.complete("All new syntax parsed successfully")

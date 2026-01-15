@@ -71,6 +71,15 @@ class GtdListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by GtdParser#flagDeclaration.
+    def enterFlagDeclaration(self, ctx:GtdParser.FlagDeclarationContext):
+        pass
+
+    # Exit a parse tree produced by GtdParser#flagDeclaration.
+    def exitFlagDeclaration(self, ctx:GtdParser.FlagDeclarationContext):
+        pass
+
+
     # Enter a parse tree produced by GtdParser#enumMemberList.
     def enterEnumMemberList(self, ctx:GtdParser.EnumMemberListContext):
         pass
@@ -86,6 +95,24 @@ class GtdListener(ParseTreeListener):
 
     # Exit a parse tree produced by GtdParser#enumMember.
     def exitEnumMember(self, ctx:GtdParser.EnumMemberContext):
+        pass
+
+
+    # Enter a parse tree produced by GtdParser#flagMemberList.
+    def enterFlagMemberList(self, ctx:GtdParser.FlagMemberListContext):
+        pass
+
+    # Exit a parse tree produced by GtdParser#flagMemberList.
+    def exitFlagMemberList(self, ctx:GtdParser.FlagMemberListContext):
+        pass
+
+
+    # Enter a parse tree produced by GtdParser#flagMember.
+    def enterFlagMember(self, ctx:GtdParser.FlagMemberContext):
+        pass
+
+    # Exit a parse tree produced by GtdParser#flagMember.
+    def exitFlagMember(self, ctx:GtdParser.FlagMemberContext):
         pass
 
 

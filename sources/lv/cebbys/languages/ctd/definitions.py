@@ -271,27 +271,148 @@ class EnumDefinition:
         return f"EnumDefinition({self.qualified_name}{base})"
 
 
+class FlagMemberDefinition:
+    """Resolved flag member definition.
+    
+    Flags use bit-shifted values instead of sequential values.
+    """
+    
+    def __init__(self, name: str, value: int):
+        """Initialize flag member.
+        
+        Args:
+            name: Member name
+            value: Member value (bit-shifted, e.g., 0x1, 0x2, 0x4, 0x8, 0x20, etc.)
+        """
+        self._name: str
+        self._value: int
+        
+        self._name = name
+        self._value = value
+    
+    @property
+    def name(self) -> str:
+        """Get the member name."""
+        return self._name
+    
+    @property
+    def value(self) -> int:
+        """Get the member value."""
+        return self._value
+    
+    def __repr__(self) -> str:
+        """String representation."""
+        return f"FlagMember({self._name} = 0x{self._value:X})"
+
+
+class FlagDefinition:
+    """Resolved flag definition.
+    
+    Flags are similar to enums but use bit-shifted values:
+    - First member: 0x1 (1)
+    - Second member: 0x2 (2)
+    - Third member: 0x4 (4)
+    - etc.
+    Manual offsets can be specified, and bit-shifting continues from there.
+    """
+    
+    def __init__(
+        self,
+        name: str,
+        namespace: str,
+        base_type: TypeSpec | None = None,
+        members: list[FlagMemberDefinition] | None = None
+    ):
+        """Initialize flag definition.
+        
+        Args:
+            name: Flag name
+            namespace: Namespace path
+            base_type: Optional resolved base type (can be set later)
+            members: List of flag members (can be set later)
+        """
+        self._name: str
+        self._namespace: str
+        self._base_type: TypeSpec | None
+        self._members: list[FlagMemberDefinition]
+        
+        self._name = name
+        self._namespace = namespace
+        self._base_type = base_type
+        self._members = members if members is not None else []
+    
+    def set_base_type(self, base_type: TypeSpec | None) -> None:
+        """Set the base type (for deferred resolution).
+        
+        Args:
+            base_type: The resolved base type
+        """
+        self._base_type = base_type
+    
+    def set_members(self, members: list[FlagMemberDefinition]) -> None:
+        """Set the members (for deferred resolution).
+        
+        Args:
+            members: List of resolved flag members
+        """
+        self._members = members
+    
+    @property
+    def name(self) -> str:
+        """Get the flag name."""
+        return self._name
+    
+    @property
+    def namespace(self) -> str:
+        """Get the namespace."""
+        return self._namespace
+    
+    @property
+    def qualified_name(self) -> str:
+        """Get the fully qualified name."""
+        return f"{self._namespace}::{self._name}"
+    
+    @property
+    def base_type(self) -> TypeSpec | None:
+        """Get the base type."""
+        return self._base_type
+    
+    @property
+    def members(self) -> list[FlagMemberDefinition]:
+        """Get the flag members."""
+        return self._members
+    
+    def __repr__(self) -> str:
+        """String representation."""
+        base = f" : {self._base_type}" if self._base_type else ""
+        return f"FlagDefinition({self.qualified_name}{base})"
+
+
 class DefinitionCollection:
     """Immutable collection of resolved type definitions."""
     
     def __init__(
         self,
         typedefs: dict[str, TypedefDefinition] | None = None,
-        enums: dict[str, EnumDefinition] | None = None
+        enums: dict[str, EnumDefinition] | None = None,
+        flags: dict[str, FlagDefinition] | None = None
     ):
         """Initialize collection.
         
         Args:
             typedefs: Dictionary of typedefs indexed by qualified name
             enums: Dictionary of enums indexed by qualified name
+            flags: Dictionary of flags indexed by qualified name
         """
         self._typedefs: Typing.Final[dict[str, TypedefDefinition]]
         self._enums: Typing.Final[dict[str, EnumDefinition]]
+        self._flags: Typing.Final[dict[str, FlagDefinition]]
         
         # Create immutable copies using MappingProxyType
         import types
         self._typedefs = types.MappingProxyType(typedefs if typedefs is not None else {})
         self._enums = types.MappingProxyType(enums if enums is not None else {})
+        self._flags = types.MappingProxyType(flags if flags is not None else {})
     
     @property
     def typedefs(self) -> Typing.Mapping[str, TypedefDefinition]:
@@ -303,7 +424,12 @@ class DefinitionCollection:
         """Get immutable view of enums indexed by qualified name."""
         return self._enums
     
-    def find_type(self, qualified_name: str) -> TypedefDefinition | EnumDefinition | None:
+    @property
+    def flags(self) -> Typing.Mapping[str, FlagDefinition]:
+        """Get immutable view of flags indexed by qualified name."""
+        return self._flags
+    
+    def find_type(self, qualified_name: str) -> TypedefDefinition | EnumDefinition | FlagDefinition | None:
         """Find a type by qualified name.
         
         Args:
@@ -316,4 +442,6 @@ class DefinitionCollection:
             return self._typedefs[qualified_name]
         if qualified_name in self._enums:
             return self._enums[qualified_name]
+        if qualified_name in self._flags:
+            return self._flags[qualified_name]
         return None

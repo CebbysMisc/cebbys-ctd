@@ -139,7 +139,7 @@ class MetaVisitor(GtdVisitor.GtdVisitor):
         self,
         ctx: GtdParser.GtdParser.DeclarationContext
     ) -> None:
-        """Visit a declaration (typedef, enum, structure, or function).
+        """Visit a declaration (typedef, enum, flag, structure, or function).
         
         Args:
             ctx: Declaration context
@@ -148,6 +148,8 @@ class MetaVisitor(GtdVisitor.GtdVisitor):
             self.visitTypedefDeclaration(ctx.typedefDeclaration())
         elif ctx.enumDeclaration():
             self.visitEnumDeclaration(ctx.enumDeclaration())
+        elif ctx.flagDeclaration():
+            self.visitFlagDeclaration(ctx.flagDeclaration())
         elif ctx.structureDeclaration():
             self.visitStructureDeclaration(ctx.structureDeclaration())
         elif ctx.functionDeclaration():
@@ -206,6 +208,37 @@ class MetaVisitor(GtdVisitor.GtdVisitor):
         # Create and add enum metadata
         enum_meta = Meta.EnumMeta(name, self._current_namespace, base_type, members)
         self._collection.add_enum(enum_meta)
+    
+    def visitFlagDeclaration(
+        self,
+        ctx: GtdParser.GtdParser.FlagDeclarationContext
+    ) -> None:
+        """Visit flag declaration and create FlagMeta.
+        
+        Args:
+            ctx: Flag declaration context
+        """
+        name: str
+        base_type: str | None
+        members: list[Meta.FlagMemberMeta]
+        flag_meta: Meta.FlagMeta
+        
+        # Get flag name
+        name = ctx.IDENTIFIER().getText()
+        
+        # Get base type if specified
+        base_type = None
+        if ctx.typeSpec():
+            base_type = self._get_type_spec(ctx.typeSpec())
+        
+        # Get flag members
+        members = []
+        if ctx.flagMemberList():
+            members = self._get_flag_members(ctx.flagMemberList())
+        
+        # Create and add flag metadata
+        flag_meta = Meta.FlagMeta(name, self._current_namespace, base_type, members)
+        self._collection.add_flag(flag_meta)
     
     def _get_qualified_name(
         self,
@@ -289,6 +322,38 @@ class MetaVisitor(GtdVisitor.GtdVisitor):
                 value = int(member_ctx.INTEGER_LITERAL().getText())
             
             members.append(Meta.EnumMemberMeta(name, value))
+        
+        return members
+    
+    def _get_flag_members(
+        self,
+        ctx: GtdParser.GtdParser.FlagMemberListContext
+    ) -> list[Meta.FlagMemberMeta]:
+        """Extract flag members from context.
+        
+        Args:
+            ctx: Flag member list context
+            
+        Returns:
+            List of FlagMemberMeta objects
+        """
+        members: list[Meta.FlagMemberMeta]
+        member_ctx: GtdParser.GtdParser.FlagMemberContext
+        name: str
+        value: int | None
+        
+        members = []
+        
+        for member_ctx in ctx.flagMember():
+            name = member_ctx.IDENTIFIER().getText()
+            value = None
+            
+            if member_ctx.HEX_LITERAL():
+                # Parse hex literal (e.g., "0x20" -> 32)
+                hex_text = member_ctx.HEX_LITERAL().getText()
+                value = int(hex_text, 16)
+            
+            members.append(Meta.FlagMemberMeta(name, value))
         
         return members
     
@@ -400,12 +465,19 @@ class MetaVisitor(GtdVisitor.GtdVisitor):
         param_ctx: GtdParser.GtdParser.ParameterContext
         name: str
         type_spec: str
+        annotation: str | None
         
         parameters = []
         
         for param_ctx in ctx.parameter():
             type_spec = self._get_type_spec(param_ctx.typeSpec())
             name = param_ctx.IDENTIFIER().getText()
-            parameters.append(Meta.ParameterMeta(name, type_spec))
+            
+            # Parse annotation if present
+            annotation = None
+            if param_ctx.annotation():
+                annotation = param_ctx.annotation().IDENTIFIER().getText()
+            
+            parameters.append(Meta.ParameterMeta(name, type_spec, annotation))
         
         return parameters

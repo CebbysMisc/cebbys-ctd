@@ -44,6 +44,11 @@ class GtdVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by GtdParser#flagDeclaration.
+    def visitFlagDeclaration(self, ctx:GtdParser.FlagDeclarationContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by GtdParser#enumMemberList.
     def visitEnumMemberList(self, ctx:GtdParser.EnumMemberListContext):
         return self.visitChildren(ctx)
@@ -51,6 +56,16 @@ class GtdVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GtdParser#enumMember.
     def visitEnumMember(self, ctx:GtdParser.EnumMemberContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by GtdParser#flagMemberList.
+    def visitFlagMemberList(self, ctx:GtdParser.FlagMemberListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by GtdParser#flagMember.
+    def visitFlagMember(self, ctx:GtdParser.FlagMemberContext):
         return self.visitChildren(ctx)
 
 

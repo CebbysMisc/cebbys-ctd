@@ -51,14 +51,33 @@ def test_d3d11_enum_members() -> None:
         assert member.value == expected_values[i], \
             f"Member {i} should have value {expected_values[i]}, got {member.value}"
     
-    # Verify HResult typedef exists
-    hresult_typedef = collection.typedefs.get('com::microsoft::direct::graphics::d3d11::HResult')
-    assert hresult_typedef is not None, "Should find HResult typedef"
+    # Verify CreateDeviceFlag flag exists and has correct bit-shifted values
+    create_device_flag = collection.flags.get('com::microsoft::direct::graphics::d3d11::CreateDeviceFlag')
+    assert create_device_flag is not None, "Should find CreateDeviceFlag flag"
     TestLogger.section_break()
-    TestLogger.success(f"HResult typedef found: {hresult_typedef.qualified_name}")
+    TestLogger.success(f"CreateDeviceFlag flag found: {create_device_flag.qualified_name}")
     
+    # Verify flag members have bit-shifted values
+    expected_flag_values = [0x1, 0x2, 0x4, 0x8, 0x20, 0x40, 0x80, 0x100, 0x200]
+    expected_flag_names = ['SINGLETHREADED', 'DEBUG', 'SWITCH_TO_REF', 'PREVENT_INTERNAL_THREADING_OPTIMIZATIONS',
+                          'BGRA_SUPPORT', 'DEBUGGABLE', 'PREVENT_ALTERING_LAYER_SETTINGS_FROM_REGISTRY',
+                          'DISABLE_GPU_TIMEOUT', 'VIDEO_SUPPORT']
+    
+    assert len(create_device_flag.members) == 9, f"Should have 9 members, got {len(create_device_flag.members)}"
+    
+    TestLogger.info("Flag members:")
+    for i, member in enumerate(create_device_flag.members):
+        TestLogger.info(f"{member.name} = 0x{member.value:X}", indent=2)
+        assert member.name == expected_flag_names[i], \
+            f"Member {i} should be {expected_flag_names[i]}, got {member.name}"
+        assert member.value == expected_flag_values[i], \
+            f"Member {i} should have value 0x{expected_flag_values[i]:X}, got 0x{member.value:X}"
+    
+    TestLogger.section_break()
     TestLogger.success("All enum members auto-incremented correctly")
+    TestLogger.success("All flag members bit-shifted correctly")
+    TestLogger.success("Manual offset in BGRA_SUPPORT respected")
     TestLogger.success("Cross-file type resolution working (d3d11 -> std-types)")
-    TestLogger.success("New syntax parsed successfully (structure, function, annotation)")
+    TestLogger.success("New syntax parsed successfully (structure, function, annotation, flags)")
     
     TestLogger.complete("D3D11 test complete")

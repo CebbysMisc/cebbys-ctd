@@ -9,7 +9,9 @@ import lv.cebbys.languages.ctd.__api__ as Api
 __all__ = [
     'TypedefMeta', 
     'EnumMemberMeta', 
-    'EnumMeta', 
+    'EnumMeta',
+    'FlagMemberMeta',
+    'FlagMeta',
     'StructureMemberMeta',
     'StructureMeta',
     'ParameterMeta',
@@ -134,6 +136,89 @@ class EnumMeta:
         return self._members
 
 
+class FlagMemberMeta:
+    """Metadata for a flag member."""
+    
+    def __init__(self, name: str, value: int | None = None):
+        """Initialize flag member metadata.
+        
+        Args:
+            name: The member identifier
+            value: Optional explicit hex value (e.g., 0x20)
+        """
+        self._name: str
+        self._value: int | None
+        
+        self._name = name
+        self._value = value
+    
+    @property
+    def name(self) -> str:
+        """Get the member name."""
+        return self._name
+    
+    @property
+    def value(self) -> int | None:
+        """Get the member value (if explicitly set)."""
+        return self._value
+
+
+class FlagMeta:
+    """Metadata for a flag declaration.
+    
+    Flags are similar to enums but with bit-shifted values:
+    - First member starts at 0x1 (1)
+    - Each subsequent member is bit-shifted: 0x2, 0x4, 0x8, etc.
+    - Manual offsets can be specified (e.g., BGRA_SUPPORT = 0x20)
+    - After a manual offset, bit-shifting continues from that value
+    """
+    
+    def __init__(
+        self,
+        name: str,
+        namespace: Api.ModulePath,
+        base_type: str | None = None,
+        members: list[FlagMemberMeta] | None = None
+    ):
+        """Initialize flag metadata.
+        
+        Args:
+            name: The flag identifier
+            namespace: Qualified namespace path
+            base_type: Optional base type specification
+            members: List of flag members
+        """
+        self._name: str
+        self._namespace: Api.ModulePath
+        self._base_type: str | None
+        self._members: list[FlagMemberMeta]
+        
+        self._name = name
+        self._namespace = namespace
+        self._base_type = base_type
+        self._members = members if members is not None else []
+    
+    @property
+    def name(self) -> str:
+        """Get the flag name."""
+        return self._name
+    
+    @property
+    def namespace(self) -> Api.ModulePath:
+        """Get the namespace."""
+        return self._namespace
+    
+    @property
+    def base_type(self) -> str | None:
+        """Get the base type."""
+        return self._base_type
+    
+    @property
+    def members(self) -> list[FlagMemberMeta]:
+        """Get the flag members."""
+        return self._members
+
+
 class StructureMemberMeta:
     """Metadata for a structure member."""
     
@@ -204,18 +289,21 @@ class StructureMeta:
 class ParameterMeta:
     """Metadata for a function parameter."""
     
-    def __init__(self, name: str, type_spec: str):
+    def __init__(self, name: str, type_spec: str, annotation: str | None = None):
         """Initialize parameter metadata.
         
         Args:
             name: The parameter identifier
             type_spec: The type specification string
+            annotation: Optional annotation (e.g., "Nullable")
         """
         self._name: str
         self._type_spec: str
+        self._annotation: str | None
         
         self._name = name
         self._type_spec = type_spec
+        self._annotation = annotation
     
     @property
     def name(self) -> str:
@@ -226,6 +314,11 @@ class ParameterMeta:
     def type_spec(self) -> str:
         """Get the type specification."""
         return self._type_spec
+    
+    @property
+    def annotation(self) -> str | None:
+        """Get the annotation."""
+        return self._annotation
 
 
 class FunctionMeta:
@@ -293,11 +386,13 @@ class DefinitionCollectionMeta:
         """Initialize an empty definition collection."""
         self._typedefs: list[TypedefMeta]
         self._enums: list[EnumMeta]
+        self._flags: list[FlagMeta]
         self._structures: list[StructureMeta]
         self._functions: list[FunctionMeta]
         
         self._typedefs = []
         self._enums = []
+        self._flags = []
         self._structures = []
         self._functions = []
     
@@ -310,6 +405,11 @@ class DefinitionCollectionMeta:
     def enums(self) -> list[EnumMeta]:
         """Get the list of enum definitions."""
         return self._enums
+    
+    @property
+    def flags(self) -> list[FlagMeta]:
+        """Get the list of flag definitions."""
+        return self._flags
     
     @property
     def structures(self) -> list[StructureMeta]:
@@ -336,6 +436,14 @@ class DefinitionCollectionMeta:
             enum: EnumMeta instance to add
         """
         self._enums.append(enum)
+    
+    def add_flag(self, flag: FlagMeta) -> None:
+        """Add a flag to the collection.
+        
+        Args:
+            flag: FlagMeta instance to add
+        """
+        self._flags.append(flag)
     
     def add_structure(self, structure: StructureMeta) -> None:
         """Add a structure to the collection.

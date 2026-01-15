@@ -4,7 +4,8 @@
         "${workspaceFolder}/hints/antlr4"
     ],
     "python.analysis.ignore": [
-        "**/lv/cebbys/languages/ctd/antlr4/**"
+        "**/lv/cebbys/languages/ctd/antlr4/**",
+        "**/lv/cebbys/languages/ctd/visitor.py"
     ],
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
