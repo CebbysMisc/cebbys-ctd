@@ -1,6 +1,7 @@
 """Test the CTD module loader."""
 import pathlib as Pathlib
 import lv.cebbys.languages.ctd as Ctd
+from test_utils import TestLogger
 
 def test_load_std_types() -> None:
     """Test loading the std-types.gtd module."""
@@ -16,23 +17,26 @@ def test_load_std_types() -> None:
     assert len(collection.typedefs) > 0 or len(collection.enums) > 0, \
         "Should find at least one typedef or enum"
     
-    print(f"✓ Loaded {len(collection.typedefs)} typedefs")
-    print(f"✓ Loaded {len(collection.enums)} enums")
+    TestLogger.header("Loaded Type Definitions")
+    TestLogger.success(f"Loaded {len(collection.typedefs)} typedefs")
+    TestLogger.success(f"Loaded {len(collection.enums)} enums")
     
     # Print typedef details
     if collection.typedefs:
-        print("\nTypedefs:")
+        TestLogger.section_break()
+        TestLogger.info("Typedefs:")
         for qualified_name, typedef in collection.typedefs.items():
-            print(f"  - {qualified_name} = {typedef.type_spec}")
+            TestLogger.info(f"{qualified_name} = {typedef.type_spec}", indent=2)
     
     # Print enum details
     if collection.enums:
-        print("\nEnums:")
+        TestLogger.section_break()
+        TestLogger.info("Enums:")
         for qualified_name, enum in collection.enums.items():
             base = f" : {enum.base_type}" if enum.base_type else ""
-            print(f"  - {qualified_name}{base}")
+            TestLogger.info(f"{qualified_name}{base}", indent=2)
             for member in enum.members:
-                print(f"      {member.name} = {member.value}")
+                TestLogger.info(f"{member.name} = {member.value}", indent=6)
     
     # Test resolution: Null enum should reference Int4 typedef
     null_enum = collection.enums.get('std::lib::Null')
@@ -46,8 +50,7 @@ def test_load_std_types() -> None:
     assert base_type.target.name == "Int4", \
         f"Base type should reference Int4, got {base_type.target.name}"
     
-    print(f"\n✓ Resolution verified: Null enum base type references {base_type.target.qualified_name}")
-
-if __name__ == '__main__':
-    test_load_std_types()
-    print("\nAll tests passed!")
+    TestLogger.section_break()
+    TestLogger.success(f"Resolution verified: Null enum base type references {base_type.target.qualified_name}")
+    
+    TestLogger.complete("All loader tests passed")
