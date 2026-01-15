@@ -1,4 +1,4 @@
-namespace lv::cebbys::types {
+namespace std::lib {
     typedef signed char     Snt1
     typedef signed short    Snt2
     typedef signed int      Snt4

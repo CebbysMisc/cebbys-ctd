@@ -1,34 +1,53 @@
-"""Test the GTD module loader."""
+"""Test the CTD module loader."""
 import pathlib as Pathlib
 import lv.cebbys.languages.ctd as Ctd
 
-def test_load_cebbys_types() -> None:
-    """Test loading the cebbys-types.gtd module."""
-    loader: Ctd.Loader.ModuleLoader
+def test_load_std_types() -> None:
+    """Test loading the std-types.gtd module."""
+    loader: Ctd.Loader.CtdLoader
     paths: list[Pathlib.Path]
-    modules: list[Ctd.Loader.ModuleInfo]
+    collection: Ctd.Definitions.DefinitionCollection
     
-    loader = Ctd.Loader.ModuleLoader()
     paths = [Pathlib.Path('resources/ctd')]
+    loader = Ctd.Loader.CtdLoader(paths)
     
-    modules = loader.load_modules(paths)
+    collection = loader.load()
     
-    assert len(modules) > 0, "Should find at least one module"
+    assert len(collection.typedefs) > 0 or len(collection.enums) > 0, \
+        "Should find at least one typedef or enum"
     
-    # Find cebbys-types module
-    cebbys_types = None
-    for module in modules:
-        if 'cebbys-types' in module.module_path:
-            cebbys_types = module
-            break
+    print(f"✓ Loaded {len(collection.typedefs)} typedefs")
+    print(f"✓ Loaded {len(collection.enums)} enums")
     
-    assert cebbys_types is not None, "Should find cebbys-types module"
-    assert cebbys_types.parse_tree is not None, "Parse tree should not be None"
+    # Print typedef details
+    if collection.typedefs:
+        print("\nTypedefs:")
+        for qualified_name, typedef in collection.typedefs.items():
+            print(f"  - {qualified_name} = {typedef.type_spec}")
     
-    print(f"✓ Loaded module: {cebbys_types.module_path}")
-    print(f"✓ File: {cebbys_types.file_path}")
-    print(f"✓ Parse tree type: {type(cebbys_types.parse_tree).__name__}")
+    # Print enum details
+    if collection.enums:
+        print("\nEnums:")
+        for qualified_name, enum in collection.enums.items():
+            base = f" : {enum.base_type}" if enum.base_type else ""
+            print(f"  - {qualified_name}{base}")
+            for member in enum.members:
+                print(f"      {member.name} = {member.value}")
+    
+    # Test resolution: Null enum should reference Int4 typedef
+    null_enum = collection.enums.get('std::lib::Null')
+    assert null_enum is not None, "Should find Null enum"
+    assert null_enum.base_type is not None, "Null enum should have base type"
+    
+    # Check that base type references Int4
+    base_type = null_enum.base_type.base_type
+    assert isinstance(base_type, Ctd.Definitions.TypeReference), \
+        "Base type should be a TypeReference"
+    assert base_type.target.name == "Int4", \
+        f"Base type should reference Int4, got {base_type.target.name}"
+    
+    print(f"\n✓ Resolution verified: Null enum base type references {base_type.target.qualified_name}")
 
 if __name__ == '__main__':
-    test_load_cebbys_types()
+    test_load_std_types()
     print("\nAll tests passed!")

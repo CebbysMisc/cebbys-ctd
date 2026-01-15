@@ -1,0 +1,9 @@
+import "std-types"
+
+namespace com::microsoft::direct::graphics::dxgi {
+    use std::lib
+
+    structure Adapter {
+        Any vtable
+    }
+}

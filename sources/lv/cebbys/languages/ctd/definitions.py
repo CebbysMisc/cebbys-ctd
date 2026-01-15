@@ -1,0 +1,319 @@
+"""CTD Resolved Definitions
+
+This module contains resolved definition classes where all type references
+point to actual type instances.
+"""
+import typing as Typing
+import lv.cebbys.languages.ctd.__api__ as Api
+
+__all__ = [
+    'PrimitiveType',
+    'TypeReference', 
+    'TypeSpec',
+    'TypedefDefinition',
+    'EnumMemberDefinition',
+    'EnumDefinition',
+    'DefinitionCollection'
+]
+
+
+class PrimitiveType:
+    """Represents a primitive type (char, short, int, long, void)."""
+    
+    def __init__(self, name: str, signed: bool | None = None):
+        """Initialize primitive type.
+        
+        Args:
+            name: Primitive type name (char, short, int, long, void)
+            signed: True for signed, False for unsigned, None for default
+        """
+        self._name: str
+        self._signed: bool | None
+        
+        self._name = name
+        self._signed = signed
+    
+    @property
+    def name(self) -> str:
+        """Get the primitive type name."""
+        return self._name
+    
+    @property
+    def signed(self) -> bool | None:
+        """Get the sign modifier (True=signed, False=unsigned, None=default)."""
+        return self._signed
+    
+    def __repr__(self) -> str:
+        """String representation."""
+        sign = ""
+        if self._signed is True:
+            sign = "signed "
+        elif self._signed is False:
+            sign = "unsigned "
+        return f"PrimitiveType({sign}{self._name})"
+
+
+class TypeReference:
+    """Reference to another type definition."""
+    
+    def __init__(self, target: 'TypedefDefinition | EnumDefinition'):
+        """Initialize type reference.
+        
+        Args:
+            target: The referenced type definition
+        """
+        self._target: TypedefDefinition | EnumDefinition
+        self._target = target
+    
+    @property
+    def target(self) -> 'TypedefDefinition | EnumDefinition':
+        """Get the referenced type."""
+        return self._target
+    
+    def __repr__(self) -> str:
+        """String representation."""
+        return f"TypeReference({self._target.qualified_name})"
+
+
+class TypeSpec:
+    """Type specification with optional pointer modifier."""
+    
+    def __init__(
+        self,
+        base_type: PrimitiveType | TypeReference,
+        is_pointer: bool = False
+    ):
+        """Initialize type specification.
+        
+        Args:
+            base_type: The base type (primitive or reference)
+            is_pointer: Whether this is a pointer type
+        """
+        self._base_type: PrimitiveType | TypeReference
+        self._is_pointer: bool
+        
+        self._base_type = base_type
+        self._is_pointer = is_pointer
+    
+    @property
+    def base_type(self) -> PrimitiveType | TypeReference:
+        """Get the base type."""
+        return self._base_type
+    
+    @property
+    def is_pointer(self) -> bool:
+        """Check if this is a pointer type."""
+        return self._is_pointer
+    
+    def __repr__(self) -> str:
+        """String representation."""
+        ptr = " *" if self._is_pointer else ""
+        return f"TypeSpec({self._base_type}{ptr})"
+
+
+class TypedefDefinition:
+    """Resolved typedef definition."""
+    
+    def __init__(self, name: str, namespace: str, type_spec: TypeSpec | None = None):
+        """Initialize typedef definition.
+        
+        Args:
+            name: Typedef name
+            namespace: Namespace path
+            type_spec: Resolved type specification (can be set later via set_type_spec)
+        """
+        self._name: str
+        self._namespace: str
+        self._type_spec: TypeSpec | None
+        
+        self._name = name
+        self._namespace = namespace
+        self._type_spec = type_spec
+    
+    def set_type_spec(self, type_spec: TypeSpec) -> None:
+        """Set the type specification (for deferred resolution).
+        
+        Args:
+            type_spec: The resolved type specification
+        """
+        self._type_spec = type_spec
+    
+    @property
+    def name(self) -> str:
+        """Get the typedef name."""
+        return self._name
+    
+    @property
+    def namespace(self) -> str:
+        """Get the namespace."""
+        return self._namespace
+    
+    @property
+    def qualified_name(self) -> str:
+        """Get the fully qualified name."""
+        return f"{self._namespace}::{self._name}"
+    
+    @property
+    def type_spec(self) -> TypeSpec:
+        """Get the type specification."""
+        if self._type_spec is None:
+            raise RuntimeError(f"Type spec not yet resolved for {self.qualified_name}")
+        return self._type_spec
+    
+    def __repr__(self) -> str:
+        """String representation."""
+        return f"TypedefDefinition({self.qualified_name} = {self._type_spec})"
+
+
+class EnumMemberDefinition:
+    """Resolved enum member definition."""
+    
+    def __init__(self, name: str, value: int):
+        """Initialize enum member.
+        
+        Args:
+            name: Member name
+            value: Member value (resolved)
+        """
+        self._name: str
+        self._value: int
+        
+        self._name = name
+        self._value = value
+    
+    @property
+    def name(self) -> str:
+        """Get the member name."""
+        return self._name
+    
+    @property
+    def value(self) -> int:
+        """Get the member value."""
+        return self._value
+    
+    def __repr__(self) -> str:
+        """String representation."""
+        return f"EnumMember({self._name} = {self._value})"
+
+
+class EnumDefinition:
+    """Resolved enum definition."""
+    
+    def __init__(
+        self,
+        name: str,
+        namespace: str,
+        base_type: TypeSpec | None = None,
+        members: list[EnumMemberDefinition] | None = None
+    ):
+        """Initialize enum definition.
+        
+        Args:
+            name: Enum name
+            namespace: Namespace path
+            base_type: Optional resolved base type (can be set later)
+            members: List of enum members (can be set later)
+        """
+        self._name: str
+        self._namespace: str
+        self._base_type: TypeSpec | None
+        self._members: list[EnumMemberDefinition]
+        
+        self._name = name
+        self._namespace = namespace
+        self._base_type = base_type
+        self._members = members if members is not None else []
+    
+    def set_base_type(self, base_type: TypeSpec | None) -> None:
+        """Set the base type (for deferred resolution).
+        
+        Args:
+            base_type: The resolved base type
+        """
+        self._base_type = base_type
+    
+    def set_members(self, members: list[EnumMemberDefinition]) -> None:
+        """Set the members (for deferred resolution).
+        
+        Args:
+            members: List of resolved enum members
+        """
+        self._members = members
+    
+    @property
+    def name(self) -> str:
+        """Get the enum name."""
+        return self._name
+    
+    @property
+    def namespace(self) -> str:
+        """Get the namespace."""
+        return self._namespace
+    
+    @property
+    def qualified_name(self) -> str:
+        """Get the fully qualified name."""
+        return f"{self._namespace}::{self._name}"
+    
+    @property
+    def base_type(self) -> TypeSpec | None:
+        """Get the base type."""
+        return self._base_type
+    
+    @property
+    def members(self) -> list[EnumMemberDefinition]:
+        """Get the enum members."""
+        return self._members
+    
+    def __repr__(self) -> str:
+        """String representation."""
+        base = f" : {self._base_type}" if self._base_type else ""
+        return f"EnumDefinition({self.qualified_name}{base})"
+
+
+class DefinitionCollection:
+    """Immutable collection of resolved type definitions."""
+    
+    def __init__(
+        self,
+        typedefs: dict[str, TypedefDefinition] | None = None,
+        enums: dict[str, EnumDefinition] | None = None
+    ):
+        """Initialize collection.
+        
+        Args:
+            typedefs: Dictionary of typedefs indexed by qualified name
+            enums: Dictionary of enums indexed by qualified name
+        """
+        self._typedefs: Typing.Final[dict[str, TypedefDefinition]]
+        self._enums: Typing.Final[dict[str, EnumDefinition]]
+        
+        # Create immutable copies using MappingProxyType
+        import types
+        self._typedefs = types.MappingProxyType(typedefs if typedefs is not None else {})
+        self._enums = types.MappingProxyType(enums if enums is not None else {})
+    
+    @property
+    def typedefs(self) -> Typing.Mapping[str, TypedefDefinition]:
+        """Get immutable view of typedefs indexed by qualified name."""
+        return self._typedefs
+    
+    @property
+    def enums(self) -> Typing.Mapping[str, EnumDefinition]:
+        """Get immutable view of enums indexed by qualified name."""
+        return self._enums
+    
+    def find_type(self, qualified_name: str) -> TypedefDefinition | EnumDefinition | None:
+        """Find a type by qualified name.
+        
+        Args:
+            qualified_name: Fully qualified type name
+            
+        Returns:
+            The type definition or None if not found
+        """
+        if qualified_name in self._typedefs:
+            return self._typedefs[qualified_name]
+        if qualified_name in self._enums:
+            return self._enums[qualified_name]
+        return None

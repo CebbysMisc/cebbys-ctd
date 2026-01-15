@@ -1,12 +1,20 @@
 grammar Gtd;
 
 // Parser rules
-compilationUnit: namespaceDeclaration* EOF;
+compilationUnit: importDeclaration* namespaceDeclaration* EOF;
+
+importDeclaration: 'import' STRING_LITERAL;
 
 namespaceDeclaration:
-    'namespace' qualifiedName '{' declaration* '}';
+    'namespace' qualifiedName '{' useDeclaration* declaration* '}';
 
-declaration: typedefDeclaration | enumDeclaration;
+useDeclaration: 'use' qualifiedName;
+
+declaration: 
+    typedefDeclaration 
+    | enumDeclaration 
+    | structureDeclaration
+    | functionDeclaration;
 
 typedefDeclaration: 'typedef' typeSpec IDENTIFIER;
 
@@ -16,6 +24,22 @@ enumDeclaration:
 enumMemberList: enumMember enumMember*;
 
 enumMember: IDENTIFIER ('=' INTEGER_LITERAL)?;
+
+structureDeclaration:
+    'structure' IDENTIFIER '{' structureMemberList? '}';
+
+structureMemberList: structureMember structureMember*;
+
+structureMember: typeSpec IDENTIFIER;
+
+functionDeclaration:
+    annotation? typeSpec IDENTIFIER '(' parameterList? ')';
+
+annotation: '@' IDENTIFIER;
+
+parameterList: parameter (',' parameter)*;
+
+parameter: typeSpec IDENTIFIER;
 
 typeSpec:
     signModifier? primitiveType pointerModifier?
@@ -35,6 +59,8 @@ qualifiedName: IDENTIFIER ('::' IDENTIFIER)*;
 IDENTIFIER: [a-zA-Z_] [a-zA-Z0-9_]*;
 
 INTEGER_LITERAL: [0-9]+;
+
+STRING_LITERAL: '"' ~["\r\n]* '"';
 
 WHITESPACE: [ \t\r\n]+ -> skip;
 

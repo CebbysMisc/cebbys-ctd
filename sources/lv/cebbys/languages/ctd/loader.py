@@ -1,132 +1,123 @@
-"""GTD Module Loader
+"""CTD Module Loader
 
-This module handles loading and parsing GTD (Generic Type Definition) files.
+This module handles loading and parsing CTD (Custom Type Definition) files.
 """
 import typing as Typing
 import pathlib as Pathlib
 import antlr4 as Antlr4
 import lv.cebbys.languages.ctd.__api__ as Api
+import lv.cebbys.languages.ctd.meta as Meta
+import lv.cebbys.languages.ctd.definitions as Definitions
+import lv.cebbys.languages.ctd.visitor as Visitor
+import lv.cebbys.languages.ctd.resolver as Resolver
 import lv.cebbys.languages.ctd.antlr4.GtdLexer as GtdLexer
 import lv.cebbys.languages.ctd.antlr4.GtdParser as GtdParser
 
-__all__ = ['ModuleInfo', 'ModuleLoader']
+__all__ = ['CtdLoader']
 
 
-class ModuleInfo:
-    """Information about a loaded GTD module."""
+class CtdLoader:
+    """Loads and parses CTD module files."""
     
-    def __init__(self, module_path: Api.ModulePath, file_path: Api.FilePath):
-        """Initialize module information.
-        
-        Args:
-            module_path: Module path (e.g., 'this/is/path/module')
-            file_path: File system path to the .gtd file
-        """
-        self._module_path: Api.ModulePath
-        self._file_path: Api.FilePath
-        self._parse_tree: GtdParser.GtdParser.CompilationUnitContext | None
-        
-        self._module_path = module_path
-        self._file_path = file_path
-        self._parse_tree = None
-    
-    @property
-    def module_path(self) -> Api.ModulePath:
-        """Get the module path."""
-        return self._module_path
-    
-    @property
-    def file_path(self) -> Api.FilePath:
-        """Get the file path."""
-        return self._file_path
-    
-    @property
-    def parse_tree(self) -> GtdParser.GtdParser.CompilationUnitContext | None:
-        """Get the parse tree."""
-        return self._parse_tree
-    
-    @parse_tree.setter
-    def parse_tree(self, tree: GtdParser.GtdParser.CompilationUnitContext) -> None:
-        """Set the parse tree."""
-        self._parse_tree = tree
-
-
-class ModuleLoader:
-    """Loads and parses GTD module files."""
-    
-    def load_modules(self, paths: list[Api.FilePath]) -> list[ModuleInfo]:
-        """Load GTD modules from the given paths.
-        
-        Iterates through paths recursively, discovering .gtd files and parsing them.
+    def __init__(self, paths: list[Api.FilePath]):
+        """Initialize the loader with paths to search.
         
         Args:
             paths: List of file or directory paths to search for .gtd files
-            
-        Returns:
-            List of ModuleInfo objects containing parsed module data
         """
-        modules: list[ModuleInfo]
+        self._paths: Typing.Final[list[Api.FilePath]]
+        self._paths = paths
+    
+    def load(self) -> Definitions.DefinitionCollection:
+        """Load and parse all CTD modules from configured paths.
+        
+        Returns:
+            DefinitionCollection containing all resolved type definitions
+        """
+        meta_collection: Meta.DefinitionCollectionMeta
+        namespace_uses: dict[str, list[str]]
+        resolver: Resolver.DefinitionResolver
         path: Api.FilePath
         
-        modules = []
+        # First, load all metadata
+        meta_collection = Meta.DefinitionCollectionMeta()
+        namespace_uses = {}
         
-        for path in paths:
+        for path in self._paths:
             if path.is_file() and path.suffix == '.gtd':
-                module_info = self._load_module_file(path)
-                modules.append(module_info)
+                self._load_file(path, meta_collection, namespace_uses)
             elif path.is_dir():
-                discovered = self._discover_modules(path)
-                modules.extend(discovered)
+                self._load_directory(path, meta_collection, namespace_uses)
         
-        return modules
+        # Then resolve all type references
+        resolver = Resolver.DefinitionResolver()
+        return resolver.resolve(meta_collection, namespace_uses)
     
-    def _discover_modules(self, directory: Api.FilePath) -> list[ModuleInfo]:
-        """Recursively discover GTD modules in a directory.
+    def _load_directory(
+        self,
+        directory: Api.FilePath,
+        collection: Meta.DefinitionCollectionMeta,
+        namespace_uses: dict[str, list[str]]
+    ) -> None:
+        """Recursively load all .gtd files from a directory.
         
         Args:
             directory: Directory path to search
-            
-        Returns:
-            List of discovered ModuleInfo objects
+            collection: Collection to add parsed types to
+            namespace_uses: Dictionary to merge namespace use declarations
         """
-        modules: list[ModuleInfo]
         gtd_file: Api.FilePath
-        
-        modules = []
         
         for gtd_file in directory.rglob('*.gtd'):
             if gtd_file.is_file():
-                module_info = self._load_module_file(gtd_file)
-                modules.append(module_info)
-        
-        return modules
+                self._load_file(gtd_file, collection, namespace_uses)
     
-    def _load_module_file(self, file_path: Api.FilePath) -> ModuleInfo:
-        """Load and parse a single GTD module file.
+    def _load_file(
+        self,
+        file_path: Api.FilePath,
+        collection: Meta.DefinitionCollectionMeta,
+        namespace_uses: dict[str, list[str]]
+    ) -> None:
+        """Load and parse a single CTD file.
         
         Args:
             file_path: Path to the .gtd file
-            
-        Returns:
-            ModuleInfo object with parsed data
+            collection: Collection to add parsed types to
+            namespace_uses: Dictionary to merge namespace use declarations
         """
-        module_path: Api.ModulePath
-        module_info: ModuleInfo
-        
-        # Convert file path to module path (e.g., 'path/to/module.gtd' -> 'path/to/module')
-        module_path = str(file_path.with_suffix('')).replace('\\', '/')
-        
-        # Create module info
-        module_info = ModuleInfo(module_path, file_path)
+        parse_tree: GtdParser.GtdParser.CompilationUnitContext
+        visitor: Visitor.MetaVisitor
+        typedef: Meta.TypedefMeta
+        enum: Meta.EnumMeta
         
         # Parse the file
         parse_tree = self._parse_file(file_path)
-        module_info.parse_tree = parse_tree
         
-        return module_info
+        # Create visitor and visit parse tree
+        visitor = Visitor.MetaVisitor()
+        visitor.visitCompilationUnit(parse_tree)
+        
+        # Merge visitor's collection into main collection
+        for typedef in visitor.collection.typedefs:
+            collection.add_typedef(typedef)
+        
+        for enum in visitor.collection.enums:
+            collection.add_enum(enum)
+        
+        for structure in visitor.collection.structures:
+            collection.add_structure(structure)
+        
+        for function in visitor.collection.functions:
+            collection.add_function(function)
+        
+        # Merge namespace uses
+        for ns, used_list in visitor.namespace_uses.items():
+            if ns not in namespace_uses:
+                namespace_uses[ns] = []
+            namespace_uses[ns].extend(used_list)
     
     def _parse_file(self, file_path: Api.FilePath) -> GtdParser.GtdParser.CompilationUnitContext:
-        """Parse a GTD file using ANTLR4.
+        """Parse a CTD file using ANTLR4.
         
         Args:
             file_path: Path to the .gtd file
