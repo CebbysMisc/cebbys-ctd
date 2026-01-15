@@ -3,6 +3,9 @@
         "${workspaceFolder}/sources",
         "${workspaceFolder}/hints/antlr4"
     ],
+    "python.analysis.ignore": [
+        "**/lv/cebbys/languages/ctd/antlr4/**"
+    ],
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
         "tests"
@@ -13,6 +16,46 @@
         "${workspaceFolder}/hints/antlr4"
     ],
     "files.associations": {
-        "*.md": "markdown"
-    }
+        "*.md": "markdown",
+        "*.g4": "antlr"
+    },
+    "antlr4.generation": {
+        "mode": "external",
+        "language": "Python3",
+        "outputDir": "../../sources/lv/cebbys/languages/ctd/antlr4",
+        "visitors": true,
+        "listeners": false
+    },
+    "antlr4.format": {
+        "alignTrailingComments": true,
+        "allowShortBlocksOnASingleLine": true,
+        "breakBeforeBraces": false,
+        "columnLimit": 100,
+        "continuationIndentWidth": 4,
+        "indentWidth": 4,
+        "keepEmptyLinesAtTheStartOfBlocks": false,
+        "maxEmptyLinesToKeep": 1,
+        "reflowComments": true,
+        "spaceBeforeAssignmentOperators": true,
+        "useTab": false
+    },
+    "[antlr]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "mike-lischke.vscode-antlr4"
+    },
+    "vsicons.associations.folders": [
+        {
+            "icon": "python",
+            "extensions": ["hints"],
+            "format": "svg"
+        },
+        {
+            "icon": "asset",
+            "extensions": ["resources"],
+            "format": "svg"
+        }
+    ],
+    "cSpell.words": [
+        "antlr"
+    ]
 }

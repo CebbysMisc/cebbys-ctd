@@ -44,6 +44,54 @@ This project is developed using **Visual Studio Code** with the following config
 - Python for runtime interpretation and object management
 - VSCode as the development environment
 
+## Branching Strategy
+
+**REQUIRED**: Follow this Git branching workflow:
+
+### Release Branch
+
+- **Branch name**: `release/{version}` (e.g., `release/1.0.0`)
+- **Protection**: No direct commits allowed
+- **Updates**: Only via Pull Requests from feature branches
+
+### Feature Branches
+
+- **Branch name template**: `feature/{short-description-for-the-feature}`
+- **Examples**:
+  - `feature/add-parser-support`
+  - `feature/implement-type-checker`
+  - `feature/fix-namespace-resolution`
+
+### Workflow
+
+1. **Create feature branch** from latest release branch:
+   ```bash
+   git checkout release/1.0.0
+   git pull
+   git checkout -b feature/my-new-feature
+   ```
+
+2. **Develop and commit** changes on feature branch:
+   ```bash
+   git add .
+   git commit -m "Your commit message"
+   ```
+
+3. **Push feature branch** and create Pull Request:
+   ```bash
+   git push origin feature/my-new-feature
+   ```
+
+4. **Merge via PR** after review and approval
+
+5. **Delete feature branch** after successful merge
+
+### Branch Protection Rules
+
+- Release branches must be protected
+- All changes require PR approval
+- No force pushes to release branches
+
 ## Adding Type Hint Modules
 
 The `hints/` directory contains type stub modules (`.pyi` files) for external libraries that may lack type hints. To add a new hint module:

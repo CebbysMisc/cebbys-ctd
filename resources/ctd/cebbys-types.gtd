@@ -9,5 +9,15 @@ namespace lv::cebbys::types {
     typedef unsigned int    Unt4
     typedef unsigned long   Unt8
 
+    typedef char            Int1
+    typedef short           Int2
+    typedef int             Int4
+    typedef long            Int8
+
     typedef void            Void
+    typedef Void*           Any
+
+    enum Null : Int4 {
+        NULL = 0
+    }
 }
