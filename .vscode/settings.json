@@ -1,0 +1,18 @@
+{
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/sources",
+        "${workspaceFolder}/hints/antlr4"
+    ],
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.cwd": "${workspaceFolder}",
+    "python.autoComplete.extraPaths": [
+        "${workspaceFolder}/sources",
+        "${workspaceFolder}/hints/antlr4"
+    ],
+    "files.associations": {
+        "*.md": "markdown"
+    }
+}

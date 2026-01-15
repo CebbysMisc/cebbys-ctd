@@ -1,0 +1,13 @@
+namespace lv::cebbys::types {
+    typedef signed char     Snt1
+    typedef signed short    Snt2
+    typedef signed int      Snt4
+    typedef signed long     Snt8
+
+    typedef unsigned char   Unt1
+    typedef unsigned short  Unt2
+    typedef unsigned int    Unt4
+    typedef unsigned long   Unt8
+
+    typedef void            Void
+}
