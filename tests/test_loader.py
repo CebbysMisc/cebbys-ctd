@@ -4,7 +4,7 @@ import lv.cebbys.languages.ctd as Ctd
 from test_utils import TestLogger
 
 def test_load_std_types() -> None:
-    """Test loading the std-types.gtd module."""
+    """Test loading all .gtd files from resources/ctd directory."""
     loader: Ctd.Loader.CtdLoader
     paths: list[Pathlib.Path]
     collection: Ctd.Define.DefinitionCollection
@@ -14,12 +14,13 @@ def test_load_std_types() -> None:
     
     collection = loader.load()
     
-    assert len(collection.typedefs) > 0 or len(collection.enums) > 0, \
-        "Should find at least one typedef or enum"
+    assert len(collection.typedefs) > 0 or len(collection.enums) > 0 or len(collection.flags) > 0, \
+        "Should find at least one typedef, enum, or flag"
     
-    TestLogger.header("Loaded Type Definitions")
+    TestLogger.header("Loaded All GTD Files")
     TestLogger.success(f"Loaded {len(collection.typedefs)} typedefs")
     TestLogger.success(f"Loaded {len(collection.enums)} enums")
+    TestLogger.success(f"Loaded {len(collection.flags)} flags")
     
     # Print typedef details
     if collection.typedefs:
@@ -37,6 +38,16 @@ def test_load_std_types() -> None:
             TestLogger.info(f"{qualified_name}{base}", indent=2)
             for member in enum.members:
                 TestLogger.info(f"{member.name} = {member.value}", indent=6)
+    
+    # Print flag details
+    if collection.flags:
+        TestLogger.section_break()
+        TestLogger.info("Flags:")
+        for qualified_name, flag in collection.flags.items():
+            base = f" : {flag.base_type}" if flag.base_type else ""
+            TestLogger.info(f"{qualified_name}{base}", indent=2)
+            for member in flag.members:
+                TestLogger.info(f"{member.name} = {hex(member.value)}", indent=6)
     
     # Test resolution: Null enum should reference Int4 typedef
     null_enum = collection.enums.get('std::lib::Null')
