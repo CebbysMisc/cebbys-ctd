@@ -14,13 +14,14 @@ def test_load_std_types() -> None:
     
     collection = loader.load()
     
-    assert len(collection.typedefs) > 0 or len(collection.enums) > 0 or len(collection.flags) > 0, \
-        "Should find at least one typedef, enum, or flag"
+    assert len(collection.typedefs) > 0 or len(collection.enums) > 0 or len(collection.flags) > 0 or len(collection.structures) > 0, \
+        "Should find at least one typedef, enum, flag, or structure"
     
     TestLogger.header("Loaded All GTD Files")
     TestLogger.success(f"Loaded {len(collection.typedefs)} typedefs")
     TestLogger.success(f"Loaded {len(collection.enums)} enums")
     TestLogger.success(f"Loaded {len(collection.flags)} flags")
+    TestLogger.success(f"Loaded {len(collection.structures)} structures")
     
     # Print typedef details
     if collection.typedefs:
@@ -48,6 +49,15 @@ def test_load_std_types() -> None:
             TestLogger.info(f"{qualified_name}{base}", indent=2)
             for member in flag.members:
                 TestLogger.info(f"{member.name} = {hex(member.value)}", indent=6)
+    
+    # Print structure details
+    if collection.structures:
+        TestLogger.section_break()
+        TestLogger.info("Structures:")
+        for qualified_name, structure in collection.structures.items():
+            TestLogger.info(f"{qualified_name}", indent=2)
+            for member in structure.members:
+                TestLogger.info(f"{member.type_spec} {member.name}", indent=6)
     
     # Test resolution: Null enum should reference Int4 typedef
     null_enum = collection.enums.get('std::lib::Null')

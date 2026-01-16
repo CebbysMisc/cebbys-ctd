@@ -13,6 +13,10 @@ __all__ = [
     'TypedefDefinition',
     'EnumMemberDefinition',
     'EnumDefinition',
+    'FlagMemberDefinition',
+    'FlagDefinition',
+    'StructureMemberDefinition',
+    'StructureDefinition',
     'DefinitionCollection'
 ]
 
@@ -56,17 +60,17 @@ class PrimitiveType:
 class TypeReference:
     """Reference to another type definition."""
 
-    def __init__(self, target: 'TypedefDefinition | EnumDefinition | FlagDefinition'):
+    def __init__(self, target: 'TypedefDefinition | EnumDefinition | FlagDefinition | StructureDefinition'):
         """Initialize type reference.
 
         Args:
             target: The referenced type definition
         """
-        self._target: TypedefDefinition | EnumDefinition | FlagDefinition
+        self._target: TypedefDefinition | EnumDefinition | FlagDefinition | StructureDefinition
         self._target = target
 
     @property
-    def target(self) -> 'TypedefDefinition | EnumDefinition | FlagDefinition':
+    def target(self) -> 'TypedefDefinition | EnumDefinition | FlagDefinition | StructureDefinition':
         """Get the referenced type."""
         return self._target
 
@@ -389,6 +393,95 @@ class FlagDefinition:
         return f"FlagDefinition({self.qualified_name}{base})"
 
 
+class StructureMemberDefinition:
+    """Resolved structure member definition."""
+
+    def __init__(self, name: str, type_spec: TypeSpec):
+        """Initialize structure member.
+
+        Args:
+            name: Member name
+            type_spec: Resolved type specification
+        """
+        self._name: str
+        self._type_spec: TypeSpec
+
+        self._name = name
+        self._type_spec = type_spec
+
+    @property
+    def name(self) -> str:
+        """Get the member name."""
+        return self._name
+
+    @property
+    def type_spec(self) -> TypeSpec:
+        """Get the member type specification."""
+        return self._type_spec
+
+    def __repr__(self) -> str:
+        """String representation."""
+        return f"StructureMember({self._type_spec} {self._name})"
+
+
+class StructureDefinition:
+    """Resolved structure definition."""
+
+    def __init__(
+        self,
+        name: str,
+        namespace: str,
+        members: list[StructureMemberDefinition] | None = None
+    ):
+        """Initialize structure definition.
+
+        Args:
+            name: Structure name
+            namespace: Namespace path
+            members: List of structure members (can be set later)
+        """
+        self._name: str
+        self._namespace: str
+        self._members: tuple[StructureMemberDefinition, ...]
+
+        self._name = name
+        self._namespace = namespace
+        self._members = tuple(members) if members is not None else ()
+
+    def set_members(self, members: list[StructureMemberDefinition]) -> None:
+        """Set the members (for deferred resolution).
+
+        Args:
+            members: List of resolved structure members
+        """
+        self._members = tuple(members)
+
+    @property
+    def name(self) -> str:
+        """Get the structure name."""
+        return self._name
+
+    @property
+    def namespace(self) -> str:
+        """Get the namespace."""
+        return self._namespace
+
+    @property
+    def qualified_name(self) -> str:
+        """Get the fully qualified name."""
+        return f"{self._namespace}::{self._name}"
+
+    @property
+    def members(self) -> Typing.Sequence[StructureMemberDefinition]:
+        """Get the structure members (immutable)."""
+        return self._members
+
+    def __repr__(self) -> str:
+        """String representation."""
+        return f"StructureDefinition({self.qualified_name})"
+
+
+
 class DefinitionCollection:
     """Immutable collection of resolved type definitions."""
 
@@ -396,7 +489,8 @@ class DefinitionCollection:
         self,
         typedefs: dict[str, TypedefDefinition] | None = None,
         enums: dict[str, EnumDefinition] | None = None,
-        flags: dict[str, FlagDefinition] | None = None
+        flags: dict[str, FlagDefinition] | None = None,
+        structures: dict[str, StructureDefinition] | None = None
     ):
         """Initialize collection.
 
@@ -404,11 +498,13 @@ class DefinitionCollection:
             typedefs: Dictionary of typedefs indexed by qualified name
             enums: Dictionary of enums indexed by qualified name
             flags: Dictionary of flags indexed by qualified name
+            structures: Dictionary of structures indexed by qualified name
         """
         self._typedefs: Typing.Final[Types.MappingProxyType[str,
                                                             TypedefDefinition]]
         self._enums: Typing.Final[Types.MappingProxyType[str, EnumDefinition]]
         self._flags: Typing.Final[Types.MappingProxyType[str, FlagDefinition]]
+        self._structures: Typing.Final[Types.MappingProxyType[str, StructureDefinition]]
 
         # Create immutable copies using MappingProxyType
         self._typedefs = Types.MappingProxyType(
@@ -417,6 +513,8 @@ class DefinitionCollection:
             enums if enums is not None else {})
         self._flags = Types.MappingProxyType(
             flags if flags is not None else {})
+        self._structures = Types.MappingProxyType(
+            structures if structures is not None else {})
 
     @property
     def typedefs(self) -> Typing.Mapping[str, TypedefDefinition]:
@@ -433,7 +531,12 @@ class DefinitionCollection:
         """Get immutable view of flags indexed by qualified name."""
         return self._flags
 
-    def find_type(self, qualified_name: str) -> TypedefDefinition | EnumDefinition | FlagDefinition | None:
+    @property
+    def structures(self) -> Typing.Mapping[str, StructureDefinition]:
+        """Get immutable view of structures indexed by qualified name."""
+        return self._structures
+
+    def find_type(self, qualified_name: str) -> TypedefDefinition | EnumDefinition | FlagDefinition | StructureDefinition | None:
         """Find a type by qualified name.
 
         Args:
@@ -448,4 +551,6 @@ class DefinitionCollection:
             return self._enums[qualified_name]
         if qualified_name in self._flags:
             return self._flags[qualified_name]
+        if qualified_name in self._structures:
+            return self._structures[qualified_name]
         return None

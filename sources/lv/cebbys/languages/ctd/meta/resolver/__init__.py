@@ -9,6 +9,7 @@ import lv.cebbys.languages.ctd.meta.resolver.__api__ as Api
 import lv.cebbys.languages.ctd.meta.resolver.typedef as TypedefModule
 import lv.cebbys.languages.ctd.meta.resolver.enum as EnumModule
 import lv.cebbys.languages.ctd.meta.resolver.flag as FlagModule
+import lv.cebbys.languages.ctd.meta.resolver.structure as StructureModule
 
 __all__ = ['MetaResolver', 'ResolutionError']
 
@@ -24,6 +25,7 @@ class MetaResolver:
         TypedefModule.TypedefResolver,
         EnumModule.EnumResolver,
         FlagModule.FlagResolver,
+        StructureModule.StructureResolver,
     ]
 
     def __init__(self):
@@ -54,7 +56,7 @@ class MetaResolver:
             ResolutionError: If type resolution fails
         """
         type_cache: dict[str, Define.TypedefDefinition |
-                         Define.EnumDefinition | Define.FlagDefinition]
+                         Define.EnumDefinition | Define.FlagDefinition | Define.StructureDefinition]
         context: Api.ResolverContext
         resolvers: list[Api.BaseResolver]
         resolver_class: type[Api.BaseResolver]
@@ -62,6 +64,7 @@ class MetaResolver:
         typedefs: dict[str, Define.TypedefDefinition]
         enums: dict[str, Define.EnumDefinition]
         flags: dict[str, Define.FlagDefinition]
+        structures: dict[str, Define.StructureDefinition]
 
         # Create context
         type_cache = {}
@@ -88,5 +91,7 @@ class MetaResolver:
                  if isinstance(e, Define.EnumDefinition)}
         flags = {qn: f for qn, f in type_cache.items()
                  if isinstance(f, Define.FlagDefinition)}
+        structures = {qn: s for qn, s in type_cache.items()
+                      if isinstance(s, Define.StructureDefinition)}
 
-        return Define.DefinitionCollection(typedefs, enums, flags)
+        return Define.DefinitionCollection(typedefs, enums, flags, structures)
