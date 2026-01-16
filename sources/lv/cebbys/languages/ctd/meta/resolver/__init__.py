@@ -2,13 +2,13 @@
 
 This module resolves type references in metadata to create fully resolved definitions.
 """
+import typing as Typing
 import lv.cebbys.languages.ctd.meta.types as Types
 import lv.cebbys.languages.ctd.define.types as Define
 import lv.cebbys.languages.ctd.meta.resolver.__api__ as Api
-import lv.cebbys.languages.ctd.meta.resolver.common as Common
-import lv.cebbys.languages.ctd.meta.resolver.typedef as TypedefResolver
-import lv.cebbys.languages.ctd.meta.resolver.enum as EnumResolver
-import lv.cebbys.languages.ctd.meta.resolver.flag as FlagResolver
+import lv.cebbys.languages.ctd.meta.resolver.typedef as TypedefModule
+import lv.cebbys.languages.ctd.meta.resolver.enum as EnumModule
+import lv.cebbys.languages.ctd.meta.resolver.flag as FlagModule
 
 __all__ = ['MetaResolver', 'ResolutionError']
 
@@ -18,6 +18,13 @@ ResolutionError = Api.ResolutionError
 
 class MetaResolver:
     """Resolves metadata into fully resolved definitions."""
+    
+    # List of resolver classes to use
+    _RESOLVER_CLASSES: Typing.Final[list[type[Api.BaseResolver]]] = [
+        TypedefModule.TypedefResolver,
+        EnumModule.EnumResolver,
+        FlagModule.FlagResolver,
+    ]
     
     def __init__(self):
         """Initialize the resolver."""
@@ -48,7 +55,9 @@ class MetaResolver:
         """
         type_cache: dict[str, Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition]
         context: Api.ResolverContext
-        type_parser: Common.TypeParser
+        resolvers: list[Api.BaseResolver]
+        resolver_class: type[Api.BaseResolver]
+        resolver: Api.BaseResolver
         typedefs: dict[str, Define.TypedefDefinition]
         enums: dict[str, Define.EnumDefinition]
         flags: dict[str, Define.FlagDefinition]
@@ -61,16 +70,18 @@ class MetaResolver:
         type_cache = {}
         context = Api.ResolverContext(type_cache, meta_collection, namespace_uses)
         
+        # Instantiate all resolvers
+        resolvers = []
+        for resolver_class in self._RESOLVER_CLASSES:
+            resolvers.append(resolver_class(context))
+        
         # Phase 1: Create all type instances and cache them
-        TypedefResolver.create_typedef_instances(context)
-        EnumResolver.create_enum_instances(context)
-        FlagResolver.create_flag_instances(context)
+        for resolver in resolvers:
+            resolver.create_instances()
         
         # Phase 2: Resolve all type references
-        type_parser = Common.TypeParser(context)
-        TypedefResolver.resolve_typedefs(context, type_parser.parse_type_spec)
-        EnumResolver.resolve_enums(context, type_parser.parse_type_spec)
-        FlagResolver.resolve_flags(context, type_parser.parse_type_spec)
+        for resolver in resolvers:
+            resolver.resolve_instances()
         
         # Build final immutable collection
         typedefs = {qn: t for qn, t in type_cache.items()
