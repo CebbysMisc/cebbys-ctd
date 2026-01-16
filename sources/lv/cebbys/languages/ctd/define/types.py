@@ -217,12 +217,12 @@ class EnumDefinition:
         self._name: str
         self._namespace: str
         self._base_type: TypeSpec | None
-        self._members: list[EnumMemberDefinition]
+        self._members: tuple[EnumMemberDefinition, ...]
 
         self._name = name
         self._namespace = namespace
         self._base_type = base_type
-        self._members = members if members is not None else []
+        self._members = tuple(members) if members is not None else ()
 
     def set_base_type(self, base_type: TypeSpec | None) -> None:
         """Set the base type (for deferred resolution).
@@ -261,8 +261,8 @@ class EnumDefinition:
         return self._base_type
 
     @property
-    def members(self) -> list[EnumMemberDefinition]:
-        """Get the enum members."""
+    def members(self) -> Typing.Sequence[EnumMemberDefinition]:
+        """Get the enum members (immutable)."""
         return self._members
 
     def __repr__(self) -> str:
@@ -334,12 +334,12 @@ class FlagDefinition:
         self._name: str
         self._namespace: str
         self._base_type: TypeSpec | None
-        self._members: list[FlagMemberDefinition]
+        self._members: tuple[FlagMemberDefinition, ...]
 
         self._name = name
         self._namespace = namespace
         self._base_type = base_type
-        self._members = members if members is not None else []
+        self._members = tuple(members) if members is not None else ()
 
     def set_base_type(self, base_type: TypeSpec | None) -> None:
         """Set the base type (for deferred resolution).
@@ -378,8 +378,8 @@ class FlagDefinition:
         return self._base_type
 
     @property
-    def members(self) -> list[FlagMemberDefinition]:
-        """Get the flag members."""
+    def members(self) -> Typing.Sequence[FlagMemberDefinition]:
+        """Get the flag members (immutable)."""
         return self._members
 
     def __repr__(self) -> str:
@@ -404,12 +404,13 @@ class DefinitionCollection:
             enums: Dictionary of enums indexed by qualified name
             flags: Dictionary of flags indexed by qualified name
         """
-        self._typedefs: Typing.Final[dict[str, TypedefDefinition]]
-        self._enums: Typing.Final[dict[str, EnumDefinition]]
-        self._flags: Typing.Final[dict[str, FlagDefinition]]
-
-        # Create immutable copies using MappingProxyType
         import types
+        
+        self._typedefs: Typing.Final[types.MappingProxyType[str, TypedefDefinition]]
+        self._enums: Typing.Final[types.MappingProxyType[str, EnumDefinition]]
+        self._flags: Typing.Final[types.MappingProxyType[str, FlagDefinition]]
+        
+        # Create immutable copies using MappingProxyType
         self._typedefs = types.MappingProxyType(
             typedefs if typedefs is not None else {})
         self._enums = types.MappingProxyType(
