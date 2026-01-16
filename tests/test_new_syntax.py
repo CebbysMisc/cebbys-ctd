@@ -78,7 +78,10 @@ def test_new_syntax_parsing() -> None:
     visitor.visitCompilationUnit(parse_tree)
     
     TestLogger.success(f"Parsed {len(visitor.collection.structures)} structures from dxgi")
-    assert len(visitor.collection.structures) == 3
+    assert len(visitor.collection.structures) == 5
+    
+    TestLogger.info(f"Parsed {len(visitor.collection.flags)} flags from dxgi")
+    TestLogger.info(f"Parsed {len(visitor.collection.enums)} enums from dxgi")
     
     # Check first structure (Rational)
     rational = visitor.collection.structures[0]
@@ -88,8 +91,14 @@ def test_new_syntax_parsing() -> None:
     for member in rational.members:
         TestLogger.info(f"{member.type_spec} {member.name}", indent=4)
     
+    # Check SwapChainDesc structure
+    swap_chain_desc = visitor.collection.structures[3]
+    assert swap_chain_desc.name == "SwapChainDesc"
+    assert len(swap_chain_desc.members) == 8
+    TestLogger.success(f"Structure: {swap_chain_desc.name} with {len(swap_chain_desc.members)} members")
+    
     # Check Adapter structure
-    adapter = visitor.collection.structures[2]
+    adapter = visitor.collection.structures[4]
     assert adapter.name == "Adapter"
     assert len(adapter.members) == 1
     TestLogger.success(f"Structure: {adapter.name} with {len(adapter.members)} members")
