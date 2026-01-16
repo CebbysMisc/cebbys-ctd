@@ -4,7 +4,7 @@ This module contains resolved definition classes where all type references
 point to actual type instances.
 """
 import typing as Typing
-import types
+import types as Types
 
 __all__ = [
     'PrimitiveType',
@@ -405,16 +405,16 @@ class DefinitionCollection:
             enums: Dictionary of enums indexed by qualified name
             flags: Dictionary of flags indexed by qualified name
         """
-        self._typedefs: Typing.Final[types.MappingProxyType[str, TypedefDefinition]]
-        self._enums: Typing.Final[types.MappingProxyType[str, EnumDefinition]]
-        self._flags: Typing.Final[types.MappingProxyType[str, FlagDefinition]]
+        self._typedefs: Typing.Final[Types.MappingProxyType[str, TypedefDefinition]]
+        self._enums: Typing.Final[Types.MappingProxyType[str, EnumDefinition]]
+        self._flags: Typing.Final[Types.MappingProxyType[str, FlagDefinition]]
         
         # Create immutable copies using MappingProxyType
-        self._typedefs = types.MappingProxyType(
+        self._typedefs = Types.MappingProxyType(
             typedefs if typedefs is not None else {})
-        self._enums = types.MappingProxyType(
+        self._enums = Types.MappingProxyType(
             enums if enums is not None else {})
-        self._flags = types.MappingProxyType(
+        self._flags = Types.MappingProxyType(
             flags if flags is not None else {})
 
     @property
