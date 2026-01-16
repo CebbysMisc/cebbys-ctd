@@ -1,0 +1,83 @@
+"""Meta Resolver Module
+
+This module resolves type references in metadata to create fully resolved definitions.
+"""
+import lv.cebbys.languages.ctd.meta.types as Types
+import lv.cebbys.languages.ctd.define.types as Define
+import lv.cebbys.languages.ctd.meta.resolver.__api__ as Api
+import lv.cebbys.languages.ctd.meta.resolver.common as Common
+import lv.cebbys.languages.ctd.meta.resolver.typedef as TypedefResolver
+import lv.cebbys.languages.ctd.meta.resolver.enum as EnumResolver
+import lv.cebbys.languages.ctd.meta.resolver.flag as FlagResolver
+
+__all__ = ['MetaResolver', 'ResolutionError']
+
+# Re-export ResolutionError from API
+ResolutionError = Api.ResolutionError
+
+
+class MetaResolver:
+    """Resolves metadata into fully resolved definitions."""
+    
+    def __init__(self):
+        """Initialize the resolver."""
+        pass
+    
+    def resolve(
+        self,
+        meta_collection: Types.DefinitionCollectionMeta,
+        namespace_uses: dict[str, list[str]]
+    ) -> Define.DefinitionCollection:
+        """Resolve metadata collection into definition collection.
+        
+        This follows a two-phase approach:
+        1. Create all type instances and cache them by qualified name
+        2. Resolve all type references by looking up cached instances
+        
+        This design naturally handles circular/recursive type references.
+        
+        Args:
+            meta_collection: Metadata collection to resolve
+            namespace_uses: Mapping of namespace to list of used namespaces
+            
+        Returns:
+            Immutable resolved definition collection
+            
+        Raises:
+            ResolutionError: If type resolution fails
+        """
+        type_cache: dict[str, Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition]
+        context: Api.ResolverContext
+        type_parser: Common.TypeParser
+        typedefs: dict[str, Define.TypedefDefinition]
+        enums: dict[str, Define.EnumDefinition]
+        flags: dict[str, Define.FlagDefinition]
+        
+        # Ensure meta_collection is valid
+        if meta_collection is None:
+            raise ResolutionError("Meta collection cannot be None")
+        
+        # Create context
+        type_cache = {}
+        context = Api.ResolverContext(type_cache, meta_collection, namespace_uses)
+        
+        # Phase 1: Create all type instances and cache them
+        TypedefResolver.create_typedef_instances(context)
+        EnumResolver.create_enum_instances(context)
+        FlagResolver.create_flag_instances(context)
+        
+        # Phase 2: Resolve all type references
+        type_parser = Common.TypeParser(context)
+        TypedefResolver.resolve_typedefs(context, type_parser.parse_type_spec)
+        EnumResolver.resolve_enums(context, type_parser.parse_type_spec)
+        FlagResolver.resolve_flags(context, type_parser.parse_type_spec)
+        
+        # Build final immutable collection
+        typedefs = {qn: t for qn, t in type_cache.items()
+                    if isinstance(t, Define.TypedefDefinition)}
+        enums = {qn: e for qn, e in type_cache.items()
+                 if isinstance(e, Define.EnumDefinition)}
+        flags = {qn: f for qn, f in type_cache.items()
+                 if isinstance(f, Define.FlagDefinition)}
+        
+        return Define.DefinitionCollection(typedefs, enums, flags)

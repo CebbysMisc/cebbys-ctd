@@ -239,7 +239,7 @@ class EnumDefinition:
         Args:
             members: List of resolved enum members
         """
-        self._members = members
+        self._members = tuple(members)
 
     @property
     def name(self) -> str:
@@ -356,7 +356,7 @@ class FlagDefinition:
         Args:
             members: List of resolved flag members
         """
-        self._members = members
+        self._members = tuple(members)
 
     @property
     def name(self) -> str:
@@ -405,10 +405,11 @@ class DefinitionCollection:
             enums: Dictionary of enums indexed by qualified name
             flags: Dictionary of flags indexed by qualified name
         """
-        self._typedefs: Typing.Final[Types.MappingProxyType[str, TypedefDefinition]]
+        self._typedefs: Typing.Final[Types.MappingProxyType[str,
+                                                            TypedefDefinition]]
         self._enums: Typing.Final[Types.MappingProxyType[str, EnumDefinition]]
         self._flags: Typing.Final[Types.MappingProxyType[str, FlagDefinition]]
-        
+
         # Create immutable copies using MappingProxyType
         self._typedefs = Types.MappingProxyType(
             typedefs if typedefs is not None else {})
