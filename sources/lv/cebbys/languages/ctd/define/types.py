@@ -4,6 +4,7 @@ This module contains resolved definition classes where all type references
 point to actual type instances.
 """
 import typing as Typing
+import types
 
 __all__ = [
     'PrimitiveType',
@@ -404,8 +405,6 @@ class DefinitionCollection:
             enums: Dictionary of enums indexed by qualified name
             flags: Dictionary of flags indexed by qualified name
         """
-        import types
-        
         self._typedefs: Typing.Final[types.MappingProxyType[str, TypedefDefinition]]
         self._enums: Typing.Final[types.MappingProxyType[str, EnumDefinition]]
         self._flags: Typing.Final[types.MappingProxyType[str, FlagDefinition]]

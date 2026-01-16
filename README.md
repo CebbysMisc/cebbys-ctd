@@ -56,16 +56,25 @@ The project follows a structured architecture with clear separation of concerns:
 
 ### Python Development Guidelines
 
-1. **Model Classes Organization**:
+1. **Import Statements**:
+   - All imports must be defined at the top of the script file
+   - Imports cannot be placed inside functions or methods
+   - Follow standard import ordering:
+     - Standard library imports (e.g., `import typing`, `import types`)
+     - Third-party imports (e.g., `import antlr4`)
+     - Local application imports (e.g., `import lv.cebbys.languages.ctd.meta`)
+   - Use `as` aliases consistently (e.g., `import typing as Typing`)
+
+2. **Model Classes Organization**:
    - Model classes shall reside in `{subdirectory}/types.py`
    - Example: `meta/types.py` for metadata models, `define/types.py` for definition models
 
-2. **Package Structure**:
+3. **Package Structure**:
    - Each subdirectory with types should have an `__init__.py` that exports public API
    - Use relative imports within the same package
    - Use absolute imports from other packages
 
-3. **Null Safety**:
+4. **Null Safety**:
    - If attributes can be `None`, it is necessary to verify they are not before use
    - Add null checks to avoid `AttributeError` exceptions when accessing optional attributes
    - Example:
@@ -75,11 +84,11 @@ The project follows a structured architecture with clear separation of concerns:
      # Safe to use self._optional_attribute here
      ```
 
-4. **Source Roots**:
+5. **Source Roots**:
    - `sources/`: Primary source root for Python modules
    - `hints/`: Contains type stub modules (`.pyi` files only, not a source root)
 
-5. **Testing**:
+6. **Testing**:
    - Tests organized in `tests/` directory
    - Each test file may contain multiple test functions
    - Use pytest for testing framework
