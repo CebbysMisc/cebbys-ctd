@@ -16,6 +16,19 @@ namespace com::microsoft::direct::graphics::d3d11 {
         WARP
     }
 
+    enum FeatureLevel : Unt4 {
+        LEVEL_9_1  = 0x9100
+        LEVEL_9_2  = 0x9200
+        LEVEL_9_3  = 0x9300
+        LEVEL_10_0 = 0xa000
+        LEVEL_10_1 = 0xa100
+        LEVEL_11_0 = 0xb000
+        LEVEL_11_1 = 0xb100
+        LEVEL_12_0 = 0xc000
+        LEVEL_12_1 = 0xc100
+        LEVEL_12_2 = 0xc200
+    }
+
     flag CreateDeviceFlag : Unt4 {
         SINGLETHREADED
         DEBUG
@@ -30,10 +43,13 @@ namespace com::microsoft::direct::graphics::d3d11 {
 
     @WinApi
     ResultCode D3D11CreateDeviceAndSwapChain(
-        @Nullable com::microsoft::direct::graphics::dxgi::Adapter*  adapter,
-        DriverType                                                  driverType,
-        ModuleHandle                                                software,
-        CreateDeviceFlag                                            flags
+        @Nullable Adapter*  adapter,
+        DriverType          driverType,
+        ModuleHandle        software,
+        CreateDeviceFlag    flags,
+        FeatureLevel*       featureLevels,
+        Unt4                featureLevelsCount,
+        Unt4                sdkVersion
     )
 
     /*

@@ -161,6 +161,15 @@ class GtdListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by GtdParser#annotationArguments.
+    def enterAnnotationArguments(self, ctx:GtdParser.AnnotationArgumentsContext):
+        pass
+
+    # Exit a parse tree produced by GtdParser#annotationArguments.
+    def exitAnnotationArguments(self, ctx:GtdParser.AnnotationArgumentsContext):
+        pass
+
+
     # Enter a parse tree produced by GtdParser#parameterList.
     def enterParameterList(self, ctx:GtdParser.ParameterListContext):
         pass

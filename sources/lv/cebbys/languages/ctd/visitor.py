@@ -320,6 +320,8 @@ class MetaVisitor(GtdVisitor.GtdVisitor):
             
             if member_ctx.INTEGER_LITERAL():
                 value = int(member_ctx.INTEGER_LITERAL().getText())
+            elif member_ctx.HEX_LITERAL():
+                value = int(member_ctx.HEX_LITERAL().getText(), 16)
             
             members.append(Meta.EnumMemberMeta(name, value))
         

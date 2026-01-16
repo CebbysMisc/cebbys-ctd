@@ -45,12 +45,17 @@ def test_new_syntax_parsing() -> None:
     TestLogger.success(f"Typedef: {resultcode.name} = {resultcode.type_spec}")
     TestLogger.success(f"Typedef: {modulehandle.name} = {modulehandle.type_spec}")
     
-    # Check enum
-    assert len(visitor.collection.enums) == 1
+    # Check enums
+    assert len(visitor.collection.enums) == 2
     driver_type = visitor.collection.enums[0]
     assert driver_type.name == "DriverType"
     assert len(driver_type.members) == 6
     TestLogger.success(f"Enum: {driver_type.name} with {len(driver_type.members)} members")
+    
+    feature_level = visitor.collection.enums[1]
+    assert feature_level.name == "FeatureLevel"
+    assert len(feature_level.members) == 10
+    TestLogger.success(f"Enum: {feature_level.name} with {len(feature_level.members)} members (hex values)")
     
     # Check flag
     assert len(visitor.collection.flags) == 1
@@ -73,8 +78,18 @@ def test_new_syntax_parsing() -> None:
     visitor.visitCompilationUnit(parse_tree)
     
     TestLogger.success(f"Parsed {len(visitor.collection.structures)} structures from dxgi")
-    assert len(visitor.collection.structures) == 1
-    adapter = visitor.collection.structures[0]
+    assert len(visitor.collection.structures) == 3
+    
+    # Check first structure (Rational)
+    rational = visitor.collection.structures[0]
+    assert rational.name == "Rational"
+    assert len(rational.members) == 2
+    TestLogger.success(f"Structure: {rational.name} with {len(rational.members)} members")
+    for member in rational.members:
+        TestLogger.info(f"{member.type_spec} {member.name}", indent=4)
+    
+    # Check Adapter structure
+    adapter = visitor.collection.structures[2]
     assert adapter.name == "Adapter"
     assert len(adapter.members) == 1
     TestLogger.success(f"Structure: {adapter.name} with {len(adapter.members)} members")
@@ -97,7 +112,7 @@ def test_new_syntax_parsing() -> None:
     func = visitor.collection.functions[0]
     assert func.name == "D3D11CreateDeviceAndSwapChain"
     assert func.annotation == "WinApi"
-    assert len(func.parameters) == 4
+    assert len(func.parameters) == 7
     TestLogger.success(f"Function: @{func.annotation} {func.return_type} {func.name}(...)")
     for param in func.parameters:
         annot_str = f"@{param.annotation} " if param.annotation else ""

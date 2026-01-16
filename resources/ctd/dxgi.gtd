@@ -3,6 +3,59 @@ import "std-types"
 namespace com::microsoft::direct::graphics::dxgi {
     use std::lib
 
+    @CType("DXGI_SAMPLE_DESC")
+    flag Usage : Unt4 {
+        SHADER_INPUT         = 0x10
+        RENDER_TARGET_OUTPUT
+        BACK_BUFFER
+        SHARED
+        READ_ONLY
+        DISCARD_ON_PRESENT
+        UNORDERED_ACCESS
+    }
+
+    @CType("DXGI_SAMPLE_DESC")
+    flag SwapChainFlag : Unt4 {
+        NON_PRE_RENDERED
+        ALLOW_MODE_SWITCH
+        GDI_COMPATIBLE
+        RESTRICTED_CONTENT
+        RESTRICT_SHARED_RESOURCE_DRIVER
+        DISPLAY_ONLY
+        UNORDERED_ACCESS_VIEW
+        FRAME_LATENCY_WAITABLE_OBJECT
+        FOREGROUND_LAYER
+        FULLSCREEN_VIDEO
+        YUV_VIDEO
+        HW_PROTECTED
+        ALLOW_TEARING
+        RESTRICTED_TO_ALL_HOLOGRAPHIC_DISPLAYS
+    }
+
+    @CType("DXGI_RATIONAL")
+    structure Rational {
+        Unt4 numerator
+        Unt4 denominator
+    }
+
+    @CType("DXGI_SAMPLE_DESC")
+    structure SampleDesc {
+        Unt4 count
+        Unt4 quality
+    }
+
+    /*
+    @CType("DXGI_MODE_DESC")
+    structure ModeDesc {
+        Unt4                width
+        Unt4                height
+        Rational            refreshRate
+        Format              format
+        ModeScanLineOrder   scanLineOrdering
+        ModeScaling         scaling
+    }
+    */
+
     structure Adapter {
         Any vtable
     }

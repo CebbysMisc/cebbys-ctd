@@ -94,6 +94,11 @@ class GtdVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by GtdParser#annotationArguments.
+    def visitAnnotationArguments(self, ctx:GtdParser.AnnotationArgumentsContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by GtdParser#parameterList.
     def visitParameterList(self, ctx:GtdParser.ParameterListContext):
         return self.visitChildren(ctx)

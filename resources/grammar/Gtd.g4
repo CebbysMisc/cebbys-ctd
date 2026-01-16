@@ -6,9 +6,9 @@ compilationUnit: importDeclaration* namespaceDeclaration* EOF;
 importDeclaration: 'import' STRING_LITERAL;
 
 namespaceDeclaration:
-    'namespace' qualifiedName '{' useDeclaration* declaration* '}';
+    annotation? 'namespace' qualifiedName '{' useDeclaration* declaration* '}';
 
-useDeclaration: 'use' qualifiedName;
+useDeclaration: annotation? 'use' qualifiedName;
 
 declaration: 
     typedefDeclaration 
@@ -17,24 +17,24 @@ declaration:
     | structureDeclaration
     | functionDeclaration;
 
-typedefDeclaration: 'typedef' typeSpec IDENTIFIER;
+typedefDeclaration: annotation? 'typedef' typeSpec IDENTIFIER;
 
 enumDeclaration:
-    'enum' IDENTIFIER (':' typeSpec)? '{' enumMemberList? '}';
+    annotation? 'enum' IDENTIFIER (':' typeSpec)? '{' enumMemberList? '}';
 
 flagDeclaration:
-    'flag' IDENTIFIER (':' typeSpec)? '{' flagMemberList? '}';
+    annotation? 'flag' IDENTIFIER (':' typeSpec)? '{' flagMemberList? '}';
 
 enumMemberList: enumMember enumMember*;
 
-enumMember: IDENTIFIER ('=' INTEGER_LITERAL)?;
+enumMember: IDENTIFIER ('=' (INTEGER_LITERAL | HEX_LITERAL))?;
 
 flagMemberList: flagMember flagMember*;
 
 flagMember: IDENTIFIER ('=' HEX_LITERAL)?;
 
 structureDeclaration:
-    'structure' IDENTIFIER '{' structureMemberList? '}';
+    annotation? 'structure' IDENTIFIER '{' structureMemberList? '}';
 
 structureMemberList: structureMember structureMember*;
 
@@ -43,7 +43,9 @@ structureMember: typeSpec IDENTIFIER;
 functionDeclaration:
     annotation? typeSpec IDENTIFIER '(' parameterList? ')';
 
-annotation: '@' IDENTIFIER;
+annotation: '@' IDENTIFIER ('(' annotationArguments? ')')?;
+
+annotationArguments: STRING_LITERAL (',' STRING_LITERAL)*;
 
 parameterList: parameter (',' parameter)*;
 
