@@ -21,9 +21,55 @@ This project implements a custom language for defining datatypes, which are pars
 
 ```
 cebbys-ctd/
-├── sources/          # Source code root directory
-├── tests/            # Tests directory with subdirectories as test modules
-├── resources/        # Resources directory containing ANTLR4 grammar files
-└── hints/            # Type hints directory (not a source root)
-    └── antlr4/       # ANTLR4 type stubs (.pyi files only)
+├── sources/                    # Source code root directory
+│   └── lv/cebbys/languages/ctd/
+│       ├── meta/              # Metadata types, loader, and resolver
+│       │   ├── types.py       # Metadata model classes
+│       │   ├── loader.py      # MetaLoader for parsing GTD files
+│       │   └── resolver.py    # MetaResolver for type resolution
+│       ├── define/            # Definition types (resolved)
+│       │   └── types.py       # Definition model classes
+│       ├── antlr4/            # ANTLR4 generated parser files
+│       ├── loader.py          # Main CtdLoader
+│       └── visitor.py         # ANTLR4 visitor implementation
+├── tests/                      # Tests directory with subdirectories as test modules
+├── resources/                  # Resources directory
+│   ├── grammar/               # ANTLR4 grammar files (.g4)
+│   └── ctd/                   # Custom type definition files (.gtd)
+└── hints/                      # Type hints directory (not a source root)
+    └── antlr4/                # ANTLR4 type stubs (.pyi files only)
 ```
+
+## Architecture
+
+### Module Organization
+
+The project follows a structured architecture with clear separation of concerns:
+
+- **meta/**: Contains metadata types and logic for loading and resolving GTD files
+  - `types.py`: Model classes for parsed metadata (TypedefMeta, EnumMeta, FlagMeta, etc.)
+  - `loader.py`: MetaLoader class for parsing GTD files into metadata
+  - `resolver.py`: MetaResolver class for resolving type references into definitions
+
+- **define/**: Contains resolved definition types
+  - `types.py`: Model classes for resolved definitions (TypedefDefinition, EnumDefinition, etc.)
+
+### Python Development Guidelines
+
+1. **Model Classes Organization**:
+   - Model classes shall reside in `{subdirectory}/types.py`
+   - Example: `meta/types.py` for metadata models, `define/types.py` for definition models
+
+2. **Package Structure**:
+   - Each subdirectory with types should have an `__init__.py` that exports public API
+   - Use relative imports within the same package
+   - Use absolute imports from other packages
+
+3. **Source Roots**:
+   - `sources/`: Primary source root for Python modules
+   - `hints/`: Contains type stub modules (`.pyi` files only, not a source root)
+
+4. **Testing**:
+   - Tests organized in `tests/` directory
+   - Each test file may contain multiple test functions
+   - Use pytest for testing framework
