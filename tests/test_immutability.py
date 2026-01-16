@@ -9,7 +9,7 @@ def test_collection_immutability() -> None:
     """Test that the returned collection is immutable."""
     loader: Ctd.Loader.CtdLoader
     paths: list[Pathlib.Path]
-    collection: Ctd.Definitions.DefinitionCollection
+    collection: Ctd.Define.DefinitionCollection
     
     paths = [Pathlib.Path('resources/ctd')]
     loader = Ctd.Loader.CtdLoader(paths)

@@ -7,7 +7,7 @@ def test_type_resolution() -> None:
     """Test that type references are properly resolved to single instances."""
     loader: Ctd.Loader.CtdLoader
     paths: list[Pathlib.Path]
-    collection: Ctd.Definitions.DefinitionCollection
+    collection: Ctd.Define.DefinitionCollection
     
     paths = [Pathlib.Path('resources/ctd')]
     loader = Ctd.Loader.CtdLoader(paths)
@@ -28,7 +28,7 @@ def test_type_resolution() -> None:
     
     # The base type should be a TypeReference
     base = any_typedef.type_spec.base_type
-    assert isinstance(base, Ctd.Definitions.TypeReference), \
+    assert isinstance(base, Ctd.Define.TypeReference), \
         "Any base type should be TypeReference"
     
     # The target should be the SAME instance as void_typedef
@@ -53,7 +53,7 @@ def test_type_resolution() -> None:
     
     # Null enum base type should reference the SAME Int4 instance
     null_base = null_enum.base_type.base_type
-    assert isinstance(null_base, Ctd.Definitions.TypeReference), \
+    assert isinstance(null_base, Ctd.Define.TypeReference), \
         "Null base type should be TypeReference"
     assert null_base.target is int4_typedef, \
         "Null should reference the same Int4 typedef instance"

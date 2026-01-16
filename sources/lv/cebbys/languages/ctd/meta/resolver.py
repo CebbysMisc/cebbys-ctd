@@ -1,13 +1,13 @@
-"""CTD Definition Resolver
+"""Meta Resolver
 
 This module resolves type references in metadata to create fully resolved definitions.
 """
 import typing as Typing
 import re
-import lv.cebbys.languages.ctd.meta as Meta
-import lv.cebbys.languages.ctd.definitions as Definitions
+import lv.cebbys.languages.ctd.meta.types as Types
+import lv.cebbys.languages.ctd.define.types as Define
 
-__all__ = ['DefinitionResolver', 'ResolutionError']
+__all__ = ['MetaResolver', 'ResolutionError']
 
 
 class ResolutionError(Exception):
@@ -15,14 +15,14 @@ class ResolutionError(Exception):
     pass
 
 
-class DefinitionResolver:
-    """Resolves metadata into fully resolved definitions."""
+class MetaResolver:
+    """Resolves metadata into fully resolved Define."""
     
     def __init__(self):
         """Initialize the resolver."""
         # Cache of all type instances by qualified name
-        self._type_cache: dict[str, Definitions.TypedefDefinition | Definitions.EnumDefinition | Definitions.FlagDefinition]
-        self._meta_collection: Meta.DefinitionCollectionMeta | None
+        self._type_cache: dict[str, Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition]
+        self._meta_collection: Types.DefinitionCollectionMeta | None
         self._namespace_uses: dict[str, list[str]]
         
         self._type_cache = {}
@@ -31,9 +31,9 @@ class DefinitionResolver:
     
     def resolve(
         self,
-        meta_collection: Meta.DefinitionCollectionMeta,
+        meta_collection: Types.DefinitionCollectionMeta,
         namespace_uses: dict[str, list[str]]
-    ) -> Definitions.DefinitionCollection:
+    ) -> Define.DefinitionCollection:
         """Resolve metadata collection into definition collection.
         
         This follows a two-phase approach:
@@ -64,13 +64,13 @@ class DefinitionResolver:
         
         # Build final immutable collection
         typedefs = {qn: t for qn, t in self._type_cache.items() 
-                    if isinstance(t, Definitions.TypedefDefinition)}
+                    if isinstance(t, Define.TypedefDefinition)}
         enums = {qn: e for qn, e in self._type_cache.items() 
-                 if isinstance(e, Definitions.EnumDefinition)}
+                 if isinstance(e, Define.EnumDefinition)}
         flags = {qn: f for qn, f in self._type_cache.items() 
-                 if isinstance(f, Definitions.FlagDefinition)}
+                 if isinstance(f, Define.FlagDefinition)}
         
-        return Definitions.DefinitionCollection(typedefs, enums, flags)
+        return Define.DefinitionCollection(typedefs, enums, flags)
     
     def _create_type_instances(self) -> None:
         """Create all type instances and cache them by qualified name.
@@ -79,15 +79,15 @@ class DefinitionResolver:
         references yet. The instances are cached so they can be referenced
         during the resolution phase, enabling circular/recursive types.
         """
-        typedef_meta: Meta.TypedefMeta
-        enum_meta: Meta.EnumMeta
-        flag_meta: Meta.FlagMeta
+        typedef_meta: Types.TypedefMeta
+        enum_meta: Types.EnumMeta
+        flag_meta: Types.FlagMeta
         qualified_name: str
         
         # Create typedef instances
         for typedef_meta in self._meta_collection.typedefs:
             qualified_name = f"{typedef_meta.namespace}::{typedef_meta.name}"
-            typedef_instance = Definitions.TypedefDefinition(
+            typedef_instance = Define.TypedefDefinition(
                 typedef_meta.name,
                 typedef_meta.namespace
                 # type_spec will be set in phase 2
@@ -97,7 +97,7 @@ class DefinitionResolver:
         # Create enum instances
         for enum_meta in self._meta_collection.enums:
             qualified_name = f"{enum_meta.namespace}::{enum_meta.name}"
-            enum_instance = Definitions.EnumDefinition(
+            enum_instance = Define.EnumDefinition(
                 enum_meta.name,
                 enum_meta.namespace
                 # base_type and members will be set in phase 2
@@ -107,7 +107,7 @@ class DefinitionResolver:
         # Create flag instances
         for flag_meta in self._meta_collection.flags:
             qualified_name = f"{flag_meta.namespace}::{flag_meta.name}"
-            flag_instance = Definitions.FlagDefinition(
+            flag_instance = Define.FlagDefinition(
                 flag_meta.name,
                 flag_meta.namespace
                 # base_type and members will be set in phase 2
@@ -121,15 +121,15 @@ class DefinitionResolver:
         in phase 1. Since all instances are already cached, references to
         other types (including circular references) can be resolved.
         """
-        typedef_meta: Meta.TypedefMeta
-        enum_meta: Meta.EnumMeta
-        flag_meta: Meta.FlagMeta
+        typedef_meta: Types.TypedefMeta
+        enum_meta: Types.EnumMeta
+        flag_meta: Types.FlagMeta
         
         # Resolve typedefs
         for typedef_meta in self._meta_collection.typedefs:
             qualified_name = f"{typedef_meta.namespace}::{typedef_meta.name}"
             typedef_instance = self._type_cache[qualified_name]
-            if isinstance(typedef_instance, Definitions.TypedefDefinition):
+            if isinstance(typedef_instance, Define.TypedefDefinition):
                 type_spec = self._parse_type_spec(typedef_meta.type_spec, typedef_meta.namespace)
                 typedef_instance.set_type_spec(type_spec)
         
@@ -137,7 +137,7 @@ class DefinitionResolver:
         for enum_meta in self._meta_collection.enums:
             qualified_name = f"{enum_meta.namespace}::{enum_meta.name}"
             enum_instance = self._type_cache[qualified_name]
-            if isinstance(enum_instance, Definitions.EnumDefinition):
+            if isinstance(enum_instance, Define.EnumDefinition):
                 # Resolve base type if specified
                 base_type = None
                 if enum_meta.base_type:
@@ -152,7 +152,7 @@ class DefinitionResolver:
         for flag_meta in self._meta_collection.flags:
             qualified_name = f"{flag_meta.namespace}::{flag_meta.name}"
             flag_instance = self._type_cache[qualified_name]
-            if isinstance(flag_instance, Definitions.FlagDefinition):
+            if isinstance(flag_instance, Define.FlagDefinition):
                 # Resolve base type if specified
                 base_type = None
                 if flag_meta.base_type:
@@ -165,8 +165,8 @@ class DefinitionResolver:
     
     def _resolve_enum_members(
         self,
-        members_meta: list[Meta.EnumMemberMeta]
-    ) -> list[Definitions.EnumMemberDefinition]:
+        members_meta: list[Types.EnumMemberMeta]
+    ) -> list[Define.EnumMemberDefinition]:
         """Resolve enum members with automatic value assignment.
         
         Args:
@@ -175,9 +175,9 @@ class DefinitionResolver:
         Returns:
             List of resolved enum member definitions
         """
-        members: list[Definitions.EnumMemberDefinition]
+        members: list[Define.EnumMemberDefinition]
         current_value: int
-        member_meta: Meta.EnumMemberMeta
+        member_meta: Types.EnumMemberMeta
         value: int
         
         members = []
@@ -191,14 +191,14 @@ class DefinitionResolver:
                 value = current_value
                 current_value += 1
             
-            members.append(Definitions.EnumMemberDefinition(member_meta.name, value))
+            members.append(Define.EnumMemberDefinition(member_meta.name, value))
         
         return members
     
     def _resolve_flag_members(
         self,
-        members_meta: list[Meta.FlagMemberMeta]
-    ) -> list[Definitions.FlagMemberDefinition]:
+        members_meta: list[Types.FlagMemberMeta]
+    ) -> list[Define.FlagMemberDefinition]:
         """Resolve flag members with bit-shifting value assignment.
         
         Flags start at 0x1 and each subsequent member is bit-shifted left:
@@ -217,8 +217,8 @@ class DefinitionResolver:
         Returns:
             List of resolved flag member definitions
         """
-        members: list[Definitions.FlagMemberDefinition]
-        member_meta: Meta.FlagMemberMeta
+        members: list[Define.FlagMemberDefinition]
+        member_meta: Types.FlagMemberMeta
         current_value: int
         value: int
         
@@ -235,11 +235,11 @@ class DefinitionResolver:
                 value = current_value
                 current_value = current_value << 1  # Bit-shift left for next member
             
-            members.append(Definitions.FlagMemberDefinition(member_meta.name, value))
+            members.append(Define.FlagMemberDefinition(member_meta.name, value))
         
         return members
     
-    def _parse_type_spec(self, type_spec_str: str, context_namespace: str) -> Definitions.TypeSpec:
+    def _parse_type_spec(self, type_spec_str: str, context_namespace: str) -> Define.TypeSpec:
         """Parse a type specification string into a TypeSpec object.
         
         Args:
@@ -255,7 +255,7 @@ class DefinitionResolver:
         parts: list[str]
         is_pointer: bool
         signed: bool | None
-        base_type: Definitions.PrimitiveType | Definitions.TypeReference
+        base_type: Define.PrimitiveType | Define.TypeReference
         
         # Parse the type spec string
         parts = type_spec_str.strip().split()
@@ -277,18 +277,18 @@ class DefinitionResolver:
         
         # Check if it's a primitive type
         if type_name in ('char', 'short', 'int', 'long', 'void'):
-            base_type = Definitions.PrimitiveType(type_name, signed)
+            base_type = Define.PrimitiveType(type_name, signed)
         else:
             # It's a type reference - resolve it
             base_type = self._resolve_type_reference(type_name, context_namespace)
         
-        return Definitions.TypeSpec(base_type, is_pointer)
+        return Define.TypeSpec(base_type, is_pointer)
     
     def _resolve_type_reference(
         self,
         type_name: str,
         context_namespace: str
-    ) -> Definitions.TypeReference:
+    ) -> Define.TypeReference:
         """Resolve a type reference by name.
         
         Args:
@@ -301,7 +301,7 @@ class DefinitionResolver:
         Raises:
             ResolutionError: If type cannot be found
         """
-        target_type: Definitions.TypedefDefinition | Definitions.EnumDefinition | Definitions.FlagDefinition | None
+        target_type: Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition | None
         qualified_name: str
         used_namespace: str
         
@@ -331,9 +331,9 @@ class DefinitionResolver:
                 f"Cannot resolve type reference '{type_name}' in namespace '{context_namespace}'"
             )
         
-        return Definitions.TypeReference(target_type)
+        return Define.TypeReference(target_type)
     
-    def _find_type_globally(self, type_name: str) -> Definitions.TypedefDefinition | Definitions.EnumDefinition | Definitions.FlagDefinition | None:
+    def _find_type_globally(self, type_name: str) -> Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition | None:
         """Search for a type by unqualified name across all namespaces.
         
         Args:
@@ -342,9 +342,9 @@ class DefinitionResolver:
         Returns:
             The type definition or None if not found or if ambiguous
         """
-        found_type: Definitions.TypedefDefinition | Definitions.EnumDefinition | Definitions.FlagDefinition | None
+        found_type: Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition | None
         qualified_name: str
-        type_def: Definitions.TypedefDefinition | Definitions.EnumDefinition | Definitions.FlagDefinition
+        type_def: Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition
         
         found_type = None
         
@@ -360,7 +360,7 @@ class DefinitionResolver:
         
         return found_type
     
-    def _find_type(self, qualified_name: str) -> Definitions.TypedefDefinition | Definitions.EnumDefinition | Definitions.FlagDefinition | None:
+    def _find_type(self, qualified_name: str) -> Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition | None:
         """Find a type by qualified name in the cache.
         
         Args:

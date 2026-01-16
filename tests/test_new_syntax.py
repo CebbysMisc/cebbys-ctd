@@ -1,7 +1,10 @@
 """Test that new syntax is parsed correctly."""
 import pathlib as Pathlib
+import antlr4 as Antlr4
 import lv.cebbys.languages.ctd.loader as Loader
 import lv.cebbys.languages.ctd.visitor as Visitor
+import lv.cebbys.languages.ctd.meta as Meta
+import lv.cebbys.languages.ctd.antlr4.GtdLexer as GtdLexer
 import lv.cebbys.languages.ctd.antlr4.GtdParser as GtdParser
 from test_utils import TestLogger
 
@@ -13,7 +16,13 @@ def test_new_syntax_parsing() -> None:
     
     # Parse d3d11.gtd directly to check meta
     d3d11_path = Pathlib.Path('resources/ctd/d3d11.gtd')
-    parse_tree = loader._parse_file(d3d11_path)
+    content = d3d11_path.read_text(encoding='utf-8')
+    input_stream = Antlr4.InputStream(content)
+    lexer = GtdLexer.GtdLexer(input_stream)
+    token_stream = Antlr4.CommonTokenStream(lexer)
+    parser = GtdParser.GtdParser(token_stream)
+    parse_tree = parser.compilationUnit()
+    
     visitor = Visitor.MetaVisitor()
     visitor.visitCompilationUnit(parse_tree)
     
@@ -53,7 +62,13 @@ def test_new_syntax_parsing() -> None:
     # Parse dxgi.gtd to check structure
     TestLogger.header("Parsing DXGI Definitions")
     dxgi_path = Pathlib.Path('resources/ctd/dxgi.gtd')
-    parse_tree = loader._parse_file(dxgi_path)
+    content = dxgi_path.read_text(encoding='utf-8')
+    input_stream = Antlr4.InputStream(content)
+    lexer = GtdLexer.GtdLexer(input_stream)
+    token_stream = Antlr4.CommonTokenStream(lexer)
+    parser = GtdParser.GtdParser(token_stream)
+    parse_tree = parser.compilationUnit()
+    
     visitor = Visitor.MetaVisitor()
     visitor.visitCompilationUnit(parse_tree)
     
@@ -69,7 +84,12 @@ def test_new_syntax_parsing() -> None:
     # Check d3d11 function
     TestLogger.header("Parsing D3D11 Functions")
     d3d11_path = Pathlib.Path('resources/ctd/d3d11.gtd')
-    parse_tree = loader._parse_file(d3d11_path)
+    content = d3d11_path.read_text(encoding='utf-8')
+    input_stream = Antlr4.InputStream(content)
+    lexer = GtdLexer.GtdLexer(input_stream)
+    token_stream = Antlr4.CommonTokenStream(lexer)
+    parser = GtdParser.GtdParser(token_stream)
+    parse_tree = parser.compilationUnit()
     visitor = Visitor.MetaVisitor()
     visitor.visitCompilationUnit(parse_tree)
     

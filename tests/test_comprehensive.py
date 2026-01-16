@@ -8,7 +8,7 @@ def test_comprehensive_features() -> None:
     """Comprehensive test showing all key features of the CTD loader."""
     loader: Ctd.Loader.CtdLoader
     paths: list[Pathlib.Path]
-    collection: Ctd.Definitions.DefinitionCollection
+    collection: Ctd.Define.DefinitionCollection
     
     # Load CTD files
     paths = [Pathlib.Path('resources/ctd')]
@@ -29,7 +29,7 @@ def test_comprehensive_features() -> None:
     
     # Any references Void
     any_base = any_typedef.type_spec.base_type
-    assert isinstance(any_base, Ctd.Definitions.TypeReference)
+    assert isinstance(any_base, Ctd.Define.TypeReference)
     assert any_base.target is void_typedef
     
     TestLogger.success("Any (Void*) references the same Void instance")
@@ -43,7 +43,7 @@ def test_comprehensive_features() -> None:
     
     # Null references Int4
     null_base = null_enum.base_type.base_type
-    assert isinstance(null_base, Ctd.Definitions.TypeReference)
+    assert isinstance(null_base, Ctd.Define.TypeReference)
     assert null_base.target is int4_typedef
     
     TestLogger.success("Null enum (base: Int4) references the same Int4 instance")
@@ -55,7 +55,7 @@ def test_comprehensive_features() -> None:
     
     # Primitive types
     snt4 = collection.typedefs['std::lib::Snt4']
-    assert isinstance(snt4.type_spec.base_type, Ctd.Definitions.PrimitiveType)
+    assert isinstance(snt4.type_spec.base_type, Ctd.Define.PrimitiveType)
     TestLogger.success(f"Snt4 = {snt4.type_spec.base_type}")
     
     # Pointer types
@@ -63,7 +63,7 @@ def test_comprehensive_features() -> None:
     TestLogger.success(f"Any is a pointer type: {any_typedef.type_spec}")
     
     # Type references
-    assert isinstance(any_base, Ctd.Definitions.TypeReference)
+    assert isinstance(any_base, Ctd.Define.TypeReference)
     TestLogger.success(f"Any base is TypeReference: {any_base}")
     
     TestLogger.header("FEATURE 4: Enum members have resolved values")

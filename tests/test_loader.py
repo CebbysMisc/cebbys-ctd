@@ -7,7 +7,7 @@ def test_load_std_types() -> None:
     """Test loading the std-types.gtd module."""
     loader: Ctd.Loader.CtdLoader
     paths: list[Pathlib.Path]
-    collection: Ctd.Definitions.DefinitionCollection
+    collection: Ctd.Define.DefinitionCollection
     
     paths = [Pathlib.Path('resources/ctd')]
     loader = Ctd.Loader.CtdLoader(paths)
@@ -45,7 +45,7 @@ def test_load_std_types() -> None:
     
     # Check that base type references Int4
     base_type = null_enum.base_type.base_type
-    assert isinstance(base_type, Ctd.Definitions.TypeReference), \
+    assert isinstance(base_type, Ctd.Define.TypeReference), \
         "Base type should be a TypeReference"
     assert base_type.target.name == "Int4", \
         f"Base type should reference Int4, got {base_type.target.name}"

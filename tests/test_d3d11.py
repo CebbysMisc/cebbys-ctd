@@ -7,7 +7,7 @@ def test_d3d11_enum_members() -> None:
     """Test that d3d11 enum members and new syntax are parsed correctly."""
     loader: Ctd.Loader.CtdLoader
     paths: list[Pathlib.Path]
-    collection: Ctd.Definitions.DefinitionCollection
+    collection: Ctd.Define.DefinitionCollection
     
     paths = [Pathlib.Path('resources/ctd')]
     loader = Ctd.Loader.CtdLoader(paths)
@@ -26,7 +26,7 @@ def test_d3d11_enum_members() -> None:
     # Verify base type resolves to std::lib::Int4
     assert driver_type.base_type is not None, "DriverType should have base type"
     base_type_ref = driver_type.base_type.base_type
-    assert isinstance(base_type_ref, Ctd.Definitions.TypeReference), \
+    assert isinstance(base_type_ref, Ctd.Define.TypeReference), \
         "Base type should be TypeReference"
     
     int4_typedef = collection.typedefs.get('std::lib::Int4')
