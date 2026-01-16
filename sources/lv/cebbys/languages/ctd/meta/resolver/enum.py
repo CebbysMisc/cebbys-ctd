@@ -30,7 +30,7 @@ class EnumResolver(Api.BaseResolver):
         """Resolve enum base types and members."""
         enum_meta: Types.EnumMeta
         qualified_name: str
-        enum_instance: Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition
+        enum_instance: Define.BaseDefinition
         base_type: Define.TypeSpec | None
         members: list[Define.EnumMemberDefinition]
         

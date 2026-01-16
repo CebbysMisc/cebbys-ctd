@@ -107,7 +107,7 @@ class BaseResolver(Abc.ABC):
         parts: list[str]
         is_pointer: bool
         signed: bool | None
-        base_type: Define.PrimitiveType | Define.TypeReference
+        base_type: Define.BaseType
 
         # Parse the type spec string
         parts = type_spec_str.strip().split()
@@ -155,7 +155,7 @@ class BaseResolver(Abc.ABC):
         Raises:
             ResolutionError: If type cannot be found
         """
-        target_type: Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition | None
+        target_type: Define.BaseDefinition | None
         qualified_name: str
         used_namespace: str
 
@@ -187,7 +187,7 @@ class BaseResolver(Abc.ABC):
 
         return Define.TypeReference(target_type)
 
-    def _find_type_globally(self, type_name: str) -> Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition | None:
+    def _find_type_globally(self, type_name: str) -> Define.BaseDefinition | None:
         """Search for a type by unqualified name across all namespaces.
 
         Args:
@@ -196,9 +196,9 @@ class BaseResolver(Abc.ABC):
         Returns:
             The type definition or None if not found or if ambiguous
         """
-        found_type: Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition | None
+        found_type: Define.BaseDefinition | None
         qualified_name: str
-        type_def: Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition
+        type_def: Define.BaseDefinition
 
         found_type = None
 
@@ -214,7 +214,7 @@ class BaseResolver(Abc.ABC):
 
         return found_type
 
-    def _find_type(self, qualified_name: str) -> Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition | None:
+    def _find_type(self, qualified_name: str) -> Define.BaseDefinition | None:
         """Find a type by qualified name in the cache.
 
         Args:

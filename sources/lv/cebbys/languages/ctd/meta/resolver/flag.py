@@ -30,7 +30,7 @@ class FlagResolver(Api.BaseResolver):
         """Resolve flag base types and members."""
         flag_meta: Types.FlagMeta
         qualified_name: str
-        flag_instance: Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition
+        flag_instance: Define.BaseDefinition
         base_type: Define.TypeSpec | None
         members: list[Define.FlagMemberDefinition]
         

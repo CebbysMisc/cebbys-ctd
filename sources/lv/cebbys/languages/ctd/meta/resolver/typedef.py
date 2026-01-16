@@ -30,7 +30,7 @@ class TypedefResolver(Api.BaseResolver):
         """Resolve typedef type specifications."""
         typedef_meta: Types.TypedefMeta
         qualified_name: str
-        typedef_instance: Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition
+        typedef_instance: Define.BaseDefinition
         type_spec: Define.TypeSpec
         
         for typedef_meta in self._context.meta_collection.typedefs:
