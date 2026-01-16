@@ -65,11 +65,21 @@ The project follows a structured architecture with clear separation of concerns:
    - Use relative imports within the same package
    - Use absolute imports from other packages
 
-3. **Source Roots**:
+3. **Null Safety**:
+   - If attributes can be `None`, it is necessary to verify they are not before use
+   - Add null checks to avoid `AttributeError` exceptions when accessing optional attributes
+   - Example:
+     ```python
+     if self._optional_attribute is None:
+         raise SomeError("Attribute not initialized")
+     # Safe to use self._optional_attribute here
+     ```
+
+4. **Source Roots**:
    - `sources/`: Primary source root for Python modules
    - `hints/`: Contains type stub modules (`.pyi` files only, not a source root)
 
-4. **Testing**:
+5. **Testing**:
    - Tests organized in `tests/` directory
    - Each test file may contain multiple test functions
    - Use pytest for testing framework
