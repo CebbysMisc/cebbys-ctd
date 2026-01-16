@@ -2,7 +2,6 @@ import "std-types"
 import "dxgi"
 
 namespace com::microsoft::direct::graphics::d3d11 {
-    use com::microsoft::direct::graphics::dxgi
     use std::lib
 
     typedef Int4 ResultCode
@@ -31,10 +30,10 @@ namespace com::microsoft::direct::graphics::d3d11 {
 
     @WinApi
     ResultCode D3D11CreateDeviceAndSwapChain(
-        @Nullable Adapter*  adapter,
-        DriverType          driverType,
-        ModuleHandle        software,
-        CreateDeviceFlag    flags
+        @Nullable com::microsoft::direct::graphics::dxgi::Adapter*  adapter,
+        DriverType                                                  driverType,
+        ModuleHandle                                                software,
+        CreateDeviceFlag                                            flags
     )
 
     /*

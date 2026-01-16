@@ -53,7 +53,7 @@ typeSpec:
     signModifier? primitiveType pointerModifier?
     | typeReference;
 
-typeReference: IDENTIFIER pointerModifier?;
+typeReference: qualifiedName pointerModifier?;
 
 signModifier: 'signed' | 'unsigned';
 

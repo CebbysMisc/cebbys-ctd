@@ -283,7 +283,7 @@ class MetaVisitor(GtdVisitor.GtdVisitor):
         
         # Handle type reference
         if ctx.typeReference():
-            parts.append(ctx.typeReference().IDENTIFIER().getText())
+            parts.append(ctx.typeReference().qualifiedName().getText())
         
         # Handle pointer modifier
         pointer_ctx = ctx.pointerModifier()

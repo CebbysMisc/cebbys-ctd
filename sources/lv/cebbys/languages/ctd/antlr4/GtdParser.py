@@ -77,7 +77,7 @@ def serializedATN():
         5,25,0,0,191,37,1,0,0,0,192,194,3,42,21,0,193,192,1,0,0,0,193,194,
         1,0,0,0,194,195,1,0,0,0,195,197,3,44,22,0,196,198,3,46,23,0,197,
         196,1,0,0,0,197,198,1,0,0,0,198,201,1,0,0,0,199,201,3,40,20,0,200,
-        193,1,0,0,0,200,199,1,0,0,0,201,39,1,0,0,0,202,204,5,25,0,0,203,
+        193,1,0,0,0,200,199,1,0,0,0,201,39,1,0,0,0,202,204,3,48,24,0,203,
         205,3,46,23,0,204,203,1,0,0,0,204,205,1,0,0,0,205,41,1,0,0,0,206,
         207,7,0,0,0,207,43,1,0,0,0,208,209,7,1,0,0,209,45,1,0,0,0,210,211,
         5,23,0,0,211,47,1,0,0,0,212,217,5,25,0,0,213,214,5,24,0,0,214,216,
@@ -1551,8 +1551,9 @@ class GtdParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def IDENTIFIER(self):
-            return self.getToken(GtdParser.IDENTIFIER, 0)
+        def qualifiedName(self):
+            return self.getTypedRuleContext(GtdParser.QualifiedNameContext,0)
+
 
         def pointerModifier(self):
             return self.getTypedRuleContext(GtdParser.PointerModifierContext,0)
@@ -1586,7 +1587,7 @@ class GtdParser ( Parser ):
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 202
-            self.match(GtdParser.IDENTIFIER)
+            self.qualifiedName()
             self.state = 204
             self._errHandler.sync(self)
             _la = self._input.LA(1)
