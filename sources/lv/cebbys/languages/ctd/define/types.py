@@ -3,10 +3,13 @@
 This module contains resolved definition classes where all type references
 point to actual type instances.
 """
+import abc as Abc
 import typing as Typing
 import types as Types
 
 __all__ = [
+    'BaseDefinition',
+    'BaseType',
     'PrimitiveType',
     'TypeReference',
     'TypeSpec',
@@ -21,7 +24,38 @@ __all__ = [
 ]
 
 
-class PrimitiveType:
+class BaseDefinition(Abc.ABC):
+    """Abstract base class for all type definitions."""
+
+    @property
+    @Abc.abstractmethod
+    def name(self) -> str:
+        """Get the definition name."""
+        pass
+
+    @property
+    @Abc.abstractmethod
+    def namespace(self) -> str:
+        """Get the namespace."""
+        pass
+
+    @property
+    @Abc.abstractmethod
+    def qualified_name(self) -> str:
+        """Get the fully qualified name."""
+        pass
+
+
+class BaseType(Abc.ABC):
+    """Abstract base class for all type representations."""
+
+    @Abc.abstractmethod
+    def __repr__(self) -> str:
+        """String representation."""
+        pass
+
+
+class PrimitiveType(BaseType):
     """Represents a primitive type (char, short, int, long, void)."""
 
     def __init__(self, name: str, signed: bool | None = None):
@@ -57,20 +91,20 @@ class PrimitiveType:
         return f"PrimitiveType({sign}{self._name})"
 
 
-class TypeReference:
+class TypeReference(BaseType):
     """Reference to another type definition."""
 
-    def __init__(self, target: 'TypedefDefinition | EnumDefinition | FlagDefinition | StructureDefinition'):
+    def __init__(self, target: BaseDefinition):
         """Initialize type reference.
 
         Args:
             target: The referenced type definition
         """
-        self._target: TypedefDefinition | EnumDefinition | FlagDefinition | StructureDefinition
+        self._target: BaseDefinition
         self._target = target
 
     @property
-    def target(self) -> 'TypedefDefinition | EnumDefinition | FlagDefinition | StructureDefinition':
+    def target(self) -> BaseDefinition:
         """Get the referenced type."""
         return self._target
 
@@ -84,7 +118,7 @@ class TypeSpec:
 
     def __init__(
         self,
-        base_type: PrimitiveType | TypeReference,
+        base_type: BaseType,
         is_pointer: bool = False
     ):
         """Initialize type specification.
@@ -93,14 +127,14 @@ class TypeSpec:
             base_type: The base type (primitive or reference)
             is_pointer: Whether this is a pointer type
         """
-        self._base_type: PrimitiveType | TypeReference
+        self._base_type: BaseType
         self._is_pointer: bool
 
         self._base_type = base_type
         self._is_pointer = is_pointer
 
     @property
-    def base_type(self) -> PrimitiveType | TypeReference:
+    def base_type(self) -> BaseType:
         """Get the base type."""
         return self._base_type
 
@@ -115,7 +149,7 @@ class TypeSpec:
         return f"TypeSpec({self._base_type}{ptr})"
 
 
-class TypedefDefinition:
+class TypedefDefinition(BaseDefinition):
     """Resolved typedef definition."""
 
     def __init__(self, name: str, namespace: str, type_spec: TypeSpec | None = None):
@@ -201,7 +235,7 @@ class EnumMemberDefinition:
         return f"EnumMember({self._name} = {self._value})"
 
 
-class EnumDefinition:
+class EnumDefinition(BaseDefinition):
     """Resolved enum definition."""
 
     def __init__(
@@ -310,7 +344,7 @@ class FlagMemberDefinition:
         return f"FlagMember({self._name} = 0x{self._value:X})"
 
 
-class FlagDefinition:
+class FlagDefinition(BaseDefinition):
     """Resolved flag definition.
 
     Flags are similar to enums but use bit-shifted values:
@@ -424,7 +458,7 @@ class StructureMemberDefinition:
         return f"StructureMember({self._type_spec} {self._name})"
 
 
-class StructureDefinition:
+class StructureDefinition(BaseDefinition):
     """Resolved structure definition."""
 
     def __init__(
@@ -536,7 +570,7 @@ class DefinitionCollection:
         """Get immutable view of structures indexed by qualified name."""
         return self._structures
 
-    def find_type(self, qualified_name: str) -> TypedefDefinition | EnumDefinition | FlagDefinition | StructureDefinition | None:
+    def find_type(self, qualified_name: str) -> BaseDefinition | None:
         """Find a type by qualified name.
 
         Args:

@@ -23,7 +23,7 @@ class ResolverContext:
 
     def __init__(
         self,
-        type_cache: dict[str, Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition | Define.StructureDefinition],
+        type_cache: dict[str, Define.BaseDefinition],
         meta_collection: Types.DefinitionCollectionMeta,
         namespace_uses: dict[str, list[str]]
     ):
@@ -34,8 +34,7 @@ class ResolverContext:
             meta_collection: Metadata collection being resolved
             namespace_uses: Mapping of namespace to list of used namespaces
         """
-        self._type_cache: dict[str, Define.TypedefDefinition |
-                               Define.EnumDefinition | Define.FlagDefinition | Define.StructureDefinition]
+        self._type_cache: dict[str, Define.BaseDefinition]
         self._meta_collection: Types.DefinitionCollectionMeta
         self._namespace_uses: dict[str, list[str]]
 
@@ -44,7 +43,7 @@ class ResolverContext:
         self._namespace_uses = namespace_uses
 
     @property
-    def type_cache(self) -> dict[str, Define.TypedefDefinition | Define.EnumDefinition | Define.FlagDefinition | Define.StructureDefinition]:
+    def type_cache(self) -> dict[str, Define.BaseDefinition]:
         """Get the type cache."""
         return self._type_cache
 

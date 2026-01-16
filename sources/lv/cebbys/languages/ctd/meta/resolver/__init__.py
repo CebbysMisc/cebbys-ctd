@@ -55,8 +55,7 @@ class MetaResolver:
         Raises:
             ResolutionError: If type resolution fails
         """
-        type_cache: dict[str, Define.TypedefDefinition |
-                         Define.EnumDefinition | Define.FlagDefinition | Define.StructureDefinition]
+        type_cache: dict[str, Define.BaseDefinition]
         context: Api.ResolverContext
         resolvers: list[Api.BaseResolver]
         resolver_class: type[Api.BaseResolver]
