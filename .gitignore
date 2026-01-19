@@ -8,3 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Claude Code temporary files
+.claude/
+tmpclaude-*-cwd
