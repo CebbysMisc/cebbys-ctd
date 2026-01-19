@@ -1,0 +1,12 @@
+import "namespace-base"
+
+namespace test::app::withuse {
+    use test::base::types
+
+    // This should WORK - test::base::types is imported via use
+    structure AppConfig {
+        BaseAdapter adapter
+        BaseStatus status
+        Unt4 flags
+    }
+}

@@ -3,6 +3,7 @@ import "dxgi"
 
 namespace com::microsoft::direct::graphics::d3d11 {
     use std::lib
+    use com::microsoft::direct::graphics::dxgi
 
     typedef Int4 ResultCode
     typedef Any ModuleHandle

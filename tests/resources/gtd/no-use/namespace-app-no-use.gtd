@@ -1,0 +1,12 @@
+import "namespace-base"
+
+namespace test::app::nouse {
+    typedef unsigned char Byte
+
+    // This should FAIL - BaseAdapter is not in current namespace
+    // and no use statement imports test::base::types
+    structure AppConfig {
+        BaseAdapter adapter
+        Byte version
+    }
+}

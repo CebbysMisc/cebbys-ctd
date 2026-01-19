@@ -104,6 +104,118 @@ enum Null : Int4 { ... }        // References the Int4 type
 
 - `::` - Separates namespace path components
 
+## Namespace Resolution
+
+### Type Reference Resolution Rules
+
+When a type is referenced in a GTD file, it is resolved using the following priority order:
+
+1. **Current Namespace** - Types defined in the same namespace as the reference
+2. **Used Namespaces** - Types from namespaces explicitly imported with `use` declarations
+3. **Fully Qualified Names** - Types referenced with their complete namespace path
+
+**IMPORTANT**: Global type search is NOT supported. Types from other namespaces MUST be:
+- Explicitly imported with a `use` declaration, OR
+- Referenced with their fully qualified name
+
+### Use Declaration
+
+The `use` keyword imports types from another namespace into the current scope:
+
+**Syntax**:
+```
+use <qualified_namespace>
+```
+
+**Examples**:
+```gtd
+namespace com::example::app {
+    use com::example::lib
+    use com::example::utils
+
+    // Now can reference types from com::example::lib and com::example::utils
+    // without qualification
+}
+```
+
+### Type Reference Examples
+
+#### Example 1: Same Namespace (Always Works)
+```gtd
+namespace com::example::lib {
+    typedef int Int4
+    typedef Int4 Integer  // ✓ Works - Int4 is in same namespace
+}
+```
+
+#### Example 2: Different Namespace Without Use (Fails)
+```gtd
+namespace com::example::lib {
+    structure Adapter {
+        int vtable
+    }
+}
+
+namespace com::example::app {
+    // ✗ FAILS - Adapter is not in current namespace or used namespaces
+    structure Config {
+        Adapter adapter
+    }
+}
+```
+
+#### Example 3: Different Namespace With Use Declaration (Works)
+```gtd
+namespace com::example::lib {
+    structure Adapter {
+        int vtable
+    }
+}
+
+namespace com::example::app {
+    use com::example::lib
+
+    // ✓ Works - com::example::lib is imported via use
+    structure Config {
+        Adapter adapter
+    }
+}
+```
+
+#### Example 4: Different Namespace With Qualified Name (Works)
+```gtd
+namespace com::example::lib {
+    structure Adapter {
+        int vtable
+    }
+}
+
+namespace com::example::app {
+    // ✓ Works - Fully qualified name used
+    structure Config {
+        com::example::lib::Adapter adapter
+    }
+}
+```
+
+### Import vs Use
+
+GTD distinguishes between file imports and namespace usage:
+
+- **`import "filename"`** - Includes another GTD file for parsing
+- **`use namespace::path`** - Makes types from a namespace available in current scope
+
+**Example**:
+```gtd
+import "std-types"  // Include the std-types.gtd file
+
+namespace com::example::app {
+    use std::lib  // Make std::lib types available without qualification
+
+    typedef Unt4 UnsignedInt  // ✓ Works - std::lib imported via use
+}
+```
+
 ## Naming Conventions
 
 Type names follow specific patterns:

@@ -176,43 +176,14 @@ class BaseResolver(Abc.ABC):
                     if target_type is not None:
                         break
 
-            # If still not found, search globally
-            if target_type is None:
-                target_type = self._find_type_globally(type_name)
-
         if target_type is None:
             raise ResolutionError(
-                f"Cannot resolve type reference '{type_name}' in namespace '{context_namespace}'"
+                f"Cannot resolve type reference '{type_name}' in namespace '{context_namespace}'. "
+                f"Type must be in the same namespace, imported via 'use' declaration, "
+                f"or referenced with a fully qualified name."
             )
 
         return Define.TypeReference(target_type)
-
-    def _find_type_globally(self, type_name: str) -> Define.BaseDefinition | None:
-        """Search for a type by unqualified name across all namespaces.
-
-        Args:
-            type_name: Unqualified type name
-
-        Returns:
-            The type definition or None if not found or if ambiguous
-        """
-        found_type: Define.BaseDefinition | None
-        qualified_name: str
-        type_def: Define.BaseDefinition
-
-        found_type = None
-
-        # Search in all cached types
-        for qualified_name, type_def in self._context.type_cache.items():
-            if qualified_name.endswith(f"::{type_name}"):
-                if found_type is not None:
-                    # Ambiguous - found in multiple namespaces
-                    raise ResolutionError(
-                        f"Ambiguous type reference '{type_name}' - found in multiple namespaces"
-                    )
-                found_type = type_def
-
-        return found_type
 
     def _find_type(self, qualified_name: str) -> Define.BaseDefinition | None:
         """Find a type by qualified name in the cache.
