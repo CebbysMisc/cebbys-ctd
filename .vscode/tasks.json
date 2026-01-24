@@ -24,6 +24,31 @@
                 "clear": false
             },
             "problemMatcher": []
+        },
+        {
+            "label": "Generate ANTLR4 Sources",
+            "type": "shell",
+            "command": "${workspaceFolder}/.venv/Scripts/antlr4.exe",
+            "args": [
+                "-Dlanguage=Python3",
+                "-visitor",
+                "resources/grammar/Gtd.g4",
+                "-o",
+                "sources/lv/cebbys/languages/ctd/antlr4"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "problemMatcher": []
         }
     ]
 }

@@ -11,7 +11,7 @@ def test_typedef_parsing() -> None:
     """Test that typedef declarations are parsed into TypedefMeta."""
     TestLogger.header("Stage 1: Typedef Meta Loading")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/std-types.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/std-types.ctd'))
 
     # std-types.ctd should have 14 typedefs
     assert len(visitor.collection.typedefs) == 14
@@ -43,7 +43,7 @@ def test_typedef_with_type_reference() -> None:
     """Test typedef that references another type."""
     TestLogger.header("Stage 1: Typedef with Type Reference")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/d3d11.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/functions.ctd'))
 
     # Find ResultCode typedef which references Int4
     resultcode = next(

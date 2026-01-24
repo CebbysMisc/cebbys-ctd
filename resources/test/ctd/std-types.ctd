@@ -1,0 +1,29 @@
+// Test file: Standard types for typedef testing
+namespace std::lib {
+    // Signed primitives
+    typedef signed char Snt1
+    typedef signed short Snt2
+    typedef signed int Snt4
+    typedef signed long Snt8
+
+    // Unsigned primitives
+    typedef unsigned char Unt1
+    typedef unsigned short Unt2
+    typedef unsigned int Unt4
+    typedef unsigned long Unt8
+
+    // Default sign primitives
+    typedef char Int1
+    typedef short Int2
+    typedef int Int4
+    typedef long Int8
+
+    // Void and Any
+    typedef void Void
+    typedef Void* Any
+
+    // Null enum for testing
+    enum Null : Int4 {
+        NULL
+    }
+}

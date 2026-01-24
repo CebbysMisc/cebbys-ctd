@@ -1,0 +1,27 @@
+// Test file: Function declarations
+import "std-types"
+import "enums"
+import "flags"
+import "structures"
+
+namespace test::functions {
+    use std::lib
+    use test::enums
+    use test::flags
+    use test::structures
+
+    typedef Int4 ResultCode
+    typedef Any ModuleHandle
+
+    @WinApi
+    ResultCode CreateDeviceAndSwapChain(
+        @Nullable Adapter*  adapter,
+        DriverType          driverType,
+        ModuleHandle        software,
+        CreateDeviceFlag    flags,
+        FeatureLevel*       featureLevels,
+        Unt4                featureLevelsCount,
+        Unt4                sdkVersion,
+        Rational**          outputDesc,
+    )
+}

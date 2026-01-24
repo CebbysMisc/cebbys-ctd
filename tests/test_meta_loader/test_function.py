@@ -11,15 +11,15 @@ def test_function_parsing() -> None:
     """Test that function declarations are parsed into FunctionMeta."""
     TestLogger.header("Stage 1: Function Meta Loading")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/d3d11.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/functions.ctd'))
 
-    # d3d11.ctd should have 1 function
+    # functions.ctd should have 1 function
     assert len(visitor.collection.functions) == 1
     TestLogger.success(f"Parsed {len(visitor.collection.functions)} functions")
 
-    # Check D3D11CreateDeviceAndSwapChain function
+    # Check CreateDeviceAndSwapChain function
     func = visitor.collection.functions[0]
-    assert func.name == "D3D11CreateDeviceAndSwapChain"
+    assert func.name == "CreateDeviceAndSwapChain"
     assert func.return_type == "ResultCode"
     assert len(func.parameters) == 8
     TestLogger.success(f"Function: {func.name}")
@@ -33,7 +33,7 @@ def test_function_parameters() -> None:
     """Test function parameters are parsed correctly."""
     TestLogger.header("Stage 1: Function Parameters")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/d3d11.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/functions.ctd'))
 
     func = visitor.collection.functions[0]
 
@@ -46,7 +46,7 @@ def test_function_parameters() -> None:
         ('featureLevels', 'FeatureLevel *'),
         ('featureLevelsCount', 'Unt4'),
         ('sdkVersion', 'Unt4'),
-        ('swapChainDesc', 'SwapChainDesc **'),
+        ('outputDesc', 'Rational **'),
     ]
 
     for i, (name, type_spec) in enumerate(expected_params):
@@ -63,7 +63,7 @@ def test_function_decorator() -> None:
     """Test function decorators are parsed correctly."""
     TestLogger.header("Stage 1: Function Decorators")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/d3d11.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/functions.ctd'))
 
     func = visitor.collection.functions[0]
 
@@ -79,7 +79,7 @@ def test_parameter_decorator() -> None:
     """Test parameter decorators are parsed correctly."""
     TestLogger.header("Stage 1: Parameter Decorators")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/d3d11.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/functions.ctd'))
 
     func = visitor.collection.functions[0]
 
@@ -100,10 +100,10 @@ def test_function_namespace() -> None:
     """Test function namespace is captured correctly."""
     TestLogger.header("Stage 1: Function Namespace")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/d3d11.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/functions.ctd'))
 
     func = visitor.collection.functions[0]
-    assert func.namespace == "com::microsoft::direct::graphics::d3d11"
+    assert func.namespace == "test::functions"
     TestLogger.success(f"Function namespace: {func.namespace}")
 
     TestLogger.complete("Function namespace test passed")

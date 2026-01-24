@@ -1,0 +1,30 @@
+// Test file: Structure declarations
+import "std-types"
+
+namespace test::structures {
+    use std::lib
+
+    // Simple structure with basic members
+    structure Rational {
+        Unt4 numerator
+        Unt4 denominator
+    }
+
+    // Structure with pointer member
+    structure Adapter {
+        Any vtable
+    }
+
+    // Structure with array member
+    structure Guid {
+        Unt4 data1
+        Unt2 data2
+        Unt2 data3
+        Unt1[8] data4
+    }
+
+    // Structure with extension (base type)
+    structure ExtendedRational : Rational {
+        Unt4 precision
+    }
+}

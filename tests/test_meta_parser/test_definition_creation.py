@@ -21,7 +21,7 @@ def test_typedef_definition_creation() -> None:
     TestLogger.header("Stage 2: Typedef Definition Creation")
 
     # Load meta collection
-    paths = [Pathlib.Path('resources/ctd/std-types.ctd')]
+    paths = [Pathlib.Path('resources/test/ctd/std-types.ctd')]
     meta_loader = MetaLoader.MetaLoader(paths)
     meta_collection, namespace_uses = meta_loader.load()
 
@@ -52,7 +52,7 @@ def test_enum_definition_creation() -> None:
     """Test that EnumMeta creates EnumDefinition instances."""
     TestLogger.header("Stage 2: Enum Definition Creation")
 
-    paths = [Pathlib.Path('resources/ctd/std-types.ctd')]
+    paths = [Pathlib.Path('resources/test/ctd/std-types.ctd')]
     meta_loader = MetaLoader.MetaLoader(paths)
     meta_collection, namespace_uses = meta_loader.load()
 
@@ -80,7 +80,7 @@ def test_structure_definition_creation() -> None:
     """Test that StructureMeta creates StructureDefinition instances."""
     TestLogger.header("Stage 2: Structure Definition Creation")
 
-    paths = [Pathlib.Path('resources/ctd/dxgi.ctd')]
+    paths = [Pathlib.Path('resources/test/ctd/structures.ctd')]
     meta_loader = MetaLoader.MetaLoader(paths)
     meta_collection, namespace_uses = meta_loader.load()
 
@@ -92,8 +92,8 @@ def test_structure_definition_creation() -> None:
     structure_resolver.create_instances()
 
     # Verify Rational structure was created
-    assert 'com::microsoft::direct::graphics::dxgi::Rational' in context.type_cache
-    rational_def = context.type_cache['com::microsoft::direct::graphics::dxgi::Rational']
+    assert 'test::structures::Rational' in context.type_cache
+    rational_def = context.type_cache['test::structures::Rational']
     assert rational_def.name == 'Rational'
     TestLogger.success(f"Rational structure definition: {rational_def.qualified_name}")
 
@@ -104,7 +104,7 @@ def test_function_definition_creation() -> None:
     """Test that FunctionMeta creates FunctionDefinition instances."""
     TestLogger.header("Stage 2: Function Definition Creation")
 
-    paths = [Pathlib.Path('resources/ctd/d3d11.ctd')]
+    paths = [Pathlib.Path('resources/test/ctd/functions.ctd')]
     meta_loader = MetaLoader.MetaLoader(paths)
     meta_collection, namespace_uses = meta_loader.load()
 
@@ -116,10 +116,10 @@ def test_function_definition_creation() -> None:
     function_resolver.create_instances()
 
     # Verify function was created
-    func_name = 'com::microsoft::direct::graphics::d3d11::D3D11CreateDeviceAndSwapChain'
+    func_name = 'test::functions::CreateDeviceAndSwapChain'
     assert func_name in context.type_cache
     func_def = context.type_cache[func_name]
-    assert func_def.name == 'D3D11CreateDeviceAndSwapChain'
+    assert func_def.name == 'CreateDeviceAndSwapChain'
     TestLogger.success(f"Function definition: {func_def.qualified_name}")
 
     # Verify decorators were transferred
@@ -134,7 +134,7 @@ def test_type_cache_singleton_guarantee() -> None:
     """Test that each type is created exactly once in the cache."""
     TestLogger.header("Stage 2: Type Cache Singleton Guarantee")
 
-    paths = [Pathlib.Path('resources/ctd/std-types.ctd')]
+    paths = [Pathlib.Path('resources/test/ctd/std-types.ctd')]
     meta_loader = MetaLoader.MetaLoader(paths)
     meta_collection, namespace_uses = meta_loader.load()
 

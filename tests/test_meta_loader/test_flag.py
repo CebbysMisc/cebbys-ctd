@@ -11,9 +11,9 @@ def test_flag_parsing() -> None:
     """Test that flag declarations are parsed into FlagMeta."""
     TestLogger.header("Stage 1: Flag Meta Loading")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/d3d11.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/flags.ctd'))
 
-    # d3d11.ctd should have 1 flag
+    # flags.ctd should have 1 flag
     assert len(visitor.collection.flags) == 1
     TestLogger.success(f"Parsed {len(visitor.collection.flags)} flags")
 
@@ -42,7 +42,7 @@ def test_flag_with_manual_offset() -> None:
     """Test flag members with manual bit offset."""
     TestLogger.header("Stage 1: Flag with Manual Offset")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/d3d11.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/flags.ctd'))
 
     create_device_flag = visitor.collection.flags[0]
 

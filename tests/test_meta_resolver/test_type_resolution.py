@@ -9,13 +9,23 @@ sys.path.insert(0, str(Pathlib.Path(__file__).parent.parent))
 import lv.cebbys.languages.ctd as Ctd
 from test_utils import TestLogger
 
+# Test CTD files to load (order matters for dependencies)
+TEST_CTD_FILES = [
+    Pathlib.Path('resources/test/ctd/std-types.ctd'),
+    Pathlib.Path('resources/test/ctd/enums.ctd'),
+    Pathlib.Path('resources/test/ctd/flags.ctd'),
+    Pathlib.Path('resources/test/ctd/structures.ctd'),
+    Pathlib.Path('resources/test/ctd/interfaces.ctd'),
+    Pathlib.Path('resources/test/ctd/aliases.ctd'),
+    Pathlib.Path('resources/test/ctd/functions.ctd'),
+]
+
 
 def test_typedef_reference_resolution() -> None:
     """Test that typedef type references are resolved to singletons."""
     TestLogger.header("Stage 3: Typedef Reference Resolution")
 
-    paths = [Pathlib.Path('resources/ctd')]
-    loader = Ctd.Loader.CtdLoader(paths)
+    loader = Ctd.Loader.CtdLoader(TEST_CTD_FILES)
     collection = loader.load()
 
     # Get Void and Any typedefs
@@ -43,8 +53,7 @@ def test_enum_base_type_resolution() -> None:
     """Test that enum base types are resolved correctly."""
     TestLogger.header("Stage 3: Enum Base Type Resolution")
 
-    paths = [Pathlib.Path('resources/ctd')]
-    loader = Ctd.Loader.CtdLoader(paths)
+    loader = Ctd.Loader.CtdLoader(TEST_CTD_FILES)
     collection = loader.load()
 
     # Get Null enum and Int4 typedef
@@ -71,12 +80,11 @@ def test_enum_member_value_resolution() -> None:
     """Test that enum member values are auto-incremented correctly."""
     TestLogger.header("Stage 3: Enum Member Value Resolution")
 
-    paths = [Pathlib.Path('resources/ctd')]
-    loader = Ctd.Loader.CtdLoader(paths)
+    loader = Ctd.Loader.CtdLoader(TEST_CTD_FILES)
     collection = loader.load()
 
     # Get DriverType enum
-    driver_type = collection.enums.get('com::microsoft::direct::graphics::d3d11::DriverType')
+    driver_type = collection.enums.get('test::enums::DriverType')
     assert driver_type is not None
 
     # Check auto-incremented values
@@ -93,12 +101,11 @@ def test_flag_member_value_resolution() -> None:
     """Test that flag member values are bit-shifted correctly."""
     TestLogger.header("Stage 3: Flag Member Value Resolution")
 
-    paths = [Pathlib.Path('resources/ctd')]
-    loader = Ctd.Loader.CtdLoader(paths)
+    loader = Ctd.Loader.CtdLoader(TEST_CTD_FILES)
     collection = loader.load()
 
     # Get CreateDeviceFlag
-    create_flag = collection.flags.get('com::microsoft::direct::graphics::d3d11::CreateDeviceFlag')
+    create_flag = collection.flags.get('test::flags::CreateDeviceFlag')
     assert create_flag is not None
 
     # Check bit-shifted values (1 << index)
@@ -115,12 +122,11 @@ def test_structure_member_type_resolution() -> None:
     """Test that structure member types are resolved correctly."""
     TestLogger.header("Stage 3: Structure Member Type Resolution")
 
-    paths = [Pathlib.Path('resources/ctd')]
-    loader = Ctd.Loader.CtdLoader(paths)
+    loader = Ctd.Loader.CtdLoader(TEST_CTD_FILES)
     collection = loader.load()
 
     # Get Rational structure
-    rational = collection.structures.get('com::microsoft::direct::graphics::dxgi::Rational')
+    rational = collection.structures.get('test::structures::Rational')
     assert rational is not None
 
     # Get Unt4 typedef
@@ -141,18 +147,15 @@ def test_function_return_type_resolution() -> None:
     """Test that function return types are resolved correctly."""
     TestLogger.header("Stage 3: Function Return Type Resolution")
 
-    paths = [Pathlib.Path('resources/ctd')]
-    loader = Ctd.Loader.CtdLoader(paths)
+    loader = Ctd.Loader.CtdLoader(TEST_CTD_FILES)
     collection = loader.load()
 
-    # Get D3D11CreateDeviceAndSwapChain function
-    func = collection.functions.get(
-        'com::microsoft::direct::graphics::d3d11::D3D11CreateDeviceAndSwapChain'
-    )
+    # Get CreateDeviceAndSwapChain function
+    func = collection.functions.get('test::functions::CreateDeviceAndSwapChain')
     assert func is not None
 
     # Return type should reference ResultCode typedef
-    result_code = collection.typedefs.get('com::microsoft::direct::graphics::d3d11::ResultCode')
+    result_code = collection.typedefs.get('test::functions::ResultCode')
     assert result_code is not None
 
     assert isinstance(func.return_type.base_type, Ctd.Define.TypeReference)
@@ -166,20 +169,17 @@ def test_function_parameter_type_resolution() -> None:
     """Test that function parameter types are resolved correctly."""
     TestLogger.header("Stage 3: Function Parameter Type Resolution")
 
-    paths = [Pathlib.Path('resources/ctd')]
-    loader = Ctd.Loader.CtdLoader(paths)
+    loader = Ctd.Loader.CtdLoader(TEST_CTD_FILES)
     collection = loader.load()
 
-    func = collection.functions.get(
-        'com::microsoft::direct::graphics::d3d11::D3D11CreateDeviceAndSwapChain'
-    )
+    func = collection.functions.get('test::functions::CreateDeviceAndSwapChain')
     assert func is not None
 
     # Check flags parameter references CreateDeviceFlag
     flags_param = func.parameters[3]
     assert flags_param.name == 'flags'
 
-    create_flag = collection.flags.get('com::microsoft::direct::graphics::d3d11::CreateDeviceFlag')
+    create_flag = collection.flags.get('test::flags::CreateDeviceFlag')
     assert create_flag is not None
 
     assert isinstance(flags_param.type_spec.base_type, Ctd.Define.TypeReference)

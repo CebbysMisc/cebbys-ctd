@@ -11,10 +11,10 @@ def test_interface_parsing() -> None:
     """Test that interface declarations are parsed into InterfaceMeta."""
     TestLogger.header("Stage 1: Interface Meta Loading")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/microsoft/unknown.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/interfaces.ctd'))
 
-    # unknown.ctd should have 1 interface
-    assert len(visitor.collection.interfaces) == 1
+    # interfaces.ctd should have 2 interfaces
+    assert len(visitor.collection.interfaces) == 2
     TestLogger.success(f"Parsed {len(visitor.collection.interfaces)} interfaces")
 
     # Check IUnknown interface
@@ -36,7 +36,7 @@ def test_interface_method_parameters() -> None:
     """Test interface method parameters are parsed correctly."""
     TestLogger.header("Stage 1: Interface Method Parameters")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/microsoft/unknown.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/interfaces.ctd'))
 
     iunknown = visitor.collection.interfaces[0]
 
@@ -47,7 +47,7 @@ def test_interface_method_parameters() -> None:
 
     # Check parameter details
     assert query_interface.parameters[0].name == "interfaceId"
-    assert query_interface.parameters[0].type_spec == "REFIID"
+    assert query_interface.parameters[0].type_spec == "Unt4"
     assert query_interface.parameters[1].name == "vtable"
     assert query_interface.parameters[1].type_spec == "Any *"
 
@@ -66,12 +66,12 @@ def test_interface_method_decorators() -> None:
     """Test interface method decorators are parsed correctly."""
     TestLogger.header("Stage 1: Interface Method Decorators")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/microsoft/unknown.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/interfaces.ctd'))
 
     iunknown = visitor.collection.interfaces[0]
     query_interface = iunknown.methods[0]
 
-    # Interface methods in unknown.ctd don't have decorators
+    # Interface methods in our test file don't have decorators
     assert len(query_interface.decorators) == 0
     TestLogger.success("QueryInterface has no decorators (as defined in CTD)")
 
@@ -82,12 +82,12 @@ def test_interface_method_return_type() -> None:
     """Test interface method return types are parsed correctly."""
     TestLogger.header("Stage 1: Interface Method Return Types")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/microsoft/unknown.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/interfaces.ctd'))
 
     iunknown = visitor.collection.interfaces[0]
 
-    # QueryInterface returns HRESULT (from wincrypt.ctd)
-    assert iunknown.methods[0].return_type == "HRESULT"
+    # QueryInterface returns Int4
+    assert iunknown.methods[0].return_type == "Int4"
     TestLogger.success(f"QueryInterface returns: {iunknown.methods[0].return_type}")
 
     # AddRef and Release return Unt4
@@ -97,3 +97,20 @@ def test_interface_method_return_type() -> None:
     TestLogger.success(f"Release returns: {iunknown.methods[2].return_type}")
 
     TestLogger.complete("Interface method return types test passed")
+
+
+def test_interface_with_extension() -> None:
+    """Test interface with base type extension."""
+    TestLogger.header("Stage 1: Interface with Extension")
+
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/interfaces.ctd'))
+
+    # IDispatch interface extends IUnknown
+    idispatch = visitor.collection.interfaces[1]
+    assert idispatch.name == "IDispatch"
+    assert idispatch.base_type == "IUnknown"
+    assert len(idispatch.methods) == 2
+    TestLogger.success(f"Interface: {idispatch.name} : {idispatch.base_type}")
+    TestLogger.info(f"Has {len(idispatch.methods)} own method(s)", indent=2)
+
+    TestLogger.complete("Interface extension test passed")

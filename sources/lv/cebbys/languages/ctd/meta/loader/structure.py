@@ -6,6 +6,7 @@ __all__ = ['StructureMemberMeta', 'StructureMeta']
 
 class StructureMemberMeta:
     """Metadata for a structure member."""
+    # TODO: Update class documentation to add description about usage and examples as in the alias.py, decorator.py, typedef.py
 
     def __init__(self, name: str, type_spec: str):
         """Initialize structure member metadata.
@@ -33,11 +34,13 @@ class StructureMemberMeta:
 
 class StructureMeta:
     """Metadata for a structure declaration."""
+    # TODO: Update class documentation to add description about usage and examples as in the alias.py, decorator.py, typedef.py
 
     def __init__(
         self,
         name: str,
         namespace: Api.ModulePath,
+        base_type: str | None = None,
         members: list[StructureMemberMeta] | None = None
     ):
         """Initialize structure metadata.
@@ -47,25 +50,28 @@ class StructureMeta:
             namespace: Qualified namespace path
             members: List of structure members
         """
-        self._name: str
-        self._namespace: Api.ModulePath
-        self._members: list[StructureMemberMeta]
 
         self._name = name
         self._namespace = namespace
+        self._base_type = base_type
         self._members = members if members is not None else []
 
     @property
-    def name(self) -> str:
+    def name(self):
         """Get the structure name."""
         return self._name
 
     @property
-    def namespace(self) -> Api.ModulePath:
+    def namespace(self):
         """Get the namespace."""
         return self._namespace
 
     @property
-    def members(self) -> list[StructureMemberMeta]:
+    def base_type(self):
+        """Get the base type."""
+        return self._base_type
+
+    @property
+    def members(self):
         """Get the structure members."""
         return self._members

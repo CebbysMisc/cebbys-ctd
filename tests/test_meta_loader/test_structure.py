@@ -11,10 +11,10 @@ def test_structure_parsing() -> None:
     """Test that structure declarations are parsed into StructureMeta."""
     TestLogger.header("Stage 1: Structure Meta Loading")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/dxgi.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/structures.ctd'))
 
-    # dxgi.ctd should have 5 structures
-    assert len(visitor.collection.structures) == 5
+    # structures.ctd should have 4 structures
+    assert len(visitor.collection.structures) == 4
     TestLogger.success(f"Parsed {len(visitor.collection.structures)} structures")
 
     # Check Rational structure
@@ -39,7 +39,7 @@ def test_structure_with_pointer_member() -> None:
     """Test structure with pointer type member."""
     TestLogger.header("Stage 1: Structure with Pointer Member")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/dxgi.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/structures.ctd'))
 
     # Adapter structure has a pointer member
     adapter = next(s for s in visitor.collection.structures if s.name == 'Adapter')
@@ -56,11 +56,10 @@ def test_structure_with_array_member() -> None:
     """Test structure with array type member."""
     TestLogger.header("Stage 1: Structure with Array Member")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/microsoft/guiddef.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/structures.ctd'))
 
     # Guid structure has an array member
-    guid = visitor.collection.structures[0]
-    assert guid.name == "Guid"
+    guid = next(s for s in visitor.collection.structures if s.name == 'Guid')
     assert len(guid.members) == 4
     TestLogger.success(f"Structure: {guid.name} with {len(guid.members)} members")
 
@@ -74,3 +73,19 @@ def test_structure_with_array_member() -> None:
         TestLogger.info(f"{member.type_spec} {member.name}", indent=2)
 
     TestLogger.complete("Structure array member test passed")
+
+
+def test_structure_with_extension() -> None:
+    """Test structure with base type extension."""
+    TestLogger.header("Stage 1: Structure with Extension")
+
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/structures.ctd'))
+
+    # ExtendedRational structure extends Rational
+    extended = next(s for s in visitor.collection.structures if s.name == 'ExtendedRational')
+    assert extended.base_type == "Rational"
+    assert len(extended.members) == 1
+    TestLogger.success(f"Structure: {extended.name} : {extended.base_type}")
+    TestLogger.info(f"Has {len(extended.members)} own member(s)", indent=2)
+
+    TestLogger.complete("Structure extension test passed")

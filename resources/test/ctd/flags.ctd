@@ -1,0 +1,19 @@
+// Test file: Flag declarations
+import "std-types"
+
+namespace test::flags {
+    use std::lib
+
+    // Flag with auto bit-shift and manual offset
+    flag CreateDeviceFlag : Unt4 {
+        SINGLETHREADED
+        DEBUG
+        SWITCH_TO_REF
+        PREVENT_INTERNAL_THREADING_OPTIMIZATIONS
+        BGRA_SUPPORT = 0x20
+        DEBUGGABLE
+        PREVENT_ALTERING_LAYER_SETTINGS_FROM_REGISTRY
+        DISABLE_GPU_TIMEOUT
+        VIDEO_SUPPORT
+    }
+}

@@ -11,9 +11,9 @@ def test_enum_parsing() -> None:
     """Test that enum declarations are parsed into EnumMeta."""
     TestLogger.header("Stage 1: Enum Meta Loading")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/d3d11.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/enums.ctd'))
 
-    # d3d11.ctd should have 2 enums
+    # enums.ctd should have 2 enums
     assert len(visitor.collection.enums) == 2
     TestLogger.success(f"Parsed {len(visitor.collection.enums)} enums")
 
@@ -37,7 +37,7 @@ def test_enum_with_hex_values() -> None:
     """Test enum with hexadecimal values."""
     TestLogger.header("Stage 1: Enum with Hex Values")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/d3d11.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/enums.ctd'))
 
     # FeatureLevel enum has hex values
     feature_level = visitor.collection.enums[1]
@@ -58,7 +58,7 @@ def test_enum_auto_increment() -> None:
     """Test enum members without explicit values (auto-increment)."""
     TestLogger.header("Stage 1: Enum Auto-Increment")
 
-    visitor = parse_ctd_file(Pathlib.Path('resources/ctd/d3d11.ctd'))
+    visitor = parse_ctd_file(Pathlib.Path('resources/test/ctd/enums.ctd'))
 
     driver_type = visitor.collection.enums[0]
 
