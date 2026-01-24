@@ -213,13 +213,72 @@ Module 3 (Resolution)    → Requires Module 1 + Module 2
 ## Commands
 
 ```bash
-# Run tests
+# Run all tests
 python -m pytest tests/ -v
+
+# Run tests by stage
+python -m pytest tests/test_meta_loader/ -v     # Stage 1: Meta loading tests
+python -m pytest tests/test_meta_parser/ -v     # Stage 2: Definition construction tests
+python -m pytest tests/test_meta_resolver/ -v   # Stage 3: Type resolution tests
 
 # Regenerate ANTLR4 parser (requires antlr4-tools)
 antlr4 -Dlanguage=Python3 -visitor resources/grammar/Gtd.g4 -o sources/lv/cebbys/languages/ctd/antlr4
 ```
 
-## Git Notes
+## Test Organization
+
+Tests are organized into three stages matching the processing pipeline:
+
+```
+tests/
+├── test_meta_loader/        # Stage 1: CTD file parsing → Meta objects
+│   └── test_*.py
+├── test_meta_parser/        # Stage 2: Meta objects → Definition instances
+│   └── test_*.py            # (alias types resolved and removed at this stage)
+├── test_meta_resolver/      # Stage 3: Definition resolution → Final collection
+│   └── test_*.py
+├── conftest.py              # Shared fixtures
+└── test_utils.py            # Test utilities
+```
+
+### Stage 1: Meta Loading (`test_meta_loader/`)
+Tests that CTD files are correctly parsed into `*Meta` objects:
+- Grammar rules parse correctly
+- `MetaVisitor` creates proper meta instances
+- `DefinitionCollectionMeta` contains expected types
+- All declaration types: typedef, alias, enum, flag, structure, interface, function
+
+### Stage 2: Definition Construction (`test_meta_parser/`)
+Tests that meta objects are correctly transformed into `*Definition` instances:
+- `create_instances()` creates definition singletons
+- Type cache is properly populated
+- **Alias types are resolved and removed** (aliases become transparent references to target types)
+- Definition objects exist but type references are not yet resolved
+
+### Stage 3: Type Resolution (`test_meta_resolver/`)
+Tests that type references are correctly resolved:
+- `resolve_instances()` resolves all type references
+- `TypeReference` objects point to correct singletons
+- Namespace resolution works (use declarations, qualified names)
+- `DefinitionCollection` is immutable and complete
+
+## Git Workflow
+
+### Pre-Commit Requirements
+
+**IMPORTANT**: Always run tests before committing changes:
+
+```bash
+# Run all tests - MUST pass before commit
+python -m pytest tests/ -v
+
+# Only if ALL tests pass, proceed with commit
+git add <files>
+git commit -m "message"
+```
+
+**Never commit if tests are failing.** Fix the failing tests first.
+
+### Git Notes
 
 - Use `/dev/null` in Git Bash, not `nul`
