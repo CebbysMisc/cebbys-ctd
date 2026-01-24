@@ -25,7 +25,7 @@ cebbys-ctd/
 │   └── lv/cebbys/languages/ctd/
 │       ├── meta/              # Metadata types, loader, and resolver
 │       │   ├── types.py       # Metadata model classes
-│       │   ├── loader.py      # MetaLoader for parsing GTD files
+│       │   ├── loader.py      # MetaLoader for parsing CTD files
 │       │   └── resolver.py    # MetaResolver for type resolution
 │       ├── define/            # Definition types (resolved)
 │       │   └── types.py       # Definition model classes
@@ -35,7 +35,7 @@ cebbys-ctd/
 ├── tests/                      # Tests directory with subdirectories as test modules
 ├── resources/                  # Resources directory
 │   ├── grammar/               # ANTLR4 grammar files (.g4)
-│   └── ctd/                   # Custom type definition files (.gtd)
+│   └── ctd/                   # Custom type definition files (.ctd)
 └── hints/                      # Type hints directory (not a source root)
     └── antlr4/                # ANTLR4 type stubs (.pyi files only)
 ```
@@ -46,9 +46,9 @@ cebbys-ctd/
 
 The project follows a structured architecture with clear separation of concerns:
 
-- **meta/**: Contains metadata types and logic for loading and resolving GTD files
+- **meta/**: Contains metadata types and logic for loading and resolving CTD files
   - `types.py`: Model classes for parsed metadata (TypedefMeta, EnumMeta, FlagMeta, etc.)
-  - `loader.py`: MetaLoader class for parsing GTD files into metadata
+  - `loader.py`: MetaLoader class for parsing CTD files into metadata
   - `resolver.py`: MetaResolver class for resolving type references into definitions
 
 - **define/**: Contains resolved definition types

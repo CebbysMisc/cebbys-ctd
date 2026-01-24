@@ -1,3 +1,6 @@
+---
+applyFor: "**/*.py, **/*.pyi"
+---
 # Python Development Instructions
 
 ## Python Project Configuration

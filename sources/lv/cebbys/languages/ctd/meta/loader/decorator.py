@@ -10,10 +10,12 @@ class DecoratorMeta:
     They can have optional arguments of various types (strings, integers, identifiers).
 
     Examples:
+    ```
         @WinApi
         @Nullable
         @Storage("reg", "ecx")
         @Offset(0x10)
+    ```
     """
 
     def __init__(

@@ -7,13 +7,11 @@ namespace com::microsoft::windows {
     use std::lib
 
     interface IUnknown {
-        @Virtual @StdCall HandleResult QueryInterface(
+        HRESULT QueryInterface(
             REFIID interfaceId,
             Any* vtable
         )
-
-        @Virtual @StdCall Unt4 AddRef()
-
-        @Virtual @StdCall Unt4 Release()
+        Unt4 AddRef()
+        Unt4 Release()
     }
 }

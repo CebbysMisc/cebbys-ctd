@@ -4,15 +4,27 @@ import lv.cebbys.languages.ctd.meta.loader.__api__ as Api
 __all__ = ['AliasMeta']
 
 
-class AliasMeta:
-    """Metadata for an alias declaration."""
+class AliasMeta(Api.Meta):
+    """Metadata for an alias declaration.
+
+    Alias provide metadata for simple type renaming without creating a new type.
+    When the type is actually resolved, the referred datatype is used instead of alias.
+    Alias is defined the same way as type definition is defined but with keyword alias.
+
+    Examples:
+    ```
+        alias byte              Int1
+        alias signed byte       Snt1
+        alias unsigned byte     Unt1
+    ```
+    """
 
     def __init__(
         self,
         name: str,
         type_spec: str,
         namespace: Api.ModulePath
-    ):
+    ) -> None:
         """Initialize alias metadata.
 
         Args:
@@ -20,25 +32,10 @@ class AliasMeta:
             type_spec: The type specification string
             namespace: Qualified namespace path
         """
-        self._name: str
-        self._type_spec: str
-        self._namespace: Api.ModulePath
-
-        self._name = name
+        super().__init__(namespace, name)
         self._type_spec = type_spec
-        self._namespace = namespace
 
     @property
-    def name(self) -> str:
-        """Get the alias name."""
-        return self._name
-
-    @property
-    def type_spec(self) -> str:
+    def type_spec(self):
         """Get the type specification."""
         return self._type_spec
-
-    @property
-    def namespace(self) -> Api.ModulePath:
-        """Get the namespace."""
-        return self._namespace

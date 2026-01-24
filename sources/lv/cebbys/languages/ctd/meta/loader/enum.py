@@ -6,6 +6,7 @@ __all__ = ['EnumMemberMeta', 'EnumMeta']
 
 class EnumMemberMeta:
     """Metadata for an enum member."""
+    # TODO: Update class documentation to add description about usage and examples as in the alias.py, decorator.py, typedef.py
 
     def __init__(self, name: str, value: int | None = None):
         """Initialize enum member metadata.
@@ -33,6 +34,7 @@ class EnumMemberMeta:
 
 class EnumMeta:
     """Metadata for an enum declaration."""
+    # TODO: Update class documentation to add description about usage and examples as in the alias.py, decorator.py, typedef.py
 
     def __init__(
         self,
@@ -49,11 +51,6 @@ class EnumMeta:
             base_type: Optional base type specification
             members: List of enum members
         """
-        self._name: str
-        self._namespace: Api.ModulePath
-        self._base_type: str | None
-        self._members: list[EnumMemberMeta]
-
         self._name = name
         self._namespace = namespace
         self._base_type = base_type

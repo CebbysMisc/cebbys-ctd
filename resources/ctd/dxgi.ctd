@@ -1,6 +1,8 @@
 import "std-types"
+import "microsoft/unknown"
 
 namespace com::microsoft::direct::graphics::dxgi {
+    use com::microsoft::windows
     use std::lib
 
     @CType("DXGI_SAMPLE_DESC")
@@ -68,6 +70,13 @@ namespace com::microsoft::direct::graphics::dxgi {
         FLIP_SEQUENTIAL = 3
         FLIP_DISCARD    = 4
     }
+
+
+    @CType("dxgi.h", "IDXGIObject")
+    interface DXGIObject : IUnknown {
+        
+    }
+
 
     @CType("DXGI_RATIONAL")
     structure Rational {

@@ -5,8 +5,6 @@ This module handles loading and parsing CTD files into metadata.
 import typing as Typing
 import antlr4 as Antlr4
 import lv.cebbys.languages.ctd.__api__ as Api
-import lv.cebbys.languages.ctd.meta.loader.typedef as TypedefModule
-import lv.cebbys.languages.ctd.meta.loader.enum as EnumModule
 import lv.cebbys.languages.ctd.meta.loader.collection as CollectionModule
 import lv.cebbys.languages.ctd.visitor as Visitor
 import lv.cebbys.languages.ctd.antlr4.GtdLexer as GtdLexer
@@ -82,8 +80,6 @@ class MetaLoader:
         """
         parse_tree: GtdParser.GtdParser.CompilationUnitContext
         visitor: Visitor.MetaVisitor
-        typedef: TypedefModule.TypedefMeta
-        enum: EnumModule.EnumMeta
 
         # Parse the file
         parse_tree = self._parse_file(file_path)
@@ -93,20 +89,7 @@ class MetaLoader:
         visitor.visitCompilationUnit(parse_tree)
 
         # Merge visitor's collection into main collection
-        for typedef in visitor.collection.typedefs:
-            collection.add_typedef(typedef)
-
-        for enum in visitor.collection.enums:
-            collection.add_enum(enum)
-
-        for flag in visitor.collection.flags:
-            collection.add_flag(flag)
-
-        for structure in visitor.collection.structures:
-            collection.add_structure(structure)
-
-        for function in visitor.collection.functions:
-            collection.add_function(function)
+        collection.add_all(visitor.collection)
 
         # Merge namespace uses
         for ns, used_list in visitor.namespace_uses.items():

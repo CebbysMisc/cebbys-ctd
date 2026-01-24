@@ -25,7 +25,7 @@
         "language": "Python3",
         "outputDir": "../../sources/lv/cebbys/languages/ctd/antlr4",
         "visitors": true,
-        "listeners": false
+        "listeners": true
     },
     "antlr4.format": {
         "alignTrailingComments": true,
@@ -47,12 +47,16 @@
     "vsicons.associations.folders": [
         {
             "icon": "python",
-            "extensions": ["hints"],
+            "extensions": [
+                "hints"
+            ],
             "format": "svg"
         },
         {
             "icon": "asset",
-            "extensions": ["resources"],
+            "extensions": [
+                "resources"
+            ],
             "format": "svg"
         }
     ],

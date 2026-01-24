@@ -3,7 +3,8 @@ import "std-types"
 namespace com::microsoft::windows {
     use std::lib
 
-    typedef int HandleResult
+    alias   ResultCode  HRESULT
+    alias   ResultCode  HandleResult
 
-    
+    typedef int         ResultCode
 }

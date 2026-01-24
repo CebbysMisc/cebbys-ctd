@@ -6,6 +6,7 @@ __all__ = ['FlagMemberMeta', 'FlagMeta']
 
 class FlagMemberMeta:
     """Metadata for a flag member."""
+    # TODO: Update class documentation to add description about usage and examples as in the alias.py, decorator.py, typedef.py
 
     def __init__(self, name: str, value: int | None = None):
         """Initialize flag member metadata.

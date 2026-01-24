@@ -24,10 +24,10 @@ typedefDeclaration: decorator* 'typedef' typeSpec IDENTIFIER;
 aliasDeclaration: decorator* 'alias' typeSpec IDENTIFIER;
 
 enumDeclaration:
-    decorator* 'enum' IDENTIFIER (':' typeSpec)? '{' enumMemberList? '}';
+    decorator* 'enum' IDENTIFIER ':' typeSpec '{' enumMemberList? '}';
 
 flagDeclaration:
-    decorator* 'flag' IDENTIFIER (':' typeSpec)? '{' flagMemberList? '}';
+    decorator* 'flag' IDENTIFIER ':' typeSpec '{' flagMemberList? '}';
 
 enumMemberList: enumMember enumMember*;
 
@@ -38,10 +38,10 @@ flagMemberList: flagMember flagMember*;
 flagMember: IDENTIFIER ('=' (INTEGER_LITERAL | HEX_LITERAL))?;
 
 structureDeclaration:
-    decorator* 'structure' IDENTIFIER '{' structureMemberList? '}';
+    decorator* 'structure' IDENTIFIER (':' typeSpec)? '{' structureMemberList? '}';
 
 interfaceDeclaration:
-    decorator* 'interface' IDENTIFIER '{' interfaceMethodList? '}';
+    decorator* 'interface' IDENTIFIER (':' typeSpec)? '{' interfaceMethodList? '}';
 
 interfaceMethodList: functionDeclaration functionDeclaration*;
 
@@ -60,7 +60,11 @@ decorator: '@' IDENTIFIER ('(' decoratorArguments? ')')?;
 
 decoratorArguments: decoratorArgument (',' decoratorArgument)*;
 
-decoratorArgument: STRING_LITERAL | INTEGER_LITERAL | HEX_LITERAL | IDENTIFIER;
+decoratorArgument:
+    STRING_LITERAL
+    | INTEGER_LITERAL
+    | HEX_LITERAL
+    | IDENTIFIER;
 
 typeSpec:
     signModifier? primitiveType arrayModifier? pointerModifier?

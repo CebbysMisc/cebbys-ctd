@@ -12,6 +12,7 @@ __all__ = ['ParameterMeta', 'FunctionMeta']
 
 class ParameterMeta:
     """Metadata for a function parameter."""
+    # TODO: Update class documentation to add description about usage and examples as in the alias.py, decorator.py, typedef.py
 
     def __init__(
         self,
@@ -52,6 +53,7 @@ class ParameterMeta:
 
 class FunctionMeta:
     """Metadata for a function declaration."""
+    # TODO: Update class documentation to add description about usage and examples as in the alias.py, decorator.py, typedef.py
 
     def __init__(
         self,

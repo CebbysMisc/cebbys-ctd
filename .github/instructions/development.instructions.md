@@ -38,9 +38,9 @@ This project is developed using **Visual Studio Code** with the following config
 5. **Link objects**: Implement linking logic to connect related objects
 6. **Test**: Write tests in `tests/` directory organized by module
 
-## Implementing GTD Language Features
+## Implementing CTD Language Features
 
-**REQUIRED**: Follow this comprehensive workflow when implementing new GTD language features or modifying existing language behavior.
+**REQUIRED**: Follow this comprehensive workflow when implementing new CTD language features or modifying existing language behavior.
 
 ### Step 1: Familiarization and Analysis
 
@@ -51,7 +51,7 @@ Before making any changes, thoroughly understand the existing codebase and requi
    - Review `.github/instructions/python.instructions.md`
 
 2. **Read the language specification**:
-   - Review `resources/documents/gtd-language-syntax.md` - this is the authoritative source of truth for GTD language syntax
+   - Review `resources/documents/ctd-language-syntax.md` - this is the authoritative source of truth for CTD language syntax
    - Understand all existing language features, keywords, and rules
    - This document explains the fully implemented logic for language syntax
 
@@ -64,7 +64,7 @@ Before making any changes, thoroughly understand the existing codebase and requi
 
 4. **Review existing tests**:
    - Examine `tests/*.py` to understand testing patterns
-   - Look at `tests/resources/gtd/*.gtd` for test resource organization
+   - Look at `tests/resources/ctd/*.ctd` for test resource organization
 
 5. **Identify what needs to change**:
    - Determine if grammar changes are needed
@@ -75,7 +75,7 @@ Before making any changes, thoroughly understand the existing codebase and requi
 
 **ALWAYS** document the feature before implementing it:
 
-1. **Update `resources/documents/gtd-language-syntax.md`**:
+1. **Update `resources/documents/ctd-language-syntax.md`**:
    - Add or modify sections describing the new feature
    - Include complete syntax definitions
    - Document all keywords, operators, and grammar rules
@@ -228,10 +228,10 @@ Ensure all code follows `python.instructions.md`:
 
 ### Step 5: Update Existing Code
 
-Fix existing GTD files and code to comply with new behavior:
+Fix existing CTD files and code to comply with new behavior:
 
-1. **Update GTD resource files**:
-   - Modify `resources/ctd/*.gtd` files if needed
+1. **Update CTD resource files**:
+   - Modify `resources/ctd/*.ctd` files if needed
    - Ensure all files comply with new language rules
    - Fix any violations
 
@@ -240,23 +240,23 @@ Fix existing GTD files and code to comply with new behavior:
    - Update imports if module structure changed
 
 3. **Test existing files load correctly**:
-   - Verify no regressions in existing GTD file loading
+   - Verify no regressions in existing CTD file loading
 
 ### Step 6: Create Test Resources
 
-Create comprehensive test GTD files in `tests/resources/gtd/`:
+Create comprehensive test CTD files in `tests/resources/ctd/`:
 
 1. **Organize by test scenario**:
    ```
-   tests/resources/gtd/
+   tests/resources/ctd/
    ├── feature-name-basic/
-   │   ├── test-file-1.gtd
-   │   └── test-file-2.gtd
+   │   ├── test-file-1.ctd
+   │   └── test-file-2.ctd
    ├── feature-name-with-dependency/
-   │   ├── dependency.gtd
-   │   └── consumer.gtd
+   │   ├── dependency.ctd
+   │   └── consumer.ctd
    └── feature-name-invalid/
-       └── invalid-usage.gtd
+       └── invalid-usage.ctd
    ```
 
 2. **Use subdirectories** to isolate test scenarios:
@@ -270,18 +270,18 @@ Create comprehensive test GTD files in `tests/resources/gtd/`:
    - **Negative tests**: Invalid usage that should fail
 
 4. **Document test intent**:
-   - Add comments in GTD files explaining what's being tested
+   - Add comments in CTD files explaining what's being tested
    - Include comments like `// This should WORK because...`
    - Include comments like `// This should FAIL because...`
 
 **Example**:
 ```gtd
-// tests/resources/gtd/namespace-with-use/base.gtd
+// tests/resources/ctd/namespace-with-use/base.ctd
 namespace test::base {
     typedef int Int4
 }
 
-// tests/resources/gtd/namespace-with-use/consumer.gtd
+// tests/resources/ctd/namespace-with-use/consumer.ctd
 import "base"
 
 namespace test::consumer {
@@ -316,8 +316,8 @@ Create test file in `tests/` directory:
 
        TestLogger.header("Feature Name: Basic Usage")
 
-       # Load test GTD files
-       paths = [Pathlib.Path('tests/resources/gtd/feature-basic')]
+       # Load test CTD files
+       paths = [Pathlib.Path('tests/resources/ctd/feature-basic')]
        loader = Ctd.Loader.CtdLoader(paths)
        collection = loader.load()
 
@@ -343,7 +343,7 @@ Create test file in `tests/` directory:
        loader: Ctd.Loader.CtdLoader
        paths: list[Pathlib.Path]
 
-       paths = [Pathlib.Path('tests/resources/gtd/feature-invalid')]
+       paths = [Pathlib.Path('tests/resources/ctd/feature-invalid')]
        loader = Ctd.Loader.CtdLoader(paths)
 
        with Pytest.raises(Exception) as exc_info:
@@ -391,14 +391,14 @@ Ensure no existing functionality is broken:
    - Test both success and failure paths
 
 5. **Manual testing** (if applicable):
-   - Load real-world GTD files
+   - Load real-world CTD files
    - Verify feature works in practical scenarios
 
 ### Step 9: Documentation Review
 
 Before completing, verify documentation is complete:
 
-1. **Language specification updated**: `resources/documents/gtd-language-syntax.md`
+1. **Language specification updated**: `resources/documents/ctd-language-syntax.md`
 2. **Code comments added**: Complex logic explained
 3. **Examples provided**: Both in docs and tests
 4. **Error messages clear**: Users understand what went wrong
@@ -421,7 +421,7 @@ Follow the branching strategy:
    ```bash
    git commit -m "Add <feature-name> support
 
-   - Document feature in gtd-language-syntax.md
+   - Document feature in ctd-language-syntax.md
    - Implement parser/resolver changes
    - Add comprehensive tests
    - All tests passing (X/X)"
@@ -436,18 +436,18 @@ Follow the branching strategy:
 
 ### Quick Reference Checklist
 
-When implementing a new GTD language feature, complete these items:
+When implementing a new CTD language feature, complete these items:
 
 - [ ] Read development instructions
-- [ ] Examine existing code and GTD files
-- [ ] Update `resources/documents/gtd-language-syntax.md` with feature documentation
+- [ ] Examine existing code and CTD files
+- [ ] Update `resources/documents/ctd-language-syntax.md` with feature documentation
 - [ ] Modify ANTLR4 grammar (if needed)
 - [ ] Update visitor.py (if needed)
 - [ ] Update meta/types.py (if needed)
 - [ ] Update or create resolver (if needed)
 - [ ] Update define/types.py (if needed)
-- [ ] Fix existing GTD files to comply with changes
-- [ ] Create test GTD files in `tests/resources/gtd/<feature-name>/`
+- [ ] Fix existing CTD files to comply with changes
+- [ ] Create test CTD files in `tests/resources/ctd/<feature-name>/`
 - [ ] Write comprehensive tests in `tests/test_<feature_name>.py`
 - [ ] Run all tests: `python -m pytest tests/ -v`
 - [ ] Verify all tests pass (no regressions)
@@ -456,8 +456,8 @@ When implementing a new GTD language feature, complete these items:
 
 ### Common Pitfalls to Avoid
 
-1. **Don't skip documentation**: Always update `gtd-language-syntax.md` first
-2. **Don't forget existing files**: Update `resources/ctd/*.gtd` to comply with changes
+1. **Don't skip documentation**: Always update `ctd-language-syntax.md` first
+2. **Don't forget existing files**: Update `resources/ctd/*.ctd` to comply with changes
 3. **Don't break existing tests**: All tests must continue to pass
 4. **Don't mix test scenarios**: Use subdirectories to isolate test cases
 5. **Don't create type collisions**: Avoid reusing type names across test files in same directory
