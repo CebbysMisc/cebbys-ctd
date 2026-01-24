@@ -12,3 +12,6 @@ wheels/
 # Claude Code temporary files
 .claude/
 tmpclaude-*-cwd
+
+# ANTLR4 generated artifacts
+resources/grammar/.antlr/
