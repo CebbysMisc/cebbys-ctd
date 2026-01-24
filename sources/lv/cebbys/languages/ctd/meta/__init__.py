@@ -2,21 +2,27 @@
 
 This package contains metadata types, loader, and resolver for CTD language.
 """
-from lv.cebbys.languages.ctd.meta.types import *
-from lv.cebbys.languages.ctd.meta.loader import MetaLoader
+from lv.cebbys.languages.ctd.meta.loader import *
 from lv.cebbys.languages.ctd.meta.resolver import MetaResolver, ResolutionError
 
 __all__ = [
-    # Types from types module
+    # API
+    'ModulePath',
+    # Typedef
     'TypedefMeta',
+    # Enum
     'EnumMemberMeta',
     'EnumMeta',
+    # Flag
     'FlagMemberMeta',
     'FlagMeta',
-    'FieldMeta',
+    # Structure
+    'StructureMemberMeta',
     'StructureMeta',
+    # Function
     'ParameterMeta',
     'FunctionMeta',
+    # Collection
     'DefinitionCollectionMeta',
     # Loader
     'MetaLoader',

@@ -5,7 +5,9 @@ This module handles loading and parsing CTD files into metadata.
 import typing as Typing
 import antlr4 as Antlr4
 import lv.cebbys.languages.ctd.__api__ as Api
-import lv.cebbys.languages.ctd.meta.types as Types
+import lv.cebbys.languages.ctd.meta.loader.typedef as TypedefModule
+import lv.cebbys.languages.ctd.meta.loader.enum as EnumModule
+import lv.cebbys.languages.ctd.meta.loader.collection as CollectionModule
 import lv.cebbys.languages.ctd.visitor as Visitor
 import lv.cebbys.languages.ctd.antlr4.GtdLexer as GtdLexer
 import lv.cebbys.languages.ctd.antlr4.GtdParser as GtdParser
@@ -20,26 +22,26 @@ class MetaLoader:
         """Initialize the loader with paths to search.
 
         Args:
-            paths: List of file or directory paths to search for .gtd files
+            paths: List of file or directory paths to search for .ctd files
         """
         self._paths: Typing.Final[list[Api.FilePath]]
         self._paths = paths
 
-    def load(self) -> tuple[Types.DefinitionCollectionMeta, dict[str, list[str]]]:
+    def load(self) -> tuple[CollectionModule.DefinitionCollectionMeta, dict[str, list[str]]]:
         """Load and parse all CTD modules from configured paths.
 
         Returns:
             Tuple of (DefinitionCollectionMeta, namespace_uses dictionary)
         """
-        meta_collection: Types.DefinitionCollectionMeta
+        meta_collection: CollectionModule.DefinitionCollectionMeta
         namespace_uses: dict[str, list[str]]
         path: Api.FilePath
 
-        meta_collection = Types.DefinitionCollectionMeta()
+        meta_collection = CollectionModule.DefinitionCollectionMeta()
         namespace_uses = {}
 
         for path in self._paths:
-            if path.is_file() and path.suffix == '.gtd':
+            if path.is_file() and path.suffix == '.ctd':
                 self._load_file(path, meta_collection, namespace_uses)
             elif path.is_dir():
                 self._load_directory(path, meta_collection, namespace_uses)
@@ -49,39 +51,39 @@ class MetaLoader:
     def _load_directory(
         self,
         directory: Api.FilePath,
-        collection: Types.DefinitionCollectionMeta,
+        collection: CollectionModule.DefinitionCollectionMeta,
         namespace_uses: dict[str, list[str]]
     ) -> None:
-        """Recursively load all .gtd files from a directory.
+        """Recursively load all .ctd files from a directory.
 
         Args:
             directory: Directory path to search
             collection: Collection to add parsed types to
             namespace_uses: Dictionary to merge namespace use declarations
         """
-        gtd_file: Api.FilePath
+        ctd_file: Api.FilePath
 
-        for gtd_file in directory.rglob('*.gtd'):
-            if gtd_file.is_file():
-                self._load_file(gtd_file, collection, namespace_uses)
+        for ctd_file in directory.rglob('*.ctd'):
+            if ctd_file.is_file():
+                self._load_file(ctd_file, collection, namespace_uses)
 
     def _load_file(
         self,
         file_path: Api.FilePath,
-        collection: Types.DefinitionCollectionMeta,
+        collection: CollectionModule.DefinitionCollectionMeta,
         namespace_uses: dict[str, list[str]]
     ) -> None:
         """Load and parse a single CTD file.
 
         Args:
-            file_path: Path to the .gtd file
+            file_path: Path to the .ctd file
             collection: Collection to add parsed types to
             namespace_uses: Dictionary to merge namespace use declarations
         """
         parse_tree: GtdParser.GtdParser.CompilationUnitContext
         visitor: Visitor.MetaVisitor
-        typedef: Types.TypedefMeta
-        enum: Types.EnumMeta
+        typedef: TypedefModule.TypedefMeta
+        enum: EnumModule.EnumMeta
 
         # Parse the file
         parse_tree = self._parse_file(file_path)
@@ -116,7 +118,7 @@ class MetaLoader:
         """Parse a CTD file using ANTLR4.
 
         Args:
-            file_path: Path to the .gtd file
+            file_path: Path to the .ctd file
 
         Returns:
             Parse tree root node

@@ -2,8 +2,8 @@
 
 This module handles resolution of typedef definitions.
 """
-import lv.cebbys.languages.ctd.meta.types as Types
-import lv.cebbys.languages.ctd.define.types as Define
+import lv.cebbys.languages.ctd.meta.loader as Types
+import lv.cebbys.languages.ctd.define as Define
 import lv.cebbys.languages.ctd.meta.resolver.__api__ as Api
 
 __all__ = ['TypedefResolver']

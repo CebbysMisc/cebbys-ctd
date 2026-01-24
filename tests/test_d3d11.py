@@ -80,9 +80,69 @@ def test_d3d11_enum_members() -> None:
     TestLogger.success("Cross-file type resolution working (d3d11 -> std-types)")
     TestLogger.success("New syntax parsed successfully (structure, function, annotation, flags)")
     
-    # Verify flag is used as a parameter type in function
-    # Note: Functions are not yet part of DefinitionCollection, but the fact that
-    # the code loads without errors means flag type references work correctly
+    # Verify function is resolved correctly
+    TestLogger.section_break()
+    TestLogger.info("Functions:")
+    TestLogger.info(f"Total functions: {len(collection.functions)}")
+
+    d3d11_func = collection.functions.get('com::microsoft::direct::graphics::d3d11::D3D11CreateDeviceAndSwapChain')
+    assert d3d11_func is not None, "Should find D3D11CreateDeviceAndSwapChain function"
+
+    TestLogger.success(f"Function: {d3d11_func.qualified_name}")
+    TestLogger.info(f"Decorators: {d3d11_func.decorators}", indent=2)
+    TestLogger.info(f"Return type: {d3d11_func.return_type}", indent=2)
+    TestLogger.info(f"Parameters: {len(d3d11_func.parameters)}", indent=2)
+
+    # Verify function decorator
+    assert len(d3d11_func.decorators) == 1, \
+        f"Function should have 1 decorator, got {len(d3d11_func.decorators)}"
+    assert d3d11_func.decorators[0].name == "WinApi", \
+        f"Function decorator should be 'WinApi', got '{d3d11_func.decorators[0].name}'"
+
+    # Verify return type resolves to ResultCode typedef
+    result_code = collection.typedefs.get('com::microsoft::direct::graphics::d3d11::ResultCode')
+    assert result_code is not None, "Should find ResultCode typedef"
+    assert isinstance(d3d11_func.return_type.base_type, Ctd.Define.TypeReference), \
+        "Return type should be TypeReference"
+    assert d3d11_func.return_type.base_type.target is result_code, \
+        "Return type should reference ResultCode"
+
+    TestLogger.success("Return type resolved to ResultCode")
+
+    # Verify parameters
+    assert len(d3d11_func.parameters) == 8, \
+        f"Should have 8 parameters, got {len(d3d11_func.parameters)}"
+
+    # Check first parameter (adapter with @Nullable decorator and pointer type)
+    adapter_param = d3d11_func.parameters[0]
+    assert adapter_param.name == "adapter", f"First param should be 'adapter', got '{adapter_param.name}'"
+    assert len(adapter_param.decorators) == 1, \
+        f"First param should have 1 decorator, got {len(adapter_param.decorators)}"
+    assert adapter_param.decorators[0].name == "Nullable", \
+        f"First param decorator should be 'Nullable', got '{adapter_param.decorators[0].name}'"
+    assert adapter_param.type_spec.is_pointer, "adapter should be pointer type"
+
+    TestLogger.success("Parameter @Nullable Adapter* adapter resolved correctly")
+
+    # Check parameter with flag type
+    flags_param = d3d11_func.parameters[3]
+    assert flags_param.name == "flags", f"Fourth param should be 'flags', got '{flags_param.name}'"
+    assert isinstance(flags_param.type_spec.base_type, Ctd.Define.TypeReference), \
+        "flags type should be TypeReference"
+    assert flags_param.type_spec.base_type.target is create_device_flag, \
+        "flags should reference CreateDeviceFlag"
+
+    TestLogger.success("Parameter CreateDeviceFlag flags resolved correctly")
+
+    for param in d3d11_func.parameters:
+        decorators_str = " ".join(str(d) for d in param.decorators)
+        if decorators_str:
+            decorators_str += " "
+        ptr_str = "*" if param.type_spec.is_pointer else ""
+        TestLogger.info(f"{decorators_str}{param.type_spec.base_type}{ptr_str} {param.name}", indent=4)
+
+    TestLogger.section_break()
+    TestLogger.success("Function definition resolved with all types")
     TestLogger.success("Flag type references resolved correctly (used in function parameters)")
-    
+
     TestLogger.complete("D3D11 test complete")

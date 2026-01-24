@@ -50,7 +50,8 @@ namespace com::microsoft::direct::graphics::d3d11 {
         CreateDeviceFlag    flags,
         FeatureLevel*       featureLevels,
         Unt4                featureLevelsCount,
-        Unt4                sdkVersion
+        Unt4                sdkVersion,
+        SwapChainDesc**     swapChainDesc,
     )
 
     /*

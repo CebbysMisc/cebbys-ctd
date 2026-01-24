@@ -4,7 +4,7 @@ import lv.cebbys.languages.ctd as Ctd
 from test_utils import TestLogger
 
 def test_load_std_types() -> None:
-    """Test loading all .gtd files from resources/ctd directory."""
+    """Test loading all .ctd files from resources/ctd directory."""
     loader: Ctd.Loader.CtdLoader
     paths: list[Pathlib.Path]
     collection: Ctd.Define.DefinitionCollection
@@ -17,7 +17,7 @@ def test_load_std_types() -> None:
     assert len(collection.typedefs) > 0 or len(collection.enums) > 0 or len(collection.flags) > 0 or len(collection.structures) > 0, \
         "Should find at least one typedef, enum, flag, or structure"
     
-    TestLogger.header("Loaded All GTD Files")
+    TestLogger.header("Loaded All CTD Files")
     TestLogger.success(f"Loaded {len(collection.typedefs)} typedefs")
     TestLogger.success(f"Loaded {len(collection.enums)} enums")
     TestLogger.success(f"Loaded {len(collection.flags)} flags")

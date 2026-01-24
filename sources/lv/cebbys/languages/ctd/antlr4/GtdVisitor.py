@@ -39,6 +39,11 @@ class GtdVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by GtdParser#aliasDeclaration.
+    def visitAliasDeclaration(self, ctx:GtdParser.AliasDeclarationContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by GtdParser#enumDeclaration.
     def visitEnumDeclaration(self, ctx:GtdParser.EnumDeclarationContext):
         return self.visitChildren(ctx)
@@ -74,6 +79,16 @@ class GtdVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by GtdParser#interfaceDeclaration.
+    def visitInterfaceDeclaration(self, ctx:GtdParser.InterfaceDeclarationContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by GtdParser#interfaceMethodList.
+    def visitInterfaceMethodList(self, ctx:GtdParser.InterfaceMethodListContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by GtdParser#structureMemberList.
     def visitStructureMemberList(self, ctx:GtdParser.StructureMemberListContext):
         return self.visitChildren(ctx)
@@ -89,16 +104,6 @@ class GtdVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by GtdParser#annotation.
-    def visitAnnotation(self, ctx:GtdParser.AnnotationContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by GtdParser#annotationArguments.
-    def visitAnnotationArguments(self, ctx:GtdParser.AnnotationArgumentsContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by GtdParser#parameterList.
     def visitParameterList(self, ctx:GtdParser.ParameterListContext):
         return self.visitChildren(ctx)
@@ -109,6 +114,21 @@ class GtdVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by GtdParser#decorator.
+    def visitDecorator(self, ctx:GtdParser.DecoratorContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by GtdParser#decoratorArguments.
+    def visitDecoratorArguments(self, ctx:GtdParser.DecoratorArgumentsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by GtdParser#decoratorArgument.
+    def visitDecoratorArgument(self, ctx:GtdParser.DecoratorArgumentContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by GtdParser#typeSpec.
     def visitTypeSpec(self, ctx:GtdParser.TypeSpecContext):
         return self.visitChildren(ctx)
@@ -116,6 +136,11 @@ class GtdVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by GtdParser#typeReference.
     def visitTypeReference(self, ctx:GtdParser.TypeReferenceContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by GtdParser#arrayModifier.
+    def visitArrayModifier(self, ctx:GtdParser.ArrayModifierContext):
         return self.visitChildren(ctx)
 
 

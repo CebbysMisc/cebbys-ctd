@@ -3,13 +3,14 @@
 This module resolves type references in metadata to create fully resolved definitions.
 """
 import typing as Typing
-import lv.cebbys.languages.ctd.meta.types as Types
-import lv.cebbys.languages.ctd.define.types as Define
+import lv.cebbys.languages.ctd.meta.loader as Types
+import lv.cebbys.languages.ctd.define as Define
 import lv.cebbys.languages.ctd.meta.resolver.__api__ as Api
 import lv.cebbys.languages.ctd.meta.resolver.typedef as TypedefModule
 import lv.cebbys.languages.ctd.meta.resolver.enum as EnumModule
 import lv.cebbys.languages.ctd.meta.resolver.flag as FlagModule
 import lv.cebbys.languages.ctd.meta.resolver.structure as StructureModule
+import lv.cebbys.languages.ctd.meta.resolver.function as FunctionModule
 
 __all__ = ['MetaResolver', 'ResolutionError']
 
@@ -26,6 +27,7 @@ class MetaResolver:
         EnumModule.EnumResolver,
         FlagModule.FlagResolver,
         StructureModule.StructureResolver,
+        FunctionModule.FunctionResolver,
     ]
 
     def __init__(self):
@@ -64,6 +66,7 @@ class MetaResolver:
         enums: dict[str, Define.EnumDefinition]
         flags: dict[str, Define.FlagDefinition]
         structures: dict[str, Define.StructureDefinition]
+        functions: dict[str, Define.FunctionDefinition]
 
         # Create context
         type_cache = {}
@@ -92,5 +95,7 @@ class MetaResolver:
                  if isinstance(f, Define.FlagDefinition)}
         structures = {qn: s for qn, s in type_cache.items()
                       if isinstance(s, Define.StructureDefinition)}
+        functions = {qn: f for qn, f in type_cache.items()
+                     if isinstance(f, Define.FunctionDefinition)}
 
-        return Define.DefinitionCollection(typedefs, enums, flags, structures)
+        return Define.DefinitionCollection(typedefs, enums, flags, structures, functions)

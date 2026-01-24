@@ -6,24 +6,28 @@ compilationUnit: importDeclaration* namespaceDeclaration* EOF;
 importDeclaration: 'import' STRING_LITERAL;
 
 namespaceDeclaration:
-    annotation? 'namespace' qualifiedName '{' useDeclaration* declaration* '}';
+    decorator* 'namespace' qualifiedName '{' useDeclaration* declaration* '}';
 
-useDeclaration: annotation? 'use' qualifiedName;
+useDeclaration: decorator* 'use' qualifiedName;
 
-declaration: 
-    typedefDeclaration 
+declaration:
+    typedefDeclaration
+    | aliasDeclaration
     | enumDeclaration
     | flagDeclaration
     | structureDeclaration
+    | interfaceDeclaration
     | functionDeclaration;
 
-typedefDeclaration: annotation? 'typedef' typeSpec IDENTIFIER;
+typedefDeclaration: decorator* 'typedef' typeSpec IDENTIFIER;
+
+aliasDeclaration: decorator* 'alias' typeSpec IDENTIFIER;
 
 enumDeclaration:
-    annotation? 'enum' IDENTIFIER (':' typeSpec)? '{' enumMemberList? '}';
+    decorator* 'enum' IDENTIFIER (':' typeSpec)? '{' enumMemberList? '}';
 
 flagDeclaration:
-    annotation? 'flag' IDENTIFIER (':' typeSpec)? '{' flagMemberList? '}';
+    decorator* 'flag' IDENTIFIER (':' typeSpec)? '{' flagMemberList? '}';
 
 enumMemberList: enumMember enumMember*;
 
@@ -31,37 +35,46 @@ enumMember: IDENTIFIER ('=' (INTEGER_LITERAL | HEX_LITERAL))?;
 
 flagMemberList: flagMember flagMember*;
 
-flagMember: IDENTIFIER ('=' HEX_LITERAL)?;
+flagMember: IDENTIFIER ('=' (INTEGER_LITERAL | HEX_LITERAL))?;
 
 structureDeclaration:
-    annotation? 'structure' IDENTIFIER '{' structureMemberList? '}';
+    decorator* 'structure' IDENTIFIER '{' structureMemberList? '}';
+
+interfaceDeclaration:
+    decorator* 'interface' IDENTIFIER '{' interfaceMethodList? '}';
+
+interfaceMethodList: functionDeclaration functionDeclaration*;
 
 structureMemberList: structureMember structureMember*;
 
 structureMember: typeSpec IDENTIFIER;
 
 functionDeclaration:
-    annotation? typeSpec IDENTIFIER '(' parameterList? ')';
+    decorator* typeSpec IDENTIFIER '(' parameterList? ')';
 
-annotation: '@' IDENTIFIER ('(' annotationArguments? ')')?;
+parameterList: parameter (',' parameter)* ','?;
 
-annotationArguments: STRING_LITERAL (',' STRING_LITERAL)*;
+parameter: decorator* typeSpec IDENTIFIER;
 
-parameterList: parameter (',' parameter)*;
+decorator: '@' IDENTIFIER ('(' decoratorArguments? ')')?;
 
-parameter: annotation? typeSpec IDENTIFIER;
+decoratorArguments: decoratorArgument (',' decoratorArgument)*;
+
+decoratorArgument: STRING_LITERAL | INTEGER_LITERAL | HEX_LITERAL | IDENTIFIER;
 
 typeSpec:
-    signModifier? primitiveType pointerModifier?
+    signModifier? primitiveType arrayModifier? pointerModifier?
     | typeReference;
 
-typeReference: qualifiedName pointerModifier?;
+typeReference: qualifiedName arrayModifier? pointerModifier?;
+
+arrayModifier: '[' INTEGER_LITERAL ']';
 
 signModifier: 'signed' | 'unsigned';
 
 primitiveType: 'char' | 'short' | 'int' | 'long' | 'void';
 
-pointerModifier: '*';
+pointerModifier: '*'+;
 
 qualifiedName: IDENTIFIER ('::' IDENTIFIER)*;
 

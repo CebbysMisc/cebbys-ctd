@@ -4,7 +4,7 @@ This module implements an ANTLR4 visitor to transform parse trees into Meta obje
 """
 import typing as Typing
 import lv.cebbys.languages.ctd.__api__ as Api
-import lv.cebbys.languages.ctd.meta as Meta
+import lv.cebbys.languages.ctd.meta.loader as Meta
 import lv.cebbys.languages.ctd.antlr4.GtdParser as GtdParser
 import lv.cebbys.languages.ctd.antlr4.GtdVisitor as GtdVisitor
 
@@ -139,19 +139,23 @@ class MetaVisitor(GtdVisitor.GtdVisitor):
         self,
         ctx: GtdParser.GtdParser.DeclarationContext
     ) -> None:
-        """Visit a declaration (typedef, enum, flag, structure, or function).
-        
+        """Visit a declaration (typedef, alias, enum, flag, structure, interface, or function).
+
         Args:
             ctx: Declaration context
         """
         if ctx.typedefDeclaration():
             self.visitTypedefDeclaration(ctx.typedefDeclaration())
+        elif ctx.aliasDeclaration():
+            self.visitAliasDeclaration(ctx.aliasDeclaration())
         elif ctx.enumDeclaration():
             self.visitEnumDeclaration(ctx.enumDeclaration())
         elif ctx.flagDeclaration():
             self.visitFlagDeclaration(ctx.flagDeclaration())
         elif ctx.structureDeclaration():
             self.visitStructureDeclaration(ctx.structureDeclaration())
+        elif ctx.interfaceDeclaration():
+            self.visitInterfaceDeclaration(ctx.interfaceDeclaration())
         elif ctx.functionDeclaration():
             self.visitFunctionDeclaration(ctx.functionDeclaration())
     
@@ -160,24 +164,47 @@ class MetaVisitor(GtdVisitor.GtdVisitor):
         ctx: GtdParser.GtdParser.TypedefDeclarationContext
     ) -> None:
         """Visit typedef declaration and create TypedefMeta.
-        
+
         Args:
             ctx: Typedef declaration context
         """
         name: str
         type_spec: str
         typedef_meta: Meta.TypedefMeta
-        
+
         # Get typedef name
         name = ctx.IDENTIFIER().getText()
-        
+
         # Get type specification
         type_spec = self._get_type_spec(ctx.typeSpec())
-        
+
         # Create and add typedef metadata
         typedef_meta = Meta.TypedefMeta(name, type_spec, self._current_namespace)
         self._collection.add_typedef(typedef_meta)
-    
+
+    def visitAliasDeclaration(
+        self,
+        ctx: GtdParser.GtdParser.AliasDeclarationContext
+    ) -> None:
+        """Visit alias declaration and create AliasMeta.
+
+        Args:
+            ctx: Alias declaration context
+        """
+        name: str
+        type_spec: str
+        alias_meta: Meta.AliasMeta
+
+        # Get alias name
+        name = ctx.IDENTIFIER().getText()
+
+        # Get type specification
+        type_spec = self._get_type_spec(ctx.typeSpec())
+
+        # Create and add alias metadata
+        alias_meta = Meta.AliasMeta(name, type_spec, self._current_namespace)
+        self._collection.add_alias(alias_meta)
+
     def visitEnumDeclaration(
         self,
         ctx: GtdParser.GtdParser.EnumDeclarationContext
@@ -262,37 +289,47 @@ class MetaVisitor(GtdVisitor.GtdVisitor):
         ctx: GtdParser.GtdParser.TypeSpecContext
     ) -> str:
         """Extract type specification as string.
-        
+
         Args:
             ctx: Type spec context
-            
+
         Returns:
             Type specification string
         """
         parts: list[str]
-        
+        array_ctx: GtdParser.GtdParser.ArrayModifierContext | None
+        pointer_ctx: GtdParser.GtdParser.PointerModifierContext | None
+
         parts = []
-        
+
         # Handle sign modifier
         if ctx.signModifier():
             parts.append(ctx.signModifier().getText())
-        
+
         # Handle primitive type
         if ctx.primitiveType():
             parts.append(ctx.primitiveType().getText())
-        
+
         # Handle type reference
         if ctx.typeReference():
             parts.append(ctx.typeReference().qualifiedName().getText())
-        
-        # Handle pointer modifier
+
+        # Handle array modifier - check in typeSpec first, then in typeReference
+        array_ctx = ctx.arrayModifier()
+        if array_ctx is None and ctx.typeReference():
+            array_ctx = ctx.typeReference().arrayModifier()
+
+        if array_ctx:
+            parts.append(array_ctx.getText())
+
+        # Handle pointer modifier - check in typeSpec first, then in typeReference
         pointer_ctx = ctx.pointerModifier()
         if pointer_ctx is None and ctx.typeReference():
             pointer_ctx = ctx.typeReference().pointerModifier()
-        
+
         if pointer_ctx:
             parts.append(pointer_ctx.getText())
-        
+
         return ' '.join(parts)
     
     def _get_enum_members(
@@ -332,10 +369,10 @@ class MetaVisitor(GtdVisitor.GtdVisitor):
         ctx: GtdParser.GtdParser.FlagMemberListContext
     ) -> list[Meta.FlagMemberMeta]:
         """Extract flag members from context.
-        
+
         Args:
             ctx: Flag member list context
-            
+
         Returns:
             List of FlagMemberMeta objects
         """
@@ -343,20 +380,22 @@ class MetaVisitor(GtdVisitor.GtdVisitor):
         member_ctx: GtdParser.GtdParser.FlagMemberContext
         name: str
         value: int | None
-        
+
         members = []
-        
+
         for member_ctx in ctx.flagMember():
             name = member_ctx.IDENTIFIER().getText()
             value = None
-            
-            if member_ctx.HEX_LITERAL():
+
+            if member_ctx.INTEGER_LITERAL():
+                value = int(member_ctx.INTEGER_LITERAL().getText())
+            elif member_ctx.HEX_LITERAL():
                 # Parse hex literal (e.g., "0x20" -> 32)
                 hex_text = member_ctx.HEX_LITERAL().getText()
                 value = int(hex_text, 16)
-            
+
             members.append(Meta.FlagMemberMeta(name, value))
-        
+
         return members
     
     def visitStructureDeclaration(
@@ -389,10 +428,10 @@ class MetaVisitor(GtdVisitor.GtdVisitor):
         ctx: GtdParser.GtdParser.StructureMemberListContext
     ) -> list[Meta.StructureMemberMeta]:
         """Extract structure members from context.
-        
+
         Args:
             ctx: Structure member list context
-            
+
         Returns:
             List of StructureMemberMeta objects
         """
@@ -400,66 +439,137 @@ class MetaVisitor(GtdVisitor.GtdVisitor):
         member_ctx: GtdParser.GtdParser.StructureMemberContext
         name: str
         type_spec: str
-        
+
         members = []
-        
+
         for member_ctx in ctx.structureMember():
             type_spec = self._get_type_spec(member_ctx.typeSpec())
             name = member_ctx.IDENTIFIER().getText()
             members.append(Meta.StructureMemberMeta(name, type_spec))
-        
+
         return members
-    
+
+    def visitInterfaceDeclaration(
+        self,
+        ctx: GtdParser.GtdParser.InterfaceDeclarationContext
+    ) -> None:
+        """Visit interface declaration and create InterfaceMeta.
+
+        Args:
+            ctx: Interface declaration context
+        """
+        name: str
+        methods: list[Meta.FunctionMeta]
+        interface_meta: Meta.InterfaceMeta
+
+        # Get interface name
+        name = ctx.IDENTIFIER().getText()
+
+        # Get interface methods
+        methods = []
+        if ctx.interfaceMethodList():
+            methods = self._get_interface_methods(ctx.interfaceMethodList())
+
+        # Create and add interface metadata
+        interface_meta = Meta.InterfaceMeta(name, self._current_namespace, methods)
+        self._collection.add_interface(interface_meta)
+
+    def _get_interface_methods(
+        self,
+        ctx: GtdParser.GtdParser.InterfaceMethodListContext
+    ) -> list[Meta.FunctionMeta]:
+        """Extract interface methods from context.
+
+        Args:
+            ctx: Interface method list context
+
+        Returns:
+            List of FunctionMeta objects representing interface methods
+        """
+        methods: list[Meta.FunctionMeta]
+        func_ctx: GtdParser.GtdParser.FunctionDeclarationContext
+        name: str
+        return_type: str
+        parameters: list[Meta.ParameterMeta]
+        decorators: list[Meta.DecoratorMeta]
+
+        methods = []
+
+        for func_ctx in ctx.functionDeclaration():
+            # Get function name
+            name = func_ctx.IDENTIFIER().getText()
+
+            # Get return type
+            return_type = self._get_type_spec(func_ctx.typeSpec())
+
+            # Get parameters
+            parameters = []
+            if func_ctx.parameterList():
+                parameters = self._get_parameters(func_ctx.parameterList())
+
+            # Get decorators if present
+            decorators = self._get_decorators(func_ctx.decorator())
+
+            # Create function meta for the interface method
+            method_meta = Meta.FunctionMeta(
+                name,
+                self._current_namespace,
+                return_type,
+                parameters,
+                decorators
+            )
+            methods.append(method_meta)
+
+        return methods
+
     def visitFunctionDeclaration(
         self,
         ctx: GtdParser.GtdParser.FunctionDeclarationContext
     ) -> None:
         """Visit function declaration and create FunctionMeta.
-        
+
         Args:
             ctx: Function declaration context
         """
         name: str
         return_type: str
         parameters: list[Meta.ParameterMeta]
-        annotation: str | None
+        decorators: list[Meta.DecoratorMeta]
         function_meta: Meta.FunctionMeta
-        
+
         # Get function name
         name = ctx.IDENTIFIER().getText()
-        
+
         # Get return type
         return_type = self._get_type_spec(ctx.typeSpec())
-        
+
         # Get parameters
         parameters = []
         if ctx.parameterList():
             parameters = self._get_parameters(ctx.parameterList())
-        
-        # Get annotation if present
-        annotation = None
-        if ctx.annotation():
-            annotation = ctx.annotation().IDENTIFIER().getText()
-        
+
+        # Get decorators if present
+        decorators = self._get_decorators(ctx.decorator())
+
         # Create and add function metadata
         function_meta = Meta.FunctionMeta(
-            name, 
-            self._current_namespace, 
-            return_type, 
-            parameters, 
-            annotation
+            name,
+            self._current_namespace,
+            return_type,
+            parameters,
+            decorators
         )
         self._collection.add_function(function_meta)
-    
+
     def _get_parameters(
         self,
         ctx: GtdParser.GtdParser.ParameterListContext
     ) -> list[Meta.ParameterMeta]:
         """Extract function parameters from context.
-        
+
         Args:
             ctx: Parameter list context
-            
+
         Returns:
             List of ParameterMeta objects
         """
@@ -467,19 +577,54 @@ class MetaVisitor(GtdVisitor.GtdVisitor):
         param_ctx: GtdParser.GtdParser.ParameterContext
         name: str
         type_spec: str
-        annotation: str | None
-        
+        decorators: list[Meta.DecoratorMeta]
+
         parameters = []
-        
+
         for param_ctx in ctx.parameter():
             type_spec = self._get_type_spec(param_ctx.typeSpec())
             name = param_ctx.IDENTIFIER().getText()
-            
-            # Parse annotation if present
-            annotation = None
-            if param_ctx.annotation():
-                annotation = param_ctx.annotation().IDENTIFIER().getText()
-            
-            parameters.append(Meta.ParameterMeta(name, type_spec, annotation))
-        
+
+            # Parse decorators if present
+            decorators = self._get_decorators(param_ctx.decorator())
+
+            parameters.append(Meta.ParameterMeta(name, type_spec, decorators))
+
         return parameters
+
+    def _get_decorators(
+        self,
+        decorator_contexts: list[GtdParser.GtdParser.DecoratorContext]
+    ) -> list[Meta.DecoratorMeta]:
+        """Extract decorators from context list.
+
+        Args:
+            decorator_contexts: List of decorator contexts
+
+        Returns:
+            List of DecoratorMeta objects
+        """
+        decorators: list[Meta.DecoratorMeta]
+        decorator_ctx: GtdParser.GtdParser.DecoratorContext
+        name: str
+        arguments: list[str]
+        arg_ctx: GtdParser.GtdParser.DecoratorArgumentContext
+
+        decorators = []
+
+        for decorator_ctx in decorator_contexts:
+            name = decorator_ctx.IDENTIFIER().getText()
+            arguments = []
+
+            # Parse arguments if present
+            if decorator_ctx.decoratorArguments():
+                for arg_ctx in decorator_ctx.decoratorArguments().decoratorArgument():
+                    # Get the text and strip quotes from string literals
+                    arg_text = arg_ctx.getText()
+                    if arg_ctx.STRING_LITERAL():
+                        arg_text = arg_text[1:-1]  # Remove surrounding quotes
+                    arguments.append(arg_text)
+
+            decorators.append(Meta.DecoratorMeta(name, arguments))
+
+        return decorators

@@ -1,0 +1,17 @@
+import "std-types"
+
+namespace com::microsoft::windows::guid {
+    use std::lib
+    
+    alias InterfaceId IID
+    alias IID* REFIID
+
+    typedef Guid InterfaceId
+
+    structure Guid {
+        Unt4    data1
+        Unt2    data2
+        Unt2    data3
+        Unt1[8] data4
+    }
+}

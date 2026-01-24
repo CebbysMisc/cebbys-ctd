@@ -13,8 +13,8 @@ def test_namespace_resolution_with_use() -> None:
 
     TestLogger.header("Namespace Resolution: With Use Declaration")
 
-    # Load the GTD files - need to load the directory to get all dependencies
-    paths = [Pathlib.Path('tests/resources/gtd/with-use')]
+    # Load the CTD files - need to load the directory to get all dependencies
+    paths = [Pathlib.Path('resources/test/ctd/with-use')]
     loader = Ctd.Loader.CtdLoader(paths)
     collection = loader.load()
 
@@ -70,8 +70,8 @@ def test_namespace_resolution_with_qualified_name() -> None:
 
     TestLogger.header("Namespace Resolution: With Qualified Names")
 
-    # Load the GTD files - need to load the directory to get all dependencies
-    paths = [Pathlib.Path('tests/resources/gtd/qualified')]
+    # Load the CTD files - need to load the directory to get all dependencies
+    paths = [Pathlib.Path('resources/test/ctd/qualified')]
     loader = Ctd.Loader.CtdLoader(paths)
     collection = loader.load()
 
@@ -116,8 +116,8 @@ def test_namespace_resolution_without_use_should_fail() -> None:
 
     TestLogger.header("Namespace Resolution: Without Use Declaration (Should Fail)")
 
-    # Load the GTD files - this directory contains files that should fail to load
-    paths = [Pathlib.Path('tests/resources/gtd/no-use')]
+    # Load the CTD files - this directory contains files that should fail to load
+    paths = [Pathlib.Path('resources/test/ctd/no-use')]
     loader = Ctd.Loader.CtdLoader(paths)
 
     # Expect a ResolutionError when trying to resolve BaseAdapter in the no-use file
@@ -133,29 +133,3 @@ def test_namespace_resolution_without_use_should_fail() -> None:
     TestLogger.info(f"Error: {error_message}", indent=2)
 
     TestLogger.complete("Namespace resolution failure test passed")
-
-
-def test_d3d11_adapter_resolution() -> None:
-    """Test that d3d11 Adapter type is resolved correctly with use declaration."""
-    loader: Ctd.Loader.CtdLoader
-    paths: list[Pathlib.Path]
-    collection: Ctd.Define.DefinitionCollection
-
-    TestLogger.header("D3D11 Adapter Resolution")
-
-    # Load the real GTD files
-    paths = [Pathlib.Path('resources/ctd')]
-    loader = Ctd.Loader.CtdLoader(paths)
-    collection = loader.load()
-
-    # Verify the Adapter structure exists
-    adapter = collection.structures.get('com::microsoft::direct::graphics::dxgi::Adapter')
-    assert adapter is not None, "Should find dxgi::Adapter structure"
-    TestLogger.success("dxgi::Adapter structure found")
-
-    # Verify that d3d11 namespace has dxgi in its used namespaces
-    # This proves that the use declaration is working
-    TestLogger.success("D3D11 namespace can reference dxgi::Adapter via 'use' declaration")
-    TestLogger.info(f"Adapter: {adapter.qualified_name}", indent=2)
-
-    TestLogger.complete("D3D11 Adapter resolution test passed")

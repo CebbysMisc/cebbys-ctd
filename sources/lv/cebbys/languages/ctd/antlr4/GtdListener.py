@@ -62,6 +62,15 @@ class GtdListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by GtdParser#aliasDeclaration.
+    def enterAliasDeclaration(self, ctx:GtdParser.AliasDeclarationContext):
+        pass
+
+    # Exit a parse tree produced by GtdParser#aliasDeclaration.
+    def exitAliasDeclaration(self, ctx:GtdParser.AliasDeclarationContext):
+        pass
+
+
     # Enter a parse tree produced by GtdParser#enumDeclaration.
     def enterEnumDeclaration(self, ctx:GtdParser.EnumDeclarationContext):
         pass
@@ -125,6 +134,24 @@ class GtdListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by GtdParser#interfaceDeclaration.
+    def enterInterfaceDeclaration(self, ctx:GtdParser.InterfaceDeclarationContext):
+        pass
+
+    # Exit a parse tree produced by GtdParser#interfaceDeclaration.
+    def exitInterfaceDeclaration(self, ctx:GtdParser.InterfaceDeclarationContext):
+        pass
+
+
+    # Enter a parse tree produced by GtdParser#interfaceMethodList.
+    def enterInterfaceMethodList(self, ctx:GtdParser.InterfaceMethodListContext):
+        pass
+
+    # Exit a parse tree produced by GtdParser#interfaceMethodList.
+    def exitInterfaceMethodList(self, ctx:GtdParser.InterfaceMethodListContext):
+        pass
+
+
     # Enter a parse tree produced by GtdParser#structureMemberList.
     def enterStructureMemberList(self, ctx:GtdParser.StructureMemberListContext):
         pass
@@ -152,24 +179,6 @@ class GtdListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by GtdParser#annotation.
-    def enterAnnotation(self, ctx:GtdParser.AnnotationContext):
-        pass
-
-    # Exit a parse tree produced by GtdParser#annotation.
-    def exitAnnotation(self, ctx:GtdParser.AnnotationContext):
-        pass
-
-
-    # Enter a parse tree produced by GtdParser#annotationArguments.
-    def enterAnnotationArguments(self, ctx:GtdParser.AnnotationArgumentsContext):
-        pass
-
-    # Exit a parse tree produced by GtdParser#annotationArguments.
-    def exitAnnotationArguments(self, ctx:GtdParser.AnnotationArgumentsContext):
-        pass
-
-
     # Enter a parse tree produced by GtdParser#parameterList.
     def enterParameterList(self, ctx:GtdParser.ParameterListContext):
         pass
@@ -188,6 +197,33 @@ class GtdListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by GtdParser#decorator.
+    def enterDecorator(self, ctx:GtdParser.DecoratorContext):
+        pass
+
+    # Exit a parse tree produced by GtdParser#decorator.
+    def exitDecorator(self, ctx:GtdParser.DecoratorContext):
+        pass
+
+
+    # Enter a parse tree produced by GtdParser#decoratorArguments.
+    def enterDecoratorArguments(self, ctx:GtdParser.DecoratorArgumentsContext):
+        pass
+
+    # Exit a parse tree produced by GtdParser#decoratorArguments.
+    def exitDecoratorArguments(self, ctx:GtdParser.DecoratorArgumentsContext):
+        pass
+
+
+    # Enter a parse tree produced by GtdParser#decoratorArgument.
+    def enterDecoratorArgument(self, ctx:GtdParser.DecoratorArgumentContext):
+        pass
+
+    # Exit a parse tree produced by GtdParser#decoratorArgument.
+    def exitDecoratorArgument(self, ctx:GtdParser.DecoratorArgumentContext):
+        pass
+
+
     # Enter a parse tree produced by GtdParser#typeSpec.
     def enterTypeSpec(self, ctx:GtdParser.TypeSpecContext):
         pass
@@ -203,6 +239,15 @@ class GtdListener(ParseTreeListener):
 
     # Exit a parse tree produced by GtdParser#typeReference.
     def exitTypeReference(self, ctx:GtdParser.TypeReferenceContext):
+        pass
+
+
+    # Enter a parse tree produced by GtdParser#arrayModifier.
+    def enterArrayModifier(self, ctx:GtdParser.ArrayModifierContext):
+        pass
+
+    # Exit a parse tree produced by GtdParser#arrayModifier.
+    def exitArrayModifier(self, ctx:GtdParser.ArrayModifierContext):
         pass
 
 

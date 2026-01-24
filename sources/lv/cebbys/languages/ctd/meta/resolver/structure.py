@@ -1,6 +1,6 @@
 """Structure resolver module."""
-import lv.cebbys.languages.ctd.meta.types as Meta
-import lv.cebbys.languages.ctd.define.types as Define
+import lv.cebbys.languages.ctd.meta.loader as Meta
+import lv.cebbys.languages.ctd.define as Define
 import lv.cebbys.languages.ctd.meta.resolver.__api__ as Api
 
 

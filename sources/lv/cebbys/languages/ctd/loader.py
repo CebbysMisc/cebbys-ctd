@@ -17,7 +17,7 @@ class CtdLoader:
         """Initialize the loader with paths to search.
         
         Args:
-            paths: List of file or directory paths to search for .gtd files
+            paths: List of file or directory paths to search for .ctd files
         """
         self._paths: Typing.Final[list[Api.FilePath]]
         self._paths = paths

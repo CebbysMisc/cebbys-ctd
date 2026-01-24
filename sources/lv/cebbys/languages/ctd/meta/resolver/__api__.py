@@ -2,9 +2,9 @@
 
 This module contains common API classes and types for resolvers.
 """
+import lv.cebbys.languages.ctd.define as Define
+import lv.cebbys.languages.ctd.meta.loader as Types
 import abc as Abc
-import lv.cebbys.languages.ctd.meta.types as Types
-import lv.cebbys.languages.ctd.define.types as Define
 
 __all__ = ['ResolutionError', 'ResolverContext', 'BaseResolver']
 
