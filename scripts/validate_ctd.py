@@ -11,7 +11,9 @@ import traceback
 # Add sources to path (must be before importing lv.cebbys modules)
 sys.path.insert(0, str(Pathlib.Path(__file__).parent.parent / 'sources'))
 
+# fmt: off
 import lv.cebbys.languages.ctd as Ctd
+# fmt: on
 
 
 def main() -> int:
