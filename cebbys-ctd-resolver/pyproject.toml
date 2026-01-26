@@ -1,0 +1,30 @@
+[project]
+name = "cebbys-ctd-resolver"
+version = "0.1.0"
+description = "Type resolution for CTD language"
+requires-python = ">=3.13"
+dependencies = [
+    "cebbys-ctd-meta",
+    "cebbys-ctd-types",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["sources/lv"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "cebbys-ctd-loader",
+]
+
+[tool.uv.sources]
+cebbys-ctd-meta = { path = "../cebbys-ctd-meta" }
+cebbys-ctd-types = { path = "../cebbys-ctd-types" }
+cebbys-ctd-loader = { path = "../cebbys-ctd-loader" }
+
+[tool.pytest.ini_options]
+pythonpath = ["sources", "tests"]

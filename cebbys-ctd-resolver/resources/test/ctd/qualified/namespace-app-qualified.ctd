@@ -1,0 +1,12 @@
+import "namespace-base"
+
+namespace test::app::qualified {
+    typedef unsigned short Word
+
+    // This should WORK - Using fully qualified names
+    structure AppConfig {
+        test::base::types::BaseAdapter adapter
+        test::base::types::BaseStatus status
+        Word version
+    }
+}

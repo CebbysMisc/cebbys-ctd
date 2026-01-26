@@ -1,0 +1,29 @@
+[project]
+name = "cebbys-ctd-antlr4"
+version = "0.1.0"
+description = "ANTLR4 generated parser for CTD language"
+requires-python = ">=3.13"
+dependencies = [
+    "antlr4-python3-runtime>=4.13.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["sources/lv"]
+
+# Include __generated__ directory (hatchling excludes __* by default)
+[tool.hatch.build.targets.wheel.force-include]
+"sources/lv/cebbys/languages/ctd/antlr4/__generated__" = "lv/cebbys/languages/ctd/antlr4/__generated__"
+
+[dependency-groups]
+dev = [
+    "antlr4-tools>=0.2.2",
+    "types-antlr4-python3-runtime>=4.13.0.20251118",
+    "pytest>=9.0.2",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["sources"]

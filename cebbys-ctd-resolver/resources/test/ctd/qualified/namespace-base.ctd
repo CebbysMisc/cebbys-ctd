@@ -1,0 +1,15 @@
+namespace test::base::types {
+    typedef int Int4
+    typedef unsigned int Unt4
+
+    structure BaseAdapter {
+        Int4 id
+        Unt4 flags
+    }
+
+    enum BaseStatus : Int4 {
+        SUCCESS = 0
+        FAILURE = 1
+        PENDING = 2
+    }
+}

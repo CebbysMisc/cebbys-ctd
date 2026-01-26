@@ -7,11 +7,24 @@ wheels/
 *.egg-info
 
 # Virtual environments
-.venv
+.venv/
+
+# UV lock files (per module)
+uv.lock
+
+# Pytest cache
+.pytest_cache/
 
 # Claude Code temporary files
 .claude/
 tmpclaude-*-cwd
 
 # ANTLR4 generated artifacts
-resources/grammar/.antlr/
+cebbys-ctd-antlr4/resources/grammar/.antlr/
+**/__generated__/**
+
+# IDE settings (keep .vscode tracked)
+.idea/
+*.swp
+*.swo
+**/.temp

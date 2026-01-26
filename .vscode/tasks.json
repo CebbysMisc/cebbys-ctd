@@ -2,7 +2,117 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Run All Tests",
+            "label": "(antlr4) install",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "python",
+                "scripts/install.py"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cebbys-ctd-antlr4"
+            },
+            "group": "build",
+            "presentation": {
+                "showReuseMessage": false,
+                "revealProblems": "onProblem",
+                "reveal": "never",
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "(loader) install",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "python",
+                "scripts/install.py"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cebbys-ctd-loader"
+            },
+            "group": "build",
+            "presentation": {
+                "showReuseMessage": false,
+                "revealProblems": "onProblem",
+                "reveal": "never",
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "(meta) install",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "python",
+                "scripts/install.py"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cebbys-ctd-meta"
+            },
+            "group": "build",
+            "presentation": {
+                "showReuseMessage": false,
+                "revealProblems": "onProblem",
+                "reveal": "never",
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "(resolver) install",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "python",
+                "scripts/install.py"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cebbys-ctd-resolver"
+            },
+            "group": "build",
+            "presentation": {
+                "showReuseMessage": false,
+                "revealProblems": "onProblem",
+                "reveal": "never",
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "(types) install",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "python",
+                "scripts/install.py"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cebbys-ctd-types"
+            },
+            "group": "build",
+            "presentation": {
+                "showReuseMessage": false,
+                "revealProblems": "onProblem",
+                "reveal": "never",
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run All Tests (antlr4)",
             "type": "shell",
             "command": "uv",
             "args": [
@@ -11,6 +121,105 @@
                 "-v",
                 "-s"
             ],
+            "options": {
+                "cwd": "${workspaceFolder}/cebbys-ctd-antlr4"
+            },
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run All Tests (types)",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "pytest",
+                "-v",
+                "-s"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cebbys-ctd-types"
+            },
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run All Tests (meta)",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "pytest",
+                "-v",
+                "-s"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cebbys-ctd-meta"
+            },
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run All Tests (resolver)",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "pytest",
+                "-v",
+                "-s"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cebbys-ctd-resolver"
+            },
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run All Tests (loader)",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "pytest",
+                "-v",
+                "-s"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/cebbys-ctd-loader"
+            },
             "group": {
                 "kind": "test",
                 "isDefault": true
@@ -28,14 +237,19 @@
         {
             "label": "Generate ANTLR4 Sources",
             "type": "shell",
-            "command": "${workspaceFolder}/.venv/Scripts/antlr4.exe",
+            "command": "uv",
             "args": [
+                "run",
+                "antlr4",
                 "-Dlanguage=Python3",
                 "-visitor",
                 "resources/grammar/Gtd.g4",
                 "-o",
                 "sources/lv/cebbys/languages/ctd/antlr4"
             ],
+            "options": {
+                "cwd": "${workspaceFolder}/cebbys-ctd-antlr4"
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -59,6 +273,9 @@
                 "python",
                 "scripts/validate_ctd.py"
             ],
+            "options": {
+                "cwd": "${workspaceFolder}/cebbys-ctd-loader"
+            },
             "group": "none",
             "presentation": {
                 "echo": true,

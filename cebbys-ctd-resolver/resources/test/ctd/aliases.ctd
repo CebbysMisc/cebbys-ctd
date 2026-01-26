@@ -1,0 +1,15 @@
+// Test file: Alias declarations
+import "std-types"
+import "structures"
+
+namespace test::aliases {
+    use std::lib
+    use test::structures
+
+    // Type alias for Guid
+    alias Guid InterfaceId
+
+    // Pointer alias
+    alias InterfaceId IID
+    alias IID* REFIID
+}

@@ -1,0 +1,22 @@
+// Test file: Interface declarations
+import "std-types"
+
+namespace test::interfaces {
+    use std::lib
+
+    // Basic interface with methods
+    interface IUnknown {
+        Int4 QueryInterface(
+            Unt4 interfaceId,
+            Any* vtable
+        )
+        Unt4 AddRef()
+        Unt4 Release()
+    }
+
+    // Interface with extension (base type)
+    interface IDispatch : IUnknown {
+        Int4 GetTypeInfoCount(Unt4* count)
+        Int4 GetTypeInfo(Unt4 index, Unt4 lcid, Any* typeInfo)
+    }
+}
