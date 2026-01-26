@@ -4,14 +4,13 @@
 This script loads all CTD files from resources/ctd and displays
 the loaded datatypes. If an error occurs, it logs the exception.
 """
+import lv.cebbys.languages.ctd as Ctd
 import pathlib as Pathlib
 import sys
 import traceback
 
 # Add sources to path
 sys.path.insert(0, str(Pathlib.Path(__file__).parent.parent / 'sources'))
-
-import lv.cebbys.languages.ctd as Ctd
 
 
 def main() -> int:
@@ -33,7 +32,7 @@ def main() -> int:
             print(f"Typedefs ({len(collection.typedefs)}):")
             print("-" * 40)
             for name, typedef in sorted(collection.typedefs.items()):
-                print(f"  {name}")
+                print(f"  {name} ({typedef} basetype)")
             print()
 
         # Print enums

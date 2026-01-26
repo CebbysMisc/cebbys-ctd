@@ -62,11 +62,6 @@ class MetaResolver:
         resolvers: list[Api.BaseResolver]
         resolver_class: type[Api.BaseResolver]
         resolver: Api.BaseResolver
-        typedefs: dict[str, Define.TypedefDefinition]
-        enums: dict[str, Define.EnumDefinition]
-        flags: dict[str, Define.FlagDefinition]
-        structures: dict[str, Define.StructureDefinition]
-        functions: dict[str, Define.FunctionDefinition]
 
         # Create context
         type_cache = {}
@@ -86,16 +81,24 @@ class MetaResolver:
         for resolver in resolvers:
             resolver.resolve_instances()
 
-        # Build final immutable collection
-        typedefs = {qn: t for qn, t in type_cache.items()
-                    if isinstance(t, Define.TypedefDefinition)}
-        enums = {qn: e for qn, e in type_cache.items()
-                 if isinstance(e, Define.EnumDefinition)}
-        flags = {qn: f for qn, f in type_cache.items()
-                 if isinstance(f, Define.FlagDefinition)}
-        structures = {qn: s for qn, s in type_cache.items()
-                      if isinstance(s, Define.StructureDefinition)}
-        functions = {qn: f for qn, f in type_cache.items()
-                     if isinstance(f, Define.FunctionDefinition)}
+        def filter[T](datatype: type[T]) -> dict[str, T]:
+            return {
+                qn: dt for qn, dt in type_cache.items()
+                if isinstance(dt, datatype)
+            }
 
-        return Define.DefinitionCollection(typedefs, enums, flags, structures, functions)
+        # Build final immutable collection
+        typedefs = filter(Define.TypedefDefinition)
+        enums = filter(Define.EnumDefinition)
+        flags = filter(Define.FlagDefinition)
+        structures = filter(Define.StructureDefinition)
+        functions = filter(Define.FunctionDefinition)
+        interfaces = filter(Define.FunctionDefinition)
+
+        return Define.DefinitionCollection(
+            typedefs,
+            enums,
+            flags,
+            structures,
+            functions
+        )

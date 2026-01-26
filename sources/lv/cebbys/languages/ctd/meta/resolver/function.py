@@ -14,10 +14,6 @@ class FunctionResolver(Api.BaseResolver):
         """
         function_meta: Meta.FunctionMeta
 
-        # Ensure functions collection exists
-        if self._context.meta_collection.functions is None:
-            return
-
         for function_meta in self._context.meta_collection.functions:
             qualified_name: str = f"{function_meta.namespace}::{function_meta.name}"
 
@@ -42,11 +38,6 @@ class FunctionResolver(Api.BaseResolver):
         Resolves all function type specifications using cached instances.
         """
         function_meta: Meta.FunctionMeta
-        function_def: Define.FunctionDefinition
-
-        # Ensure functions collection exists
-        if self._context.meta_collection.functions is None:
-            return
 
         for function_meta in self._context.meta_collection.functions:
             qualified_name: str = f"{function_meta.namespace}::{function_meta.name}"

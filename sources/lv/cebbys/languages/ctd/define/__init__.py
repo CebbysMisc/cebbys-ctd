@@ -9,6 +9,7 @@ from lv.cebbys.languages.ctd.define.enum import *
 from lv.cebbys.languages.ctd.define.flag import *
 from lv.cebbys.languages.ctd.define.structure import *
 from lv.cebbys.languages.ctd.define.function import *
+from lv.cebbys.languages.ctd.define.interface import *
 from lv.cebbys.languages.ctd.define.collection import *
 
 __all__ = [
@@ -31,6 +32,8 @@ __all__ = [
     # Structure
     'StructureMemberDefinition',
     'StructureDefinition',
+    # Interface,
+    'InterfaceDefinition',
     # Function
     'ParameterDefinition',
     'FunctionDefinition',

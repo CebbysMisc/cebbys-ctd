@@ -99,5 +99,11 @@ class DecoratableMeta(Meta):
         self._decorators = decorators
 
     @property
-    def decorators(self):
-        return self._decorators
+    def decorators(self) -> tuple[DecoratorMeta, ...]:
+        out: tuple[DecoratorMeta, ...] = ()
+        try:
+            if self._decorators:
+                out = self._decorators
+        except:
+            pass
+        return out

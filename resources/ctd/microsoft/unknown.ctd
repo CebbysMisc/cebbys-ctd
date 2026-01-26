@@ -6,6 +6,7 @@ namespace com::microsoft::windows {
     use com::microsoft::windows::guid
     use std::lib
 
+    @CType("Unknown.h", "IUnknown")
     interface IUnknown {
         HRESULT QueryInterface(
             REFIID interfaceId,

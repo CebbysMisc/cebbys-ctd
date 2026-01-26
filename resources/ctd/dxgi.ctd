@@ -34,14 +34,14 @@ namespace com::microsoft::direct::graphics::dxgi {
         RESTRICTED_TO_ALL_HOLOGRAPHIC_DISPLAYS
     }
 
-    enum ModeScanLineOrder : Unt4 {
+    enum ScanLineOrderMode : Unt4 {
         UNSPECIFIED       = 0
         PROGRESSIVE       = 1
         UPPER_FIELD_FIRST = 2
         LOWER_FIELD_FIRST = 3
     }
 
-    enum ModeScaling : Unt4 {
+    enum ScalingMode : Unt4 {
         UNSPECIFIED = 0
         CENTERED    = 1
         STRETCHED   = 2
@@ -74,7 +74,87 @@ namespace com::microsoft::direct::graphics::dxgi {
 
     @CType("dxgi.h", "IDXGIObject")
     interface DXGIObject : IUnknown {
+        HRESULT SetPrivateData(
+            REFGUID name,
+            Unt4 dataSize,
+            Any data
+        )
+
+        HRESULT SetPrivateDataInterface(
+            REFGUID name,
+            IUnknown* dataInterface
+        )
+
+        HRESULT GetPrivateData(
+            REFGUID name,
+            Unt4* dataSize,
+            Any data
+        )
+
+        HRESULT GetParent(
+            REFIID riid,
+            Any* parent
+        )
+    }
+
+    @CType("dxgi.h", "IDXGIObject")
+    interface IDXGIDeviceSubObject : DXGIObject {
+        HRESULT GetDevice(
+            REFIID riid,
+            Any* device
+        )
+    }
+
+    @CType("dxgi.h", "IDXGISwapChain")
+    interface IDXGISwapChain : IDXGIDeviceSubObject {
+        HRESULT Present( 
+            Unt4    SyncInterval,
+            Unt4    Flags
+        )
         
+        HRESULT GetBuffer( 
+            Unt4    buffer,
+            REFIID  riid,
+            Any*    surface
+        )
+        
+        HRESULT SetFullscreenState( 
+            BOOL            fullscreen,
+            IDXGIOutput*    target
+        )
+        
+        HRESULT GetFullscreenState( 
+            BOOL*           fullscreen,
+            IDXGIOutput**   target
+        )
+        
+        HRESULT GetDesc( 
+            DXGI_SWAP_CHAIN_DESC *pDesc
+        )
+        
+        HRESULT ResizeBuffers( 
+            Unt4 bufferCount,
+            Unt4 width,
+            Unt4 height,
+            Format newFormat,
+            Unt4 swapChainFlags
+        )
+        
+        HRESULT ResizeTarget( 
+            DXGI_MODE_DESC *pNewTargetParameters
+        )
+        
+        HRESULT GetContainingOutput( 
+            IDXGIOutput **ppOutput
+        )
+        
+        HRESULT GetFrameStatistics( 
+            DXGI_FRAME_STATISTICS *pStats
+        )
+        
+        HRESULT GetLastPresentCount( 
+            Unt4 *pLastPresentCount
+        )
     }
 
 
@@ -96,8 +176,8 @@ namespace com::microsoft::direct::graphics::dxgi {
         Unt4                height
         Rational            refreshRate
         Format              format
-        ModeScanLineOrder   scanLineOrdering
-        ModeScaling         scaling
+        ScanLineOrderMode   scanLineOrdering
+        ScalingMode         scaling
     }
 
     @CType("DXGI_SWAP_CHAIN_DESC")
