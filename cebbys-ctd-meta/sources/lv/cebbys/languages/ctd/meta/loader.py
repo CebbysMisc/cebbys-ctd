@@ -15,6 +15,34 @@ from lv.cebbys.languages.ctd.antlr4 import CtdLexer as GtdLexer
 __all__ = ['MetaLoader']
 
 
+# class CtdParser:
+#     # TODO: This will be the class exposing API to parse the contents into the ANTLR types
+#     def parse_file(self, *args: Typing.Any):
+#         content: str
+
+#         length = len(args)
+#         if length == 1:
+#             argument: Typing.Any = args[0]
+#             if isinstance(argument, Pathlib.Path):
+#                 # TODO: Implement file type validation, if path points to file, only then read it
+#                 content = argument.read_text(encoding="utf-8")
+#             else:
+#                 content = argument
+#             return self._create_parser(content)
+#         types = [type(a) for a in args]
+#         raise BaseException(f"Not implemented 'CtdParser.parse_file' for arguments ({types})")
+
+#     def _create_parser(self, content: str):
+#         try:
+#             input = Antlr4.InputStream(content)
+#             lexer = Generated.CtdLexer(input)
+#             stream = Antlr4.CommonTokenStream(lexer)
+#             parser = Generated.CtdParser(stream)
+#             return parser
+#         except BaseException as e:
+#             raise BaseException("Failed to parse CTD content") from e
+
+
 class MetaLoader:
     """Loads and parses CTD files into metadata."""
 
