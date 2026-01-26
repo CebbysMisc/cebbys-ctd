@@ -4,13 +4,14 @@
 This script loads all CTD files from resources/ctd and displays
 the loaded datatypes. If an error occurs, it logs the exception.
 """
-import lv.cebbys.languages.ctd as Ctd
 import pathlib as Pathlib
 import sys
 import traceback
 
-# Add sources to path
+# Add sources to path (must be before importing lv.cebbys modules)
 sys.path.insert(0, str(Pathlib.Path(__file__).parent.parent / 'sources'))
+
+import lv.cebbys.languages.ctd as Ctd
 
 
 def main() -> int:
