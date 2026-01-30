@@ -5,12 +5,8 @@ This module handles loading and parsing CTD files into metadata.
 import lv.cebbys.languages.ctd.types.__api__ as Api
 import lv.cebbys.languages.ctd.types.meta.collection as CollectionModule
 import lv.cebbys.languages.ctd.meta.visitor as Visitor
-
+import lv.cebbys.languages.ctd.antlr4 as Antlr4
 import typing as Typing
-import antlr4 as Antlr4
-
-from lv.cebbys.languages.ctd.antlr4 import CtdParser as GtdParser
-from lv.cebbys.languages.ctd.antlr4 import CtdLexer as GtdLexer
 
 __all__ = ['MetaLoader']
 
@@ -108,7 +104,7 @@ class MetaLoader:
             collection: Collection to add parsed types to
             namespace_uses: Dictionary to merge namespace use declarations
         """
-        parse_tree: GtdParser.CompilationUnitContext
+        parse_tree: Antlr4.CtdParser.CompilationUnitContext
         visitor: Visitor.MetaVisitor
 
         # Parse the file
@@ -127,7 +123,7 @@ class MetaLoader:
                 namespace_uses[ns] = []
             namespace_uses[ns].extend(used_list)
 
-    def _parse_file(self, file_path: Api.FilePath) -> GtdParser.CompilationUnitContext:
+    def _parse_file(self, file_path: Api.FilePath) -> Antlr4.CtdParser.CompilationUnitContext:
         """Parse a CTD file using ANTLR4.
 
         Args:
@@ -136,11 +132,11 @@ class MetaLoader:
         Returns:
             Parse tree root node
         """
-        content: str
-        input_stream: Antlr4.InputStream
-        lexer: GtdLexer
-        token_stream: Antlr4.CommonTokenStream
-        parser: GtdParser
+        content:        str
+        input_stream:   Antlr4.InputStream
+        lexer:          Antlr4.CtdLexer
+        token_stream:   Antlr4.CommonTokenStream
+        parser:         Antlr4.CtdParser
 
         # Read file content
         content = file_path.read_text(encoding='utf-8')
@@ -149,13 +145,13 @@ class MetaLoader:
         input_stream = Antlr4.InputStream(content)
 
         # Create lexer
-        lexer = GtdLexer(input_stream)
+        lexer = Antlr4.CtdLexer(input_stream)
 
         # Create token stream
         token_stream = Antlr4.CommonTokenStream(lexer)
 
         # Create parser
-        parser = GtdParser(token_stream)
+        parser = Antlr4.CtdParser(token_stream)
 
         # Parse and return compilation unit
         return parser.compilationUnit()
