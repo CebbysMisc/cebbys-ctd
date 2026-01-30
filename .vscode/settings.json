@@ -7,8 +7,7 @@
         "${workspaceFolder}/cebbys-ctd-loader/sources"
     ],
     "python.analysis.ignore": [
-        "**/lv/cebbys/languages/ctd/antlr4/**",
-        "**/lv/cebbys/languages/ctd/meta/visitor.py"
+        "**/lv/cebbys/languages/ctd/antlr4/**"
     ],
     // "python.analysis.stubPath": "hints",
     "python.testing.pytestEnabled": true,
