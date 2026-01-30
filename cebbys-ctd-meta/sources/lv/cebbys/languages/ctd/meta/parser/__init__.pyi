@@ -26,6 +26,9 @@ class CtdMetaParser:
     @staticmethod
     def parse_typespec(ctx: Antlr4.CtdGrammar.TypeSpecContext) -> str: ...
 
+    @staticmethod
+    def parse_declaration(namespace: str, ctx: Antlr4.CtdGrammar.DeclarationContext) -> Meta.DeclarationMeta: ...
+
     # Declaration parser methods
 
     @staticmethod

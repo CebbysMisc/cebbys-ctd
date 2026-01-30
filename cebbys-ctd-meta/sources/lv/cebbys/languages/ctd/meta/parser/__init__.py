@@ -3,6 +3,7 @@ import lv.cebbys.languages.ctd.meta.parser.namespace as _NamespaceModule
 import lv.cebbys.languages.ctd.meta.parser.include as _IncludeModule
 import lv.cebbys.languages.ctd.meta.parser.decorator as _DecoratorModule
 import lv.cebbys.languages.ctd.meta.parser.typespec as _TypeSpecModule
+import lv.cebbys.languages.ctd.meta.parser.declaration as _DeclarationModule
 import lv.cebbys.languages.ctd.meta.parser.typedef as _TypedefModule
 import lv.cebbys.languages.ctd.meta.parser.alias as _AliasModule
 import lv.cebbys.languages.ctd.meta.parser.enum as _EnumModule
@@ -42,6 +43,10 @@ class CtdMetaParser:
     @staticmethod
     def parse_typespec(ctx: _Antlr4.CtdGrammar.TypeSpecContext):
         return _TypeSpecModule.CtdTypeSpecContextParser.instance().parse(ctx)
+
+    @staticmethod
+    def parse_declaration(namespace: str, ctx: _Antlr4.CtdGrammar.DeclarationContext):
+        return _DeclarationModule.CtdDeclarationContextParser.instance().parse(namespace, ctx)
 
     # Declaration parser methods
 
