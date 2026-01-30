@@ -52,19 +52,16 @@ class DecoratorMeta:
     def __init__(
         self,
         name: str,
-        arguments: list[str] | None = None
+        arguments: list[str] = []
     ):
         """Initialize decorator metadata.
 
         Args:
             name: The decorator name (e.g., "WinApi", "Nullable")
-            arguments: Optional list of argument values as strings
+            arguments: List of argument values as strings
         """
-        self._name: str
-        self._arguments: tuple[str, ...]
-
         self._name = name
-        self._arguments = tuple(arguments) if arguments is not None else ()
+        self._arguments = tuple(arguments)
 
     @property
     def name(self) -> str:
@@ -87,7 +84,7 @@ class DecoratorMeta:
 class DecoratableMeta(Meta):
     """Metadata base type with decorator support."""
 
-    def __init__(self, namespace: str, name: str, decorators: tuple[DecoratorMeta, ...] = ()) -> None:
+    def __init__(self, namespace: str, name: str, decorators: list[DecoratorMeta] = []) -> None:
         """Initialize decoratable metadata basetype.
 
         Args:
@@ -96,14 +93,12 @@ class DecoratableMeta(Meta):
             decorators: List of decorators (e.g., @Nullable)
         """
         super().__init__(namespace, name)
-        self._decorators = decorators
+        self._decorators = tuple(decorators)
 
     @property
     def decorators(self) -> tuple[DecoratorMeta, ...]:
-        out: tuple[DecoratorMeta, ...] = ()
-        try:
-            if self._decorators:
-                out = self._decorators
-        except:
-            pass
-        return out
+        return self._decorators
+
+
+class DeclarationMeta(DecoratableMeta):
+    ...

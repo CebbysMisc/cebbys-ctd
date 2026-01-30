@@ -75,8 +75,8 @@ class StructureMeta(Api.DeclarationMeta):
         name: str,
         namespace: Api.ModulePath,
         base_type: str | None = None,
-        members: list[StructureMemberMeta] | None = None,
-        decorators: list[Api.DecoratorMeta] | None = None
+        members: list[StructureMemberMeta] = [],
+        decorators: list[Api.DecoratorMeta] = []
     ):
         """Initialize structure metadata.
 
@@ -85,11 +85,11 @@ class StructureMeta(Api.DeclarationMeta):
             namespace: Qualified namespace path
             base_type: Optional base type specification
             members: List of structure members
-            decorators: Optional list of decorators
+            decorators: List of decorators
         """
-        super().__init__(namespace, name, decorators if decorators is not None else [])
+        super().__init__(namespace, name, decorators)
         self._base_type = base_type
-        self._members = members if members is not None else []
+        self._members = list(members)
 
     @property
     def base_type(self):
@@ -99,4 +99,4 @@ class StructureMeta(Api.DeclarationMeta):
     @property
     def members(self):
         """Get the structure members."""
-        return self._members
+        return list(self._members)

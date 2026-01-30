@@ -32,8 +32,8 @@ class InterfaceMeta(Api.DeclarationMeta):
         name: str,
         namespace: Api.ModulePath,
         base_type: str | None = None,
-        methods: list[FunctionModule.FunctionMeta] | None = None,
-        decorators: list[Api.DecoratorMeta] | None = None
+        methods: list[FunctionModule.FunctionMeta] = [],
+        decorators: list[Api.DecoratorMeta] = []
     ):
         """Initialize interface metadata.
 
@@ -42,11 +42,11 @@ class InterfaceMeta(Api.DeclarationMeta):
             namespace: Qualified namespace path
             base_type: Optional base type specification
             methods: List of interface method definitions
-            decorators: Optional list of decorators
+            decorators: List of decorators
         """
-        super().__init__(namespace, name, decorators if decorators is not None else [])
+        super().__init__(namespace, name, decorators)
         self._base_type = base_type
-        self._methods = methods if methods is not None else []
+        self._methods = list(methods)
 
     @property
     def base_type(self):
@@ -56,4 +56,4 @@ class InterfaceMeta(Api.DeclarationMeta):
     @property
     def methods(self):
         """Get the interface methods."""
-        return self._methods
+        return list(self._methods)

@@ -26,7 +26,7 @@ class CtdDecoratorContextParser(Api.CtdContextParserBase[Api.CtdParser.Decorator
                     arg_text = arg_text[1:-1]
                 arguments.append(arg_text)
 
-        return Meta.DecoratorMeta(name, arguments if arguments else None)
+        return Meta.DecoratorMeta(name, arguments)
 
     def parse_all(self, contexts: Iterable[Api.CtdParser.DecoratorContext]) -> list[Meta.DecoratorMeta]:
         """Parse multiple decorator contexts.

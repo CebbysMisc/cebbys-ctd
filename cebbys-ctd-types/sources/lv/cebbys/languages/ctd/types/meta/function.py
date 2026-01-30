@@ -23,22 +23,18 @@ class ParameterMeta:
         self,
         name: str,
         type_spec: str,
-        decorators: list[Api.DecoratorMeta] | None = None
+        decorators: list[Api.DecoratorMeta] = []
     ):
         """Initialize parameter metadata.
 
         Args:
             name: The parameter identifier
             type_spec: The type specification string
-            decorators: Optional list of decorators (e.g., @Nullable)
+            decorators: List of decorators (e.g., @Nullable)
         """
-        self._name: str
-        self._type_spec: str
-        self._decorators: tuple[Api.DecoratorMeta, ...]
-
         self._name = name
         self._type_spec = type_spec
-        self._decorators = tuple(decorators) if decorators is not None else ()
+        self._decorators = tuple(decorators)
 
     @property
     def name(self) -> str:
@@ -81,8 +77,8 @@ class FunctionMeta(Api.DeclarationMeta):
         name: str,
         namespace: Api.ModulePath,
         return_type: str,
-        parameters: list[ParameterMeta] | None = None,
-        decorators: list[Api.DecoratorMeta] | None = None
+        parameters: list[ParameterMeta] = [],
+        decorators: list[Api.DecoratorMeta] = []
     ):
         """Initialize function metadata.
 
@@ -91,11 +87,11 @@ class FunctionMeta(Api.DeclarationMeta):
             namespace: Qualified namespace path
             return_type: The return type specification
             parameters: List of function parameters
-            decorators: Optional list of decorators (e.g., @WinApi)
+            decorators: List of decorators (e.g., @WinApi)
         """
-        super().__init__(namespace, name, decorators if decorators is not None else [])
+        super().__init__(namespace, name, decorators)
         self._return_type = return_type
-        self._parameters = parameters if parameters is not None else []
+        self._parameters = list(parameters)
 
     @property
     def return_type(self) -> str:
@@ -105,4 +101,4 @@ class FunctionMeta(Api.DeclarationMeta):
     @property
     def parameters(self) -> list[ParameterMeta]:
         """Get the function parameters."""
-        return self._parameters
+        return list(self._parameters)

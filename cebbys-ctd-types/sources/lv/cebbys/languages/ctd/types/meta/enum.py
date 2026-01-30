@@ -71,8 +71,8 @@ class EnumMeta(Api.DeclarationMeta):
         name: str,
         namespace: Api.ModulePath,
         base_type: str | None = None,
-        members: list[EnumMemberMeta] | None = None,
-        decorators: list[Api.DecoratorMeta] | None = None
+        members: list[EnumMemberMeta] = [],
+        decorators: list[Api.DecoratorMeta] = []
     ):
         """Initialize enum metadata.
 
@@ -81,11 +81,11 @@ class EnumMeta(Api.DeclarationMeta):
             namespace: Qualified namespace path
             base_type: Optional base type specification
             members: List of enum members
-            decorators: Optional list of decorators
+            decorators: List of decorators
         """
-        super().__init__(namespace, name, decorators if decorators is not None else [])
+        super().__init__(namespace, name, decorators)
         self._base_type = base_type
-        self._members = members if members is not None else []
+        self._members = list(members)
 
     @property
     def base_type(self) -> str | None:
@@ -95,4 +95,4 @@ class EnumMeta(Api.DeclarationMeta):
     @property
     def members(self) -> list[EnumMemberMeta]:
         """Get the enum members."""
-        return self._members
+        return list(self._members)

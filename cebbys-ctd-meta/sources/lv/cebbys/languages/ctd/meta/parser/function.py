@@ -45,15 +45,15 @@ class CtdFunctionContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdParse
                 parameters.append(Meta.ParameterMeta(
                     param_name,
                     param_typespec,
-                    param_decorators if param_decorators else None
+                    param_decorators
                 ))
 
         return Meta.FunctionMeta(
             name,
             namespace,
             return_type,
-            parameters if parameters else None,
-            decorators if decorators else None
+            parameters,
+            decorators
         )
 
 
