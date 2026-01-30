@@ -1,8 +1,9 @@
+import lv.cebbys.languages.ctd.meta.parser.typespec as TypeSpecModule
 import lv.cebbys.languages.ctd.meta.parser.__api__ as Api
 import lv.cebbys.languages.ctd.types.meta as Meta
 
 
-class CtdImportContextParser(Api.CtdDeclaractionContextParser[Api.CtdParser.TypedefDeclarationContext, Meta.TypedefMeta]):
+class CtdTypedefContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdParser.TypedefDeclarationContext, Meta.TypedefMeta]):
     @staticmethod
     def instance() -> Api.CtdDeclaractionContextParser[Api.CtdParser.TypedefDeclarationContext, Meta.TypedefMeta]:
         return INSTANCE
@@ -15,11 +16,12 @@ class CtdImportContextParser(Api.CtdDeclaractionContextParser[Api.CtdParser.Type
             ctx:        Typedef declaration context
         """
         # Get typedef name
-        name = self._parseGetText(ctx.IDENTIFIER)
+        name = self.text(self.token(ctx, Api.CtdParser.IDENTIFIER))
         # Get type specification
-        type_spec = self._parseTypeSpec(ctx.typeSpec)
+        typespec_rule = self.rule(ctx, Api.CtdParser.TypeSpecContext)
+        typespec = TypeSpecModule.CtdTypeSpecContextParser.instance().parse(typespec_rule)
         # Create and add typedef metadata
-        return Meta.TypedefMeta(name, type_spec, namespace)
+        return Meta.TypedefMeta(name, typespec, namespace)
 
 
-INSTANCE = CtdImportContextParser()
+INSTANCE = CtdTypedefContextParser()

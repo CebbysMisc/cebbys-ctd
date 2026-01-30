@@ -4,73 +4,79 @@ from lv.cebbys.languages.ctd.antlr4 import CtdParser
 
 __all__ = ["CtdParser", "CtdContextParser"]
 
-T = Typing.TypeVar("T", bound=Antlr4.ParserRuleContext)
+R = Typing.TypeVar("R", bound=Antlr4.ParserRuleContext)
 O = Typing.TypeVar("O")
 
 
-class CtdContextParser(Antlr4.CtdVisitor, Typing.Generic[T, O]):
-    @staticmethod
-    def instance() -> 'CtdContextParser[T, O]': ...
+class ParserBase(Antlr4.CtdVisitor):
+    def rules[T1](self, ctx: Antlr4.ParserRuleContext, look: type[T1]) -> list[T1]:
+        return ctx.getTypedRuleContexts(look)  # type: ignore
 
-    def parse(self, ctx: T) -> O: ...
+    def rule[T1](self, ctx: Antlr4.ParserRuleContext, look: type[T1], index: int = 0) -> T1:
+        out = self.optional_rule(ctx, look, index)
+        if not out:
+            raise BaseException(f"Ctx: {ctx} must have rule: {look} at index: {index}")
+        return out
 
+    def optional_rule[T1](self, ctx: Antlr4.ParserRuleContext, look: type[T1], index: int = 0) -> T1 | None:
+        return ctx.getTypedRuleContext(look, index)  # type: ignore
 
-class CtdDeclaractionContextParser(Antlr4.CtdVisitor, Typing.Generic[T, O]):
-    @staticmethod
-    def instance() -> 'CtdDeclaractionContextParser[T, O]': ...
+    def tokens(self, ctx: Antlr4.ParserRuleContext, token: int) -> list[Antlr4.TerminalNode]:
+        return ctx.getTokens(token)  # type: ignore
 
-    def parse(self, namespace: str, ctx: T) -> O: ...
+    def token(self, ctx: Antlr4.ParserRuleContext, token: int, index: int = 0) -> Antlr4.TerminalNode:
+        out = self.optional_token(ctx, token, index)
+        if not out:
+            raise BaseException(f"Ctx: {ctx} must have token: {token} at index: {index}")
+        return out
 
-    def _parseGetText(self, callable: Typing.Callable[[], Typing.Any]) -> str:
-        ctx: SupportsGetText = callable()
-        return ctx.getText()
+    def optional_token(self, ctx: Antlr4.ParserRuleContext, token: int, index: int = 0) -> Antlr4.TerminalNode | None:
+        return ctx.getToken(token, index)  # type: ignore
 
-    def _parseTypeSpec(self, callable: Typing.Callable[[], Typing.Any]) -> str:
-        """Extract type specification as string.
+    def text(self, ctx: Typing.Any) -> str:
+        out = self.optional_text(ctx)
+        if not out:
+            raise BaseException(f"Ctx: {ctx} must have text property")
+        return out
+
+    def optional_text(self, ctx: Typing.Any) -> str | None:
+        try:
+            return ctx.getText()  # type: ignore
+        except:
+            return None
+
+    def qualified_name(self, ctx: Antlr4.CtdParser.QualifiedNameContext):
+        """Extract qualified name from context.
 
         Args:
-            ctx: Type spec context
+            ctx: Qualified name context
 
         Returns:
-            Type specification string
+            Qualified name as string (e.g., 'ns1::ns2::name')
         """
-        ctx: Antlr4.CtdParser.TypeSpecContext = callable()
-        parts: list[str]
-        array_ctx: Antlr4.CtdParser.ArrayModifierContext | None
-        pointer_ctx: Antlr4.CtdParser.PointerModifierContext | None
-
-        parts = []
-
-        # Handle sign modifier
-        if ctx.signModifier():
-            parts.append(self._parseGetText(ctx.signModifier))  # type: ignore
-
-        # Handle primitive type
-        if ctx.primitiveType():
-            parts.append(self._parseGetText(ctx.primitiveType))  # type: ignore
-
-        # Handle type reference
-        if ctx.typeReference():
-            parts.append(self._parseGetText(ctx.typeReference().qualifiedName))  # type: ignore
-
-        # Handle array modifier - check in typeSpec first, then in typeReference
-        array_ctx = ctx.arrayModifier()  # type: ignore
-        if array_ctx is None and ctx.typeReference():
-            array_ctx = ctx.typeReference().arrayModifier()  # type: ignore
-
-        if array_ctx:
-            parts.append(array_ctx.getText())  # type: ignore
-
-        # Handle pointer modifier - check in typeSpec first, then in typeReference
-        pointer_ctx = ctx.pointerModifier()  # type: ignore
-        if pointer_ctx is None and ctx.typeReference():
-            pointer_ctx = ctx.typeReference().pointerModifier()  # type: ignore
-
-        if pointer_ctx:
-            parts.append(pointer_ctx.getText())  # type: ignore
-
-        return ' '.join(parts)
+        return '::'.join([
+            self.text(id_token)
+            for id_token in self.tokens(ctx, Antlr4.CtdParser.IDENTIFIER)
+        ])
 
 
-class SupportsGetText:
-    def getText(self) -> str: ...
+class CtdContextParser(Typing.Generic[R, O]):
+    @staticmethod
+    def instance() -> 'CtdContextParser[R, O]': ...
+
+    def parse(self, ctx: R) -> O: ...
+
+
+class CtdDeclaractionContextParser(Typing.Generic[R, O]):
+    @staticmethod
+    def instance() -> 'CtdDeclaractionContextParser[R, O]': ...
+
+    def parse(self, namespace: str, ctx: R) -> O: ...
+
+
+class CtdContextParserBase(ParserBase, CtdContextParser[R, O]):
+    ...
+
+
+class CtdDeclaractionContextParserBase(ParserBase, CtdDeclaractionContextParser[R, O]):
+    ...
