@@ -1,4 +1,4 @@
-"""Tests for MetaParser.parseNamespaceDeclaration method."""
+"""Tests for CtdContextParser.parseNamespaceDeclaration method."""
 import lv.cebbys.languages.ctd.meta as Meta
 import lv.cebbys.languages.ctd.antlr4 as Antlr4
 from conftest import TestLogger
@@ -8,7 +8,7 @@ def test_parse_simple_namespace() -> None:
     """Test parsing a simple namespace."""
     TestLogger.header("MetaParser: Simple Namespace")
 
-    parser = Meta.MetaParser()
+    parser = Meta.CtdContextParser()
     result = parser.parseNamespaceDeclaration('''
         namespace example {
             typedef int MyInt
@@ -25,7 +25,7 @@ def test_parse_nested_namespace() -> None:
     """Test parsing a nested namespace."""
     TestLogger.header("MetaParser: Nested Namespace")
 
-    parser = Meta.MetaParser()
+    parser = Meta.CtdContextParser()
     result = parser.parseNamespaceDeclaration('''
         namespace foo::bar::baz {
             typedef int MyInt

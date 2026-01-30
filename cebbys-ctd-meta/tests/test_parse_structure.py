@@ -1,4 +1,4 @@
-"""Tests for MetaParser.parseStructureDeclaration method."""
+"""Tests for CtdContextParser.parseStructureDeclaration method."""
 import lv.cebbys.languages.ctd.meta as Meta
 import lv.cebbys.languages.ctd.antlr4 as Antlr4
 from conftest import TestLogger
@@ -8,7 +8,7 @@ def test_parse_simple_structure() -> None:
     """Test parsing a simple structure."""
     TestLogger.header("MetaParser: Simple Structure")
 
-    parser = Meta.MetaParser()
+    parser = Meta.CtdContextParser()
     result = parser.parseStructureDeclaration('''
         structure Point {
             Int4 x
@@ -26,7 +26,7 @@ def test_parse_structure_with_extension() -> None:
     """Test parsing a structure with base type."""
     TestLogger.header("MetaParser: Structure with Extension")
 
-    parser = Meta.MetaParser()
+    parser = Meta.CtdContextParser()
     result = parser.parseStructureDeclaration('''
         structure Point3D : Point {
             Int4 z
@@ -43,7 +43,7 @@ def test_parse_structure_with_pointer_member() -> None:
     """Test parsing a structure with pointer member."""
     TestLogger.header("MetaParser: Structure with Pointer")
 
-    parser = Meta.MetaParser()
+    parser = Meta.CtdContextParser()
     result = parser.parseStructureDeclaration('''
         structure Node {
             Int4 value
@@ -61,7 +61,7 @@ def test_parse_structure_with_array_member() -> None:
     """Test parsing a structure with array member."""
     TestLogger.header("MetaParser: Structure with Array")
 
-    parser = Meta.MetaParser()
+    parser = Meta.CtdContextParser()
     result = parser.parseStructureDeclaration('''
         structure Buffer {
             Unt4 size

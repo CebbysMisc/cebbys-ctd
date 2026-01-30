@@ -1,23 +1,23 @@
-"""Meta Parser
+"""CTD Context Parser
 
-This module provides the MetaParser class for parsing CTD content strings
-into ANTLR4 parse trees.
+This module provides the CtdContextParser class for parsing CTD content strings
+into ANTLR4 parse tree contexts.
 """
 import lv.cebbys.languages.ctd.antlr4 as Antlr4
 
-__all__ = ['MetaParser']
+__all__ = ['CtdContextParser']
 
 
-class MetaParser:
+class CtdContextParser:
     """Parser for CTD content strings.
 
-    MetaParser provides a high-level API for parsing CTD source code into
-    ANTLR4 parse trees. It handles the creation of lexer, token stream,
+    CtdContextParser provides a high-level API for parsing CTD source code into
+    ANTLR4 parse tree contexts. It handles the creation of lexer, token stream,
     and parser internally.
 
     Examples:
     ```python
-        parser = MetaParser()
+        parser = CtdContextParser()
 
         # Parse a full compilation unit
         parse_tree = parser.parseCompilationUnit('''

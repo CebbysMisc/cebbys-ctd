@@ -1,4 +1,4 @@
-"""Tests for MetaParser.parseEnumDeclaration method."""
+"""Tests for CtdContextParser.parseEnumDeclaration method."""
 import lv.cebbys.languages.ctd.meta as Meta
 import lv.cebbys.languages.ctd.antlr4 as Antlr4
 from conftest import TestLogger
@@ -8,7 +8,7 @@ def test_parse_simple_enum() -> None:
     """Test parsing a simple enum."""
     TestLogger.header("MetaParser: Simple Enum")
 
-    parser = Meta.MetaParser()
+    parser = Meta.CtdContextParser()
     result = parser.parseEnumDeclaration('''
         enum Color : Int4 {
             RED
@@ -27,7 +27,7 @@ def test_parse_enum_with_values() -> None:
     """Test parsing an enum with explicit values."""
     TestLogger.header("MetaParser: Enum with Values")
 
-    parser = Meta.MetaParser()
+    parser = Meta.CtdContextParser()
     result = parser.parseEnumDeclaration('''
         enum Status : Unt4 {
             OK = 0

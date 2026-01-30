@@ -1,4 +1,4 @@
-"""Tests for MetaParser.parseInterfaceDeclaration method."""
+"""Tests for CtdContextParser.parseInterfaceDeclaration method."""
 import lv.cebbys.languages.ctd.meta as Meta
 import lv.cebbys.languages.ctd.antlr4 as Antlr4
 from conftest import TestLogger
@@ -8,7 +8,7 @@ def test_parse_simple_interface() -> None:
     """Test parsing a simple interface."""
     TestLogger.header("MetaParser: Simple Interface")
 
-    parser = Meta.MetaParser()
+    parser = Meta.CtdContextParser()
     result = parser.parseInterfaceDeclaration('''
         interface IExample {
             Void doSomething()
@@ -26,7 +26,7 @@ def test_parse_interface_with_extension() -> None:
     """Test parsing an interface with base type."""
     TestLogger.header("MetaParser: Interface with Extension")
 
-    parser = Meta.MetaParser()
+    parser = Meta.CtdContextParser()
     result = parser.parseInterfaceDeclaration('''
         interface IExtended : IBase {
             Void extendedMethod()
@@ -43,7 +43,7 @@ def test_parse_interface_with_parameters() -> None:
     """Test parsing an interface with method parameters."""
     TestLogger.header("MetaParser: Interface with Parameters")
 
-    parser = Meta.MetaParser()
+    parser = Meta.CtdContextParser()
     result = parser.parseInterfaceDeclaration('''
         interface ICalculator {
             Int4 add(Int4 a, Int4 b)
