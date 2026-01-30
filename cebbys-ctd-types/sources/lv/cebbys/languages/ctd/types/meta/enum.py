@@ -5,8 +5,19 @@ __all__ = ['EnumMemberMeta', 'EnumMeta']
 
 
 class EnumMemberMeta:
-    """Metadata for an enum member."""
-    # TODO: Update class documentation to add description about usage and examples as in the alias.py, decorator.py, typedef.py
+    """Metadata for an enum member.
+
+    Enum members represent individual named values within an enum declaration.
+    Members can have explicit integer values or use auto-increment starting from 0.
+
+    Examples:
+    ```
+        UNKNOWN                 // Auto-increment value
+        HARDWARE                // Next auto-increment value
+        LEVEL_9_1  = 0x9100     // Explicit hex value
+        LEVEL_10_0 = 0xa000     // Explicit hex value
+    ```
+    """
 
     def __init__(self, name: str, value: int | None = None):
         """Initialize enum member metadata.
@@ -33,8 +44,27 @@ class EnumMemberMeta:
 
 
 class EnumMeta:
-    """Metadata for an enum declaration."""
-    # TODO: Update class documentation to add description about usage and examples as in the alias.py, decorator.py, typedef.py
+    """Metadata for an enum declaration.
+
+    Enums provide metadata for enumerated types with named integer constants.
+    An enum can optionally specify a base type and contains one or more members.
+    Members use sequential integer values starting from 0 unless explicit values are provided.
+
+    Examples:
+    ```
+        enum DriverType : Int4 {
+            UNKNOWN
+            HARDWARE
+            REFERENCE
+        }
+
+        enum FeatureLevel : Unt4 {
+            LEVEL_9_1  = 0x9100
+            LEVEL_10_0 = 0xa000
+            LEVEL_11_0 = 0xb000
+        }
+    ```
+    """
 
     def __init__(
         self,

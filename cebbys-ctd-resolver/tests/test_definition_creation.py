@@ -3,18 +3,13 @@
 Tests that meta objects are correctly transformed into Definition instances.
 At this stage, Definition objects are created but type references are not resolved.
 """
-import pathlib as Pathlib
-import sys
-sys.path.insert(0, str(Pathlib.Path(__file__).parent.parent))
-
 import lv.cebbys.languages.ctd.meta as MetaLoader
 import lv.cebbys.languages.ctd.resolver.__api__ as ResolverApi
 import lv.cebbys.languages.ctd.resolver.typedef as TypedefModule
 import lv.cebbys.languages.ctd.resolver.enum as EnumModule
 import lv.cebbys.languages.ctd.resolver.structure as StructureModule
 import lv.cebbys.languages.ctd.resolver.function as FunctionModule
-from test_utils import TestLogger
-from conftest import get_resource_path
+from conftest import TestLogger, get_resource_path
 
 
 def test_typedef_definition_creation() -> None:

@@ -5,8 +5,19 @@ __all__ = ['StructureMemberMeta', 'StructureMeta']
 
 
 class StructureMemberMeta:
-    """Metadata for a structure member."""
-    # TODO: Update class documentation to add description about usage and examples as in the alias.py, decorator.py, typedef.py
+    """Metadata for a structure member.
+
+    Structure members represent individual fields within a structure declaration.
+    Each member has a type specification and name. Types can include pointers,
+    arrays, and references to other defined types.
+
+    Examples:
+    ```
+        Unt4 numerator          // Simple member
+        Any vtable              // Pointer-like member
+        Unt1[8] data4           // Array member
+    ```
+    """
 
     def __init__(self, name: str, type_spec: str):
         """Initialize structure member metadata.
@@ -33,8 +44,31 @@ class StructureMemberMeta:
 
 
 class StructureMeta:
-    """Metadata for a structure declaration."""
-    # TODO: Update class documentation to add description about usage and examples as in the alias.py, decorator.py, typedef.py
+    """Metadata for a structure declaration.
+
+    Structures define composite types with named member fields.
+    A structure can optionally extend another structure (base type) and contains
+    zero or more member declarations. Members are defined with their type and name.
+
+    Examples:
+    ```
+        structure Rational {
+            Unt4 numerator
+            Unt4 denominator
+        }
+
+        structure Guid {
+            Unt4 data1
+            Unt2 data2
+            Unt2 data3
+            Unt1[8] data4
+        }
+
+        structure ExtendedRational : Rational {
+            Unt4 precision
+        }
+    ```
+    """
 
     def __init__(
         self,

@@ -2,14 +2,9 @@
 
 Tests that type references are correctly resolved to singleton instances.
 """
-import pathlib as Pathlib
-import sys
-sys.path.insert(0, str(Pathlib.Path(__file__).parent.parent))
-
 import lv.cebbys.languages.ctd.loader as Loader
 import lv.cebbys.languages.ctd.types.define as Define
-from test_utils import TestLogger
-from conftest import get_resource_path
+from conftest import TestLogger, get_resource_path
 
 # Test CTD files to load (order matters for dependencies)
 TEST_CTD_FILES = [

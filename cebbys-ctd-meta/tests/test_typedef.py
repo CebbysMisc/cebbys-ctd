@@ -1,10 +1,7 @@
 """Stage 1: Test typedef meta loading."""
 import pathlib as Pathlib
-import sys
-sys.path.insert(0, str(Pathlib.Path(__file__).parent.parent))
 
-from tests.conftest import parse_ctd_file
-from test_utils import TestLogger
+from conftest import parse_ctd_file, TestLogger
 
 
 def test_typedef_parsing() -> None:

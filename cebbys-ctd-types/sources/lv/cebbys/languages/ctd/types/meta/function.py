@@ -6,8 +6,19 @@ __all__ = ['ParameterMeta', 'FunctionMeta']
 
 
 class ParameterMeta:
-    """Metadata for a function parameter."""
-    # TODO: Update class documentation to add description about usage and examples as in the alias.py, decorator.py, typedef.py
+    """Metadata for a function parameter.
+
+    Parameters represent individual arguments in a function declaration.
+    Each parameter has a type specification and name, and can optionally
+    have decorators like @Nullable to indicate special semantics.
+
+    Examples:
+    ```
+        Unt4                    sdkVersion      // Simple parameter
+        FeatureLevel*           featureLevels   // Pointer parameter
+        @Nullable Adapter*      adapter         // Decorated parameter
+    ```
+    """
 
     def __init__(
         self,
@@ -47,8 +58,24 @@ class ParameterMeta:
 
 
 class FunctionMeta:
-    """Metadata for a function declaration."""
-    # TODO: Update class documentation to add description about usage and examples as in the alias.py, decorator.py, typedef.py
+    """Metadata for a function declaration.
+
+    Functions define callable signatures with a return type, name, and parameters.
+    Functions can have decorators (e.g., @WinApi) and parameters can also be
+    decorated (e.g., @Nullable). Functions are declared at namespace scope.
+
+    Examples:
+    ```
+        @WinApi
+        ResultCode CreateDeviceAndSwapChain(
+            @Nullable Adapter*  adapter,
+            DriverType          driverType,
+            Unt4                sdkVersion,
+        )
+
+        Unt4 AddRef()
+    ```
+    """
 
     def __init__(
         self,

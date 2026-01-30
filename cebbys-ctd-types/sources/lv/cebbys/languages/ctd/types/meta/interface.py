@@ -6,8 +6,26 @@ __all__ = ['InterfaceMeta']
 
 
 class InterfaceMeta:
-    """Metadata for an interface declaration."""
-    # TODO: Update class documentation to add description about usage and examples as in the alias.py, decorator.py, typedef.py
+    """Metadata for an interface declaration.
+
+    Interfaces define contracts with method signatures that implementations must provide.
+    An interface can optionally extend another interface (base type) and contains
+    zero or more method declarations. Methods are defined using function syntax.
+
+    Examples:
+    ```
+        interface IUnknown {
+            Int4 QueryInterface(Unt4 interfaceId, Any* vtable)
+            Unt4 AddRef()
+            Unt4 Release()
+        }
+
+        interface IDispatch : IUnknown {
+            Int4 GetTypeInfoCount(Unt4* count)
+            Int4 GetTypeInfo(Unt4 index, Unt4 lcid, Any* typeInfo)
+        }
+    ```
+    """
 
     def __init__(
         self,

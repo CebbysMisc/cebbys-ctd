@@ -5,8 +5,21 @@ __all__ = ['FlagMemberMeta', 'FlagMeta']
 
 
 class FlagMemberMeta:
-    """Metadata for a flag member."""
-    # TODO: Update class documentation to add description about usage and examples as in the alias.py, decorator.py, typedef.py
+    """Metadata for a flag member.
+
+    Flag members represent individual bit flags within a flag declaration.
+    Members use bit-shifted values (0x1, 0x2, 0x4, 0x8, etc.) by default,
+    or can specify explicit hex values. After an explicit value, bit-shifting
+    continues from that position.
+
+    Examples:
+    ```
+        SINGLETHREADED              // 0x1 (auto bit-shift)
+        DEBUG                       // 0x2 (auto bit-shift)
+        BGRA_SUPPORT = 0x20         // Explicit value
+        DEBUGGABLE                  // 0x40 (continues from 0x20)
+    ```
+    """
 
     def __init__(self, name: str, value: int | None = None):
         """Initialize flag member metadata.
@@ -35,11 +48,22 @@ class FlagMemberMeta:
 class FlagMeta:
     """Metadata for a flag declaration.
 
-    Flags are similar to enums but with bit-shifted values:
-    - First member starts at 0x1 (1)
-    - Each subsequent member is bit-shifted: 0x2, 0x4, 0x8, etc.
-    - Manual offsets can be specified (e.g., BGRA_SUPPORT = 0x20)
-    - After a manual offset, bit-shifting continues from that value
+    Flags are similar to enums but with bit-shifted values.
+    The first member starts at 0x1, and each subsequent member is bit-shifted
+    (0x2, 0x4, 0x8, etc.). Manual offsets can be specified, after which
+    bit-shifting continues from that value.
+
+    Examples:
+    ```
+        flag CreateDeviceFlag : Unt4 {
+            SINGLETHREADED
+            DEBUG
+            SWITCH_TO_REF
+            BGRA_SUPPORT = 0x20
+            DEBUGGABLE
+            VIDEO_SUPPORT
+        }
+    ```
     """
 
     def __init__(

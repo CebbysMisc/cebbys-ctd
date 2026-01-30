@@ -1,19 +1,45 @@
 [project]
 name = "cebbys-ctd"
 version = "0.1.0"
-description = "Add your description here"
+description = "Custom Type Definition Language"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = [
-    "antlr4-python3-runtime>=4.13.2",
-    "pytest>=9.0.2",
+dependencies = []
+
+[tool.uv.workspace]
+members = [
+    "cebbys-ctd-antlr4",
+    "cebbys-ctd-types",
+    "cebbys-ctd-meta",
+    "cebbys-ctd-resolver",
+    "cebbys-ctd-loader",
 ]
+
+[tool.uv.sources]
+cebbys-ctd-antlr4 = { workspace = true }
+cebbys-ctd-types = { workspace = true }
+cebbys-ctd-meta = { workspace = true }
+cebbys-ctd-resolver = { workspace = true }
+cebbys-ctd-loader = { workspace = true }
 
 [dependency-groups]
 dev = [
     "antlr4-tools>=0.2.2",
     "types-antlr4-python3-runtime>=4.13.0.20251118",
+    "pytest>=9.0.2",
 ]
 
 [tool.pytest.ini_options]
-pythonpath = ["sources"]
+pythonpath = [
+    "cebbys-ctd-antlr4/sources",
+    "cebbys-ctd-types/sources",
+    "cebbys-ctd-meta/sources",
+    "cebbys-ctd-resolver/sources",
+    "cebbys-ctd-loader/sources",
+]
+testpaths = [
+    "cebbys-ctd-antlr4/tests",
+    "cebbys-ctd-meta/tests",
+    "cebbys-ctd-resolver/tests",
+]
+addopts = "--import-mode=importlib"

@@ -18,12 +18,5 @@ packages = ["sources/lv"]
 [tool.hatch.build.targets.wheel.force-include]
 "sources/lv/cebbys/languages/ctd/antlr4/__generated__" = "lv/cebbys/languages/ctd/antlr4/__generated__"
 
-[dependency-groups]
-dev = [
-    "antlr4-tools>=0.2.2",
-    "types-antlr4-python3-runtime>=4.13.0.20251118",
-    "pytest>=9.0.2",
-]
-
 [tool.pytest.ini_options]
 pythonpath = ["sources"]
