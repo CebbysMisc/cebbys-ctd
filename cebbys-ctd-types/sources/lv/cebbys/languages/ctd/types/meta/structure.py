@@ -43,7 +43,7 @@ class StructureMemberMeta:
         return self._type_spec
 
 
-class StructureMeta:
+class StructureMeta(Api.DeclarationMeta):
     """Metadata for a structure declaration.
 
     Structures define composite types with named member fields.
@@ -75,30 +75,21 @@ class StructureMeta:
         name: str,
         namespace: Api.ModulePath,
         base_type: str | None = None,
-        members: list[StructureMemberMeta] | None = None
+        members: list[StructureMemberMeta] | None = None,
+        decorators: list[Api.DecoratorMeta] | None = None
     ):
         """Initialize structure metadata.
 
         Args:
             name: The structure identifier
             namespace: Qualified namespace path
+            base_type: Optional base type specification
             members: List of structure members
+            decorators: Optional list of decorators
         """
-
-        self._name = name
-        self._namespace = namespace
+        super().__init__(namespace, name, decorators if decorators is not None else [])
         self._base_type = base_type
         self._members = members if members is not None else []
-
-    @property
-    def name(self):
-        """Get the structure name."""
-        return self._name
-
-    @property
-    def namespace(self):
-        """Get the namespace."""
-        return self._namespace
 
     @property
     def base_type(self):

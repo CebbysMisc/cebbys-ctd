@@ -1,4 +1,5 @@
 import lv.cebbys.languages.ctd.meta.parser.typespec as TypeSpecModule
+import lv.cebbys.languages.ctd.meta.parser.decorator as DecoratorModule
 import lv.cebbys.languages.ctd.meta.parser.__api__ as Api
 import lv.cebbys.languages.ctd.types.meta as Meta
 
@@ -21,6 +22,11 @@ class CtdStructureContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdPars
         typespec_ctx = self.optional_rule(ctx, Api.CtdParser.TypeSpecContext)
         base_type = TypeSpecModule.CtdTypeSpecContextParser.instance().parse(typespec_ctx) if typespec_ctx else None
 
+        # Parse decorators
+        decorators = DecoratorModule.CtdDecoratorContextParser.instance().parse_all(
+            self.rules(ctx, Api.CtdParser.DecoratorContext)
+        )
+
         # Parse members
         members: list[Meta.StructureMemberMeta] = []
         member_list_ctx = self.optional_rule(ctx, Api.CtdParser.StructureMemberListContext)
@@ -31,7 +37,7 @@ class CtdStructureContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdPars
                 member_typespec = TypeSpecModule.CtdTypeSpecContextParser.instance().parse(member_typespec_ctx)
                 members.append(Meta.StructureMemberMeta(member_name, member_typespec))
 
-        return Meta.StructureMeta(name, namespace, base_type, members)
+        return Meta.StructureMeta(name, namespace, base_type, members, decorators)
 
 
 INSTANCE = CtdStructureContextParser()

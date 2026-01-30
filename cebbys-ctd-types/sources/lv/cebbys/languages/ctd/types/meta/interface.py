@@ -5,7 +5,7 @@ import lv.cebbys.languages.ctd.types.meta.__api__ as Api
 __all__ = ['InterfaceMeta']
 
 
-class InterfaceMeta:
+class InterfaceMeta(Api.DeclarationMeta):
     """Metadata for an interface declaration.
 
     Interfaces define contracts with method signatures that implementations must provide.
@@ -32,29 +32,21 @@ class InterfaceMeta:
         name: str,
         namespace: Api.ModulePath,
         base_type: str | None = None,
-        methods: list[FunctionModule.FunctionMeta] | None = None
+        methods: list[FunctionModule.FunctionMeta] | None = None,
+        decorators: list[Api.DecoratorMeta] | None = None
     ):
         """Initialize interface metadata.
 
         Args:
             name: The interface identifier
             namespace: Qualified namespace path
+            base_type: Optional base type specification
             methods: List of interface method definitions
+            decorators: Optional list of decorators
         """
-        self._name = name
-        self._namespace = namespace
+        super().__init__(namespace, name, decorators if decorators is not None else [])
         self._base_type = base_type
         self._methods = methods if methods is not None else []
-
-    @property
-    def name(self):
-        """Get the interface name."""
-        return self._name
-
-    @property
-    def namespace(self):
-        """Get the namespace."""
-        return self._namespace
 
     @property
     def base_type(self):

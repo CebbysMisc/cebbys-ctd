@@ -45,7 +45,7 @@ class FlagMemberMeta:
         return self._value
 
 
-class FlagMeta:
+class FlagMeta(Api.DeclarationMeta):
     """Metadata for a flag declaration.
 
     Flags are similar to enums but with bit-shifted values.
@@ -71,7 +71,8 @@ class FlagMeta:
         name: str,
         namespace: Api.ModulePath,
         base_type: str | None = None,
-        members: list[FlagMemberMeta] | None = None
+        members: list[FlagMemberMeta] | None = None,
+        decorators: list[Api.DecoratorMeta] | None = None
     ):
         """Initialize flag metadata.
 
@@ -80,26 +81,11 @@ class FlagMeta:
             namespace: Qualified namespace path
             base_type: Optional base type specification
             members: List of flag members
+            decorators: Optional list of decorators
         """
-        self._name: str
-        self._namespace: Api.ModulePath
-        self._base_type: str | None
-        self._members: list[FlagMemberMeta]
-
-        self._name = name
-        self._namespace = namespace
+        super().__init__(namespace, name, decorators if decorators is not None else [])
         self._base_type = base_type
         self._members = members if members is not None else []
-
-    @property
-    def name(self) -> str:
-        """Get the flag name."""
-        return self._name
-
-    @property
-    def namespace(self) -> Api.ModulePath:
-        """Get the namespace."""
-        return self._namespace
 
     @property
     def base_type(self) -> str | None:

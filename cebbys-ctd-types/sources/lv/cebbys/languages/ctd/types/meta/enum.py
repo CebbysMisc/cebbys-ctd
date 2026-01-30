@@ -43,7 +43,7 @@ class EnumMemberMeta:
         return self._value
 
 
-class EnumMeta:
+class EnumMeta(Api.DeclarationMeta):
     """Metadata for an enum declaration.
 
     Enums provide metadata for enumerated types with named integer constants.
@@ -71,7 +71,8 @@ class EnumMeta:
         name: str,
         namespace: Api.ModulePath,
         base_type: str | None = None,
-        members: list[EnumMemberMeta] | None = None
+        members: list[EnumMemberMeta] | None = None,
+        decorators: list[Api.DecoratorMeta] | None = None
     ):
         """Initialize enum metadata.
 
@@ -80,21 +81,11 @@ class EnumMeta:
             namespace: Qualified namespace path
             base_type: Optional base type specification
             members: List of enum members
+            decorators: Optional list of decorators
         """
-        self._name = name
-        self._namespace = namespace
+        super().__init__(namespace, name, decorators if decorators is not None else [])
         self._base_type = base_type
         self._members = members if members is not None else []
-
-    @property
-    def name(self) -> str:
-        """Get the enum name."""
-        return self._name
-
-    @property
-    def namespace(self) -> Api.ModulePath:
-        """Get the namespace."""
-        return self._namespace
 
     @property
     def base_type(self) -> str | None:

@@ -1,5 +1,4 @@
 """Function Meta Module"""
-import lv.cebbys.languages.ctd.types.meta.decorator as DecoratorModule
 import lv.cebbys.languages.ctd.types.meta.__api__ as Api
 
 __all__ = ['ParameterMeta', 'FunctionMeta']
@@ -24,7 +23,7 @@ class ParameterMeta:
         self,
         name: str,
         type_spec: str,
-        decorators: list[DecoratorModule.DecoratorMeta] | None = None
+        decorators: list[Api.DecoratorMeta] | None = None
     ):
         """Initialize parameter metadata.
 
@@ -35,7 +34,7 @@ class ParameterMeta:
         """
         self._name: str
         self._type_spec: str
-        self._decorators: tuple[DecoratorModule.DecoratorMeta, ...]
+        self._decorators: tuple[Api.DecoratorMeta, ...]
 
         self._name = name
         self._type_spec = type_spec
@@ -52,12 +51,12 @@ class ParameterMeta:
         return self._type_spec
 
     @property
-    def decorators(self) -> tuple[DecoratorModule.DecoratorMeta, ...]:
+    def decorators(self) -> tuple[Api.DecoratorMeta, ...]:
         """Get the parameter decorators (immutable)."""
         return self._decorators
 
 
-class FunctionMeta:
+class FunctionMeta(Api.DeclarationMeta):
     """Metadata for a function declaration.
 
     Functions define callable signatures with a return type, name, and parameters.
@@ -83,7 +82,7 @@ class FunctionMeta:
         namespace: Api.ModulePath,
         return_type: str,
         parameters: list[ParameterMeta] | None = None,
-        decorators: list[DecoratorModule.DecoratorMeta] | None = None
+        decorators: list[Api.DecoratorMeta] | None = None
     ):
         """Initialize function metadata.
 
@@ -94,27 +93,9 @@ class FunctionMeta:
             parameters: List of function parameters
             decorators: Optional list of decorators (e.g., @WinApi)
         """
-        self._name: str
-        self._namespace: Api.ModulePath
-        self._return_type: str
-        self._parameters: list[ParameterMeta]
-        self._decorators: tuple[DecoratorModule.DecoratorMeta, ...]
-
-        self._name = name
-        self._namespace = namespace
+        super().__init__(namespace, name, decorators if decorators is not None else [])
         self._return_type = return_type
         self._parameters = parameters if parameters is not None else []
-        self._decorators = tuple(decorators) if decorators is not None else ()
-
-    @property
-    def name(self) -> str:
-        """Get the function name."""
-        return self._name
-
-    @property
-    def namespace(self) -> Api.ModulePath:
-        """Get the namespace."""
-        return self._namespace
 
     @property
     def return_type(self) -> str:
@@ -125,8 +106,3 @@ class FunctionMeta:
     def parameters(self) -> list[ParameterMeta]:
         """Get the function parameters."""
         return self._parameters
-
-    @property
-    def decorators(self) -> tuple[DecoratorModule.DecoratorMeta, ...]:
-        """Get the function decorators (immutable)."""
-        return self._decorators

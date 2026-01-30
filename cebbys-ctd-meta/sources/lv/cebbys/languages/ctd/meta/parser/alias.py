@@ -1,4 +1,5 @@
 import lv.cebbys.languages.ctd.meta.parser.typespec as TypeSpecModule
+import lv.cebbys.languages.ctd.meta.parser.decorator as DecoratorModule
 import lv.cebbys.languages.ctd.meta.parser.__api__ as Api
 import lv.cebbys.languages.ctd.types.meta as Meta
 
@@ -18,7 +19,11 @@ class CtdAliasContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdParser.A
         name = self.text(self.token(ctx, Api.CtdParser.IDENTIFIER))
         typespec_rule = self.rule(ctx, Api.CtdParser.TypeSpecContext)
         typespec = TypeSpecModule.CtdTypeSpecContextParser.instance().parse(typespec_rule)
-        return Meta.AliasMeta(name, typespec, namespace)
+        # Parse decorators
+        decorators = DecoratorModule.CtdDecoratorContextParser.instance().parse_all(
+            self.rules(ctx, Api.CtdParser.DecoratorContext)
+        )
+        return Meta.AliasMeta(name, typespec, namespace, decorators)
 
 
 INSTANCE = CtdAliasContextParser()
