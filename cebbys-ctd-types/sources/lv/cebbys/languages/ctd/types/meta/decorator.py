@@ -21,19 +21,16 @@ class DecoratorMeta:
     def __init__(
         self,
         name: str,
-        arguments: list[str] | None = None
+        arguments: list[str] = []
     ):
         """Initialize decorator metadata.
 
         Args:
             name: The decorator name (e.g., "WinApi", "Nullable")
-            arguments: Optional list of argument values as strings
+            arguments: List of argument values as strings
         """
-        self._name: str
-        self._arguments: tuple[str, ...]
-
         self._name = name
-        self._arguments = tuple(arguments) if arguments is not None else ()
+        self._arguments = tuple(arguments)
 
     @property
     def name(self) -> str:
