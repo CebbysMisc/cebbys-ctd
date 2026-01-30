@@ -3,6 +3,8 @@
 This module provides the CtdContextParser class for parsing CTD content strings
 into ANTLR4 parse tree contexts.
 """
+import lv.cebbys.languages.ctd.meta.parser as Parser
+import lv.cebbys.languages.ctd.types.meta as Meta
 import lv.cebbys.languages.ctd.antlr4 as Antlr4
 
 __all__ = ['CtdInterpreter']
@@ -65,16 +67,17 @@ class CtdInterpreter:
     # Top-level parsing methods
     # =========================================================================
 
-    def moduleDeclaration(self, content: str) -> Antlr4.CtdParser.ModuleDeclarationContext:
+    def moduleDeclaration(self, content: str) -> Meta.ModuleMeta:
         """Parse a complete CTD source file.
 
         Args:
             content: Complete CTD source code
 
         Returns:
-            ModuleDeclarationContext parse tree
+            ModuleMeta with parsed content
         """
-        return self._createParser(content).moduleDeclaration()
+        ctx = self._createParser(content).moduleDeclaration()
+        return Parser.CtdParser().parse_module(ctx)
 
     def namespaceDeclaration(self, content: str) -> Antlr4.CtdParser.NamespaceDeclarationContext:
         """Parse a namespace declaration.

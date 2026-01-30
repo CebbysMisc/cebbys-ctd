@@ -1,25 +1,25 @@
-"""Tests for CtdContextParser.parseCompilationUnit method."""
+"""Tests for CtdInterpreter.moduleDeclaration method."""
 import lv.cebbys.languages.ctd.meta as Meta
-import lv.cebbys.languages.ctd.antlr4 as Antlr4
+import lv.cebbys.languages.ctd.types.meta as TypesMeta
 from conftest import TestLogger
 
 
 def test_parse_empty_compilation_unit() -> None:
     """Test parsing an empty compilation unit."""
-    TestLogger.header("MetaParser: Empty Compilation Unit")
+    TestLogger.header("CtdInterpreter: Empty Module Declaration")
 
     parser = Meta.CtdInterpreter()
     result = parser.moduleDeclaration("")
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.ModuleDeclarationContext)
-    TestLogger.success("Empty compilation unit parsed successfully")
+    assert isinstance(result, TypesMeta.ModuleMeta)
+    TestLogger.success("Empty module declaration parsed successfully")
     TestLogger.complete()
 
 
 def test_parse_compilation_unit_with_namespace() -> None:
     """Test parsing a compilation unit with a namespace."""
-    TestLogger.header("MetaParser: Compilation Unit with Namespace")
+    TestLogger.header("CtdInterpreter: Module with Namespace")
 
     parser = Meta.CtdInterpreter()
     result = parser.moduleDeclaration('''
@@ -29,14 +29,14 @@ def test_parse_compilation_unit_with_namespace() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.ModuleDeclarationContext)
-    TestLogger.success("Compilation unit with namespace parsed")
+    assert isinstance(result, TypesMeta.ModuleMeta)
+    TestLogger.success("Module with namespace parsed")
     TestLogger.complete()
 
 
 def test_parse_compilation_unit_with_import() -> None:
     """Test parsing a compilation unit with imports."""
-    TestLogger.header("MetaParser: Compilation Unit with Import")
+    TestLogger.header("CtdInterpreter: Module with Import")
 
     parser = Meta.CtdInterpreter()
     result = parser.moduleDeclaration('''
@@ -48,6 +48,6 @@ def test_parse_compilation_unit_with_import() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.ModuleDeclarationContext)
-    TestLogger.success("Compilation unit with import parsed")
+    assert isinstance(result, TypesMeta.ModuleMeta)
+    TestLogger.success("Module with import parsed")
     TestLogger.complete()
