@@ -77,7 +77,7 @@ class CtdInterpreter:
             ModuleMeta with parsed content
         """
         ctx = self._createParser(content).moduleDeclaration()
-        return Parser.CtdParser().parse_module(ctx)
+        return Parser.CtdParser.parse_module(ctx)
 
     def namespaceDeclaration(self, content: str) -> Antlr4.CtdParser.NamespaceDeclarationContext:
         """Parse a namespace declaration.
