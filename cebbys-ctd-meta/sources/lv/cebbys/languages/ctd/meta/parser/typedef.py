@@ -4,12 +4,12 @@ import lv.cebbys.languages.ctd.meta.parser.__api__ as Api
 import lv.cebbys.languages.ctd.types.meta as Meta
 
 
-class CtdTypedefContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdParser.TypedefDeclarationContext, Meta.TypedefMeta]):
+class CtdTypedefContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGrammar.TypedefDeclarationContext, Meta.TypedefMeta]):
     @staticmethod
-    def instance() -> Api.CtdDeclaractionContextParser[Api.CtdParser.TypedefDeclarationContext, Meta.TypedefMeta]:
+    def instance() -> Api.CtdDeclaractionContextParser[Api.CtdGrammar.TypedefDeclarationContext, Meta.TypedefMeta]:
         return INSTANCE
 
-    def parse(self, namespace: str, ctx: Api.CtdParser.TypedefDeclarationContext) -> Meta.TypedefMeta:
+    def parse(self, namespace: str, ctx: Api.CtdGrammar.TypedefDeclarationContext) -> Meta.TypedefMeta:
         """Visit typedef declaration and create TypedefMeta.
 
         Args:
@@ -17,13 +17,13 @@ class CtdTypedefContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdParser
             ctx:        Typedef declaration context
         """
         # Get typedef name
-        name = self.text(self.token(ctx, Api.CtdParser.IDENTIFIER))
+        name = self.text(self.token(ctx, Api.CtdGrammar.IDENTIFIER))
         # Get type specification
-        typespec_rule = self.rule(ctx, Api.CtdParser.TypeSpecContext)
+        typespec_rule = self.rule(ctx, Api.CtdGrammar.TypeSpecContext)
         typespec = TypeSpecModule.CtdTypeSpecContextParser.instance().parse(typespec_rule)
         # Parse decorators
         decorators = DecoratorModule.CtdDecoratorContextParser.instance().parse_all(
-            self.rules(ctx, Api.CtdParser.DecoratorContext)
+            self.rules(ctx, Api.CtdGrammar.DecoratorContext)
         )
         # Create and add typedef metadata
         return Meta.TypedefMeta(name, typespec, namespace, decorators)

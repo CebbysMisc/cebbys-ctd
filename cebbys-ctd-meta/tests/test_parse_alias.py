@@ -8,11 +8,11 @@ def test_parse_simple_alias() -> None:
     """Test parsing a simple alias."""
     TestLogger.header("MetaParser: Simple Alias")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.aliasDeclaration("alias Guid InterfaceId")
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.AliasDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.AliasDeclarationContext)
     TestLogger.success("Simple alias parsed")
     TestLogger.complete()
 
@@ -21,10 +21,10 @@ def test_parse_pointer_alias() -> None:
     """Test parsing an alias to a pointer type."""
     TestLogger.header("MetaParser: Pointer Alias")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.aliasDeclaration("alias IID* REFIID")
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.AliasDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.AliasDeclarationContext)
     TestLogger.success("Pointer alias parsed")
     TestLogger.complete()

@@ -1,6 +1,7 @@
 from lv.cebbys.languages.ctd.antlr4.__generated__.CtdVisitor import CtdVisitor
-from lv.cebbys.languages.ctd.antlr4.__generated__.CtdParser import CtdParser
+from lv.cebbys.languages.ctd.antlr4.__generated__.CtdParser import CtdParser as CtdGrammar
 from lv.cebbys.languages.ctd.antlr4.__generated__.CtdLexer import CtdLexer
+from lv.cebbys.languages.ctd.antlr4.parser import CtdParser
 
 from antlr4.Token import Token
 from antlr4.InputStream import InputStream
@@ -38,8 +39,10 @@ from antlr4.Utils import str_list
 __all__ = [
     # lv.cebbys.languages.ctd.antlr4.__generated__
     "CtdVisitor",
-    "CtdParser",
+    "CtdGrammar",
     "CtdLexer",
+    # lv.cebbys.languages.ctd.antlr4.parser
+    "CtdParser",
     # antlr4
     "Token",
     "InputStream",

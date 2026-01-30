@@ -4,7 +4,7 @@ import lv.cebbys.languages.ctd.types.meta.__api__ as Api
 __all__ = ['AliasMeta']
 
 
-class AliasMeta(Api.Meta):
+class AliasMeta(Api.DeclarationMeta):
     """Metadata for an alias declaration.
 
     Alias provide metadata for simple type renaming without creating a new type.
@@ -23,7 +23,8 @@ class AliasMeta(Api.Meta):
         self,
         name: str,
         type_spec: str,
-        namespace: Api.ModulePath
+        namespace: Api.ModulePath,
+        decorators: list[Api.DecoratorMeta] = []
     ) -> None:
         """Initialize alias metadata.
 
@@ -32,7 +33,7 @@ class AliasMeta(Api.Meta):
             type_spec: The type specification string
             namespace: Qualified namespace path
         """
-        super().__init__(namespace, name)
+        super().__init__(namespace, name, decorators)
         self._type_spec = type_spec
 
     @property

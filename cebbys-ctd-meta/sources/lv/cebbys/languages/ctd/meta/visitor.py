@@ -44,15 +44,15 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def visitModuleDeclaration(
         self,
-        ctx: Antlr4.CtdParser.ModuleDeclarationContext
+        ctx: Antlr4.CtdGrammar.ModuleDeclarationContext
     ) -> None:
         """Visit module declaration and process imports and namespace declarations.
 
         Args:
             ctx: Module declaration context
         """
-        import_ctx: Antlr4.CtdParser.ImportDeclarationContext
-        namespace_ctx: Antlr4.CtdParser.NamespaceDeclarationContext
+        import_ctx: Antlr4.CtdGrammar.ImportDeclarationContext
+        namespace_ctx: Antlr4.CtdGrammar.NamespaceDeclarationContext
 
         # Process imports first
         for import_ctx in ctx.importDeclaration():
@@ -64,7 +64,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def visitImportDeclaration(
         self,
-        ctx: Antlr4.CtdParser.ImportDeclarationContext
+        ctx: Antlr4.CtdGrammar.ImportDeclarationContext
     ) -> None:
         """Visit import declaration and store the imported module name.
 
@@ -79,7 +79,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def visitNamespaceDeclaration(
         self,
-        ctx: Antlr4.CtdParser.NamespaceDeclarationContext
+        ctx: Antlr4.CtdGrammar.NamespaceDeclarationContext
     ) -> None:
         """Visit namespace declaration and process use declarations and type declarations.
 
@@ -87,8 +87,8 @@ class MetaVisitor(Antlr4.CtdVisitor):
             ctx: Namespace declaration context
         """
         qualified_name: str
-        use_ctx: Antlr4.CtdParser.UseDeclarationContext
-        declaration_ctx: Antlr4.CtdParser.DeclarationContext
+        use_ctx: Antlr4.CtdGrammar.UseDeclarationContext
+        declaration_ctx: Antlr4.CtdGrammar.DeclarationContext
         previous_namespace: str
         previous_used_namespaces: list[str]
 
@@ -120,7 +120,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def visitUseDeclaration(
         self,
-        ctx: Antlr4.CtdParser.UseDeclarationContext
+        ctx: Antlr4.CtdGrammar.UseDeclarationContext
     ) -> None:
         """Visit use declaration and track the used namespace.
 
@@ -135,7 +135,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def visitDeclaration(
         self,
-        ctx: Antlr4.CtdParser.DeclarationContext
+        ctx: Antlr4.CtdGrammar.DeclarationContext
     ) -> None:
         """Visit a declaration (typedef, alias, enum, flag, structure, interface, or function).
 
@@ -159,7 +159,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def visitTypedefDeclaration(
         self,
-        ctx: Antlr4.CtdParser.TypedefDeclarationContext
+        ctx: Antlr4.CtdGrammar.TypedefDeclarationContext
     ) -> None:
         """Visit typedef declaration and create TypedefMeta.
 
@@ -182,7 +182,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def visitAliasDeclaration(
         self,
-        ctx: Antlr4.CtdParser.AliasDeclarationContext
+        ctx: Antlr4.CtdGrammar.AliasDeclarationContext
     ) -> None:
         """Visit alias declaration and create AliasMeta.
 
@@ -205,7 +205,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def visitEnumDeclaration(
         self,
-        ctx: Antlr4.CtdParser.EnumDeclarationContext
+        ctx: Antlr4.CtdGrammar.EnumDeclarationContext
     ) -> None:
         """Visit enum declaration and create EnumMeta.
 
@@ -236,7 +236,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def visitFlagDeclaration(
         self,
-        ctx: Antlr4.CtdParser.FlagDeclarationContext
+        ctx: Antlr4.CtdGrammar.FlagDeclarationContext
     ) -> None:
         """Visit flag declaration and create FlagMeta.
 
@@ -267,7 +267,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def _get_qualified_name(
         self,
-        ctx: Antlr4.CtdParser.QualifiedNameContext
+        ctx: Antlr4.CtdGrammar.QualifiedNameContext
     ) -> str:
         """Extract qualified name from context.
 
@@ -284,7 +284,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def _get_type_spec(
         self,
-        ctx: Antlr4.CtdParser.TypeSpecContext
+        ctx: Antlr4.CtdGrammar.TypeSpecContext
     ) -> str:
         """Extract type specification as string.
 
@@ -295,8 +295,8 @@ class MetaVisitor(Antlr4.CtdVisitor):
             Type specification string
         """
         parts: list[str]
-        array_ctx: Antlr4.CtdParser.ArrayModifierContext | None
-        pointer_ctx: Antlr4.CtdParser.PointerModifierContext | None
+        array_ctx: Antlr4.CtdGrammar.ArrayModifierContext | None
+        pointer_ctx: Antlr4.CtdGrammar.PointerModifierContext | None
 
         parts = []
 
@@ -332,7 +332,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def _get_enum_members(
         self,
-        ctx: Antlr4.CtdParser.EnumMemberListContext
+        ctx: Antlr4.CtdGrammar.EnumMemberListContext
     ) -> list[Meta.EnumMemberMeta]:
         """Extract enum members from context.
 
@@ -343,7 +343,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
             List of EnumMemberMeta objects
         """
         members: list[Meta.EnumMemberMeta]
-        member_ctx: Antlr4.CtdParser.EnumMemberContext
+        member_ctx: Antlr4.CtdGrammar.EnumMemberContext
         name: str
         value: int | None
 
@@ -364,7 +364,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def _get_flag_members(
         self,
-        ctx: Antlr4.CtdParser.FlagMemberListContext
+        ctx: Antlr4.CtdGrammar.FlagMemberListContext
     ) -> list[Meta.FlagMemberMeta]:
         """Extract flag members from context.
 
@@ -375,7 +375,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
             List of FlagMemberMeta objects
         """
         members: list[Meta.FlagMemberMeta]
-        member_ctx: Antlr4.CtdParser.FlagMemberContext
+        member_ctx: Antlr4.CtdGrammar.FlagMemberContext
         name: str
         value: int | None
 
@@ -398,7 +398,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def visitStructureDeclaration(
         self,
-        ctx: Antlr4.CtdParser.StructureDeclarationContext
+        ctx: Antlr4.CtdGrammar.StructureDeclarationContext
     ) -> None:
         """Visit structure declaration and create StructureMeta.
 
@@ -428,7 +428,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def _get_structure_members(
         self,
-        ctx: Antlr4.CtdParser.StructureMemberListContext
+        ctx: Antlr4.CtdGrammar.StructureMemberListContext
     ) -> list[Meta.StructureMemberMeta]:
         """Extract structure members from context.
 
@@ -439,7 +439,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
             List of StructureMemberMeta objects
         """
         members: list[Meta.StructureMemberMeta]
-        member_ctx: Antlr4.CtdParser.StructureMemberContext
+        member_ctx: Antlr4.CtdGrammar.StructureMemberContext
         name: str
         type_spec: str
 
@@ -454,7 +454,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def visitInterfaceDeclaration(
         self,
-        ctx: Antlr4.CtdParser.InterfaceDeclarationContext
+        ctx: Antlr4.CtdGrammar.InterfaceDeclarationContext
     ) -> None:
         """Visit interface declaration and create InterfaceMeta.
 
@@ -484,7 +484,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def _get_interface_methods(
         self,
-        ctx: Antlr4.CtdParser.InterfaceMethodListContext
+        ctx: Antlr4.CtdGrammar.InterfaceMethodListContext
     ) -> list[Meta.FunctionMeta]:
         """Extract interface methods from context.
 
@@ -495,7 +495,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
             List of FunctionMeta objects representing interface methods
         """
         methods: list[Meta.FunctionMeta]
-        func_ctx: Antlr4.CtdParser.FunctionDeclarationContext
+        func_ctx: Antlr4.CtdGrammar.FunctionDeclarationContext
         name: str
         return_type: str
         parameters: list[Meta.ParameterMeta]
@@ -532,7 +532,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def visitFunctionDeclaration(
         self,
-        ctx: Antlr4.CtdParser.FunctionDeclarationContext
+        ctx: Antlr4.CtdGrammar.FunctionDeclarationContext
     ) -> None:
         """Visit function declaration and create FunctionMeta.
 
@@ -571,7 +571,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def _get_parameters(
         self,
-        ctx: Antlr4.CtdParser.ParameterListContext
+        ctx: Antlr4.CtdGrammar.ParameterListContext
     ) -> list[Meta.ParameterMeta]:
         """Extract function parameters from context.
 
@@ -582,7 +582,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
             List of ParameterMeta objects
         """
         parameters: list[Meta.ParameterMeta]
-        param_ctx: Antlr4.CtdParser.ParameterContext
+        param_ctx: Antlr4.CtdGrammar.ParameterContext
         name: str
         type_spec: str
         decorators: list[Meta.DecoratorMeta]
@@ -602,7 +602,7 @@ class MetaVisitor(Antlr4.CtdVisitor):
 
     def _get_decorators(
         self,
-        decorator_contexts: list[Antlr4.CtdParser.DecoratorContext]
+        decorator_contexts: list[Antlr4.CtdGrammar.DecoratorContext]
     ) -> list[Meta.DecoratorMeta]:
         """Extract decorators from context list.
 
@@ -613,10 +613,10 @@ class MetaVisitor(Antlr4.CtdVisitor):
             List of DecoratorMeta objects
         """
         decorators: list[Meta.DecoratorMeta]
-        decorator_ctx: Antlr4.CtdParser.DecoratorContext
+        decorator_ctx: Antlr4.CtdGrammar.DecoratorContext
         name: str
         arguments: list[str]
-        arg_ctx: Antlr4.CtdParser.DecoratorArgumentContext
+        arg_ctx: Antlr4.CtdGrammar.DecoratorArgumentContext
 
         decorators = []
 

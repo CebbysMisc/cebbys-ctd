@@ -104,7 +104,7 @@ class MetaLoader:
             collection: Collection to add parsed types to
             namespace_uses: Dictionary to merge namespace use declarations
         """
-        parse_tree: Antlr4.CtdParser.ModuleDeclarationContext
+        parse_tree: Antlr4.CtdGrammar.ModuleDeclarationContext
         visitor: Visitor.MetaVisitor
 
         # Parse the file
@@ -123,7 +123,7 @@ class MetaLoader:
                 namespace_uses[ns] = []
             namespace_uses[ns].extend(used_list)
 
-    def _parse_file(self, file_path: Api.FilePath) -> Antlr4.CtdParser.ModuleDeclarationContext:
+    def _parse_file(self, file_path: Api.FilePath) -> Antlr4.CtdGrammar.ModuleDeclarationContext:
         """Parse a CTD file using ANTLR4.
 
         Args:
@@ -136,7 +136,7 @@ class MetaLoader:
         input_stream:   Antlr4.InputStream
         lexer:          Antlr4.CtdLexer
         token_stream:   Antlr4.CommonTokenStream
-        parser:         Antlr4.CtdParser
+        parser:         Antlr4.CtdGrammar
 
         # Read file content
         content = file_path.read_text(encoding='utf-8')
@@ -151,7 +151,7 @@ class MetaLoader:
         token_stream = Antlr4.CommonTokenStream(lexer)
 
         # Create parser
-        parser = Antlr4.CtdParser(token_stream)
+        parser = Antlr4.CtdGrammar(token_stream)
 
         # Parse and return module declaration
         return parser.moduleDeclaration()

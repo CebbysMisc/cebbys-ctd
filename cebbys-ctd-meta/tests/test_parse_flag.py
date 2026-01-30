@@ -8,7 +8,7 @@ def test_parse_simple_flag() -> None:
     """Test parsing a simple flag."""
     TestLogger.header("MetaParser: Simple Flag")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.flagDeclaration('''
         flag Options : Unt4 {
             OPTION_A
@@ -18,7 +18,7 @@ def test_parse_simple_flag() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.FlagDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.FlagDeclarationContext)
     TestLogger.success("Simple flag parsed")
     TestLogger.complete()
 
@@ -27,7 +27,7 @@ def test_parse_flag_with_offsets() -> None:
     """Test parsing a flag with manual offsets."""
     TestLogger.header("MetaParser: Flag with Offsets")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.flagDeclaration('''
         flag Permissions : Unt4 {
             READ
@@ -38,6 +38,6 @@ def test_parse_flag_with_offsets() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.FlagDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.FlagDeclarationContext)
     TestLogger.success("Flag with offsets parsed")
     TestLogger.complete()

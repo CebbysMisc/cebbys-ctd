@@ -2,7 +2,6 @@
 
 This package contains metadata types and the loader for CTD files.
 """
-from lv.cebbys.languages.ctd.meta.interpreter import CtdInterpreter
 from lv.cebbys.languages.ctd.meta.visitor import MetaVisitor as CtdMetaVisitor
 from lv.cebbys.languages.ctd.meta.loader import MetaLoader as CtdMetaLoader
 
@@ -13,7 +12,6 @@ MetaLoader = CtdMetaLoader
 __all__ = [
     'CtdMetaVisitor',
     'CtdMetaLoader',
-    'CtdInterpreter',
     'MetaVisitor',
     'MetaLoader',
 ]

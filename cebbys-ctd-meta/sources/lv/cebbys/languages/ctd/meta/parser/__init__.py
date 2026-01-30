@@ -12,63 +12,63 @@ import lv.cebbys.languages.ctd.meta.parser.interface as _InterfaceModule
 import lv.cebbys.languages.ctd.meta.parser.function as _FunctionModule
 import lv.cebbys.languages.ctd.antlr4 as _Antlr4
 
-__all__ = ['CtdParser']
+__all__ = ['CtdMetaParser']
 
 
-class CtdParser:
+class CtdMetaParser:
     """Static utility class for parsing CTD ANTLR4 contexts into Meta objects."""
 
     def __init__(self) -> None:
-        raise TypeError("CtdParser is a static utility class and cannot be instantiated")
+        raise TypeError("CtdMetaParser is a static utility class and cannot be instantiated")
 
     # Context parser methods
 
     @staticmethod
-    def parse_module(ctx: _Antlr4.CtdParser.ModuleDeclarationContext):
+    def parse_module(ctx: _Antlr4.CtdGrammar.ModuleDeclarationContext):
         return _ModuleModule.CtdModuleContextParser.instance().parse(ctx)
 
     @staticmethod
-    def parse_namespace(ctx: _Antlr4.CtdParser.NamespaceDeclarationContext):
+    def parse_namespace(ctx: _Antlr4.CtdGrammar.NamespaceDeclarationContext):
         return _NamespaceModule.CtdNamespaceContextParser.instance().parse(ctx)
 
     @staticmethod
-    def parse_include(ctx: _Antlr4.CtdParser.ImportDeclarationContext):
+    def parse_include(ctx: _Antlr4.CtdGrammar.ImportDeclarationContext):
         return _IncludeModule.CtdIncludeContextParser.instance().parse(ctx)
 
     @staticmethod
-    def parse_decorator(ctx: _Antlr4.CtdParser.DecoratorContext):
+    def parse_decorator(ctx: _Antlr4.CtdGrammar.DecoratorContext):
         return _DecoratorModule.CtdDecoratorContextParser.instance().parse(ctx)
 
     @staticmethod
-    def parse_typespec(ctx: _Antlr4.CtdParser.TypeSpecContext):
+    def parse_typespec(ctx: _Antlr4.CtdGrammar.TypeSpecContext):
         return _TypeSpecModule.CtdTypeSpecContextParser.instance().parse(ctx)
 
     # Declaration parser methods
 
     @staticmethod
-    def parse_typedef(namespace: str, ctx: _Antlr4.CtdParser.TypedefDeclarationContext):
+    def parse_typedef(namespace: str, ctx: _Antlr4.CtdGrammar.TypedefDeclarationContext):
         return _TypedefModule.CtdTypedefContextParser.instance().parse(namespace, ctx)
 
     @staticmethod
-    def parse_alias(namespace: str, ctx: _Antlr4.CtdParser.AliasDeclarationContext):
+    def parse_alias(namespace: str, ctx: _Antlr4.CtdGrammar.AliasDeclarationContext):
         return _AliasModule.CtdAliasContextParser.instance().parse(namespace, ctx)
 
     @staticmethod
-    def parse_enum(namespace: str, ctx: _Antlr4.CtdParser.EnumDeclarationContext):
+    def parse_enum(namespace: str, ctx: _Antlr4.CtdGrammar.EnumDeclarationContext):
         return _EnumModule.CtdEnumContextParser.instance().parse(namespace, ctx)
 
     @staticmethod
-    def parse_flag(namespace: str, ctx: _Antlr4.CtdParser.FlagDeclarationContext):
+    def parse_flag(namespace: str, ctx: _Antlr4.CtdGrammar.FlagDeclarationContext):
         return _FlagModule.CtdFlagContextParser.instance().parse(namespace, ctx)
 
     @staticmethod
-    def parse_structure(namespace: str, ctx: _Antlr4.CtdParser.StructureDeclarationContext):
+    def parse_structure(namespace: str, ctx: _Antlr4.CtdGrammar.StructureDeclarationContext):
         return _StructureModule.CtdStructureContextParser.instance().parse(namespace, ctx)
 
     @staticmethod
-    def parse_interface(namespace: str, ctx: _Antlr4.CtdParser.InterfaceDeclarationContext):
+    def parse_interface(namespace: str, ctx: _Antlr4.CtdGrammar.InterfaceDeclarationContext):
         return _InterfaceModule.CtdInterfaceContextParser.instance().parse(namespace, ctx)
 
     @staticmethod
-    def parse_function(namespace: str, ctx: _Antlr4.CtdParser.FunctionDeclarationContext):
+    def parse_function(namespace: str, ctx: _Antlr4.CtdGrammar.FunctionDeclarationContext):
         return _FunctionModule.CtdFunctionContextParser.instance().parse(namespace, ctx)

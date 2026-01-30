@@ -4,7 +4,7 @@ import lv.cebbys.languages.ctd.types.meta.__api__ as Api
 __all__ = ['TypedefMeta']
 
 
-class TypedefMeta:
+class TypedefMeta(Api.DeclarationMeta):
     """Metadata for a typedef declaration.
 
     Typedef provide metadata for simple type definition by creating new instances.
@@ -22,7 +22,8 @@ class TypedefMeta:
         self,
         name: str,
         type_spec: str,
-        namespace: Api.ModulePath
+        namespace: Api.ModulePath,
+        decorators: list[Api.DecoratorMeta] = []
     ):
         """Initialize typedef metadata.
 
@@ -31,21 +32,10 @@ class TypedefMeta:
             type_spec: The type specification string
             namespace: Qualified namespace path
         """
-        self._name = name
+        super().__init__(namespace, name, decorators)
         self._type_spec = type_spec
-        self._namespace = namespace
-
-    @property
-    def name(self):
-        """Get the typedef name."""
-        return self._name
 
     @property
     def type_spec(self):
         """Get the type specification."""
         return self._type_spec
-
-    @property
-    def namespace(self):
-        """Get the namespace."""
-        return self._namespace

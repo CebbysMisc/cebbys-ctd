@@ -8,7 +8,7 @@ def test_parse_simple_structure() -> None:
     """Test parsing a simple structure."""
     TestLogger.header("MetaParser: Simple Structure")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.structureDeclaration('''
         structure Point {
             Int4 x
@@ -17,7 +17,7 @@ def test_parse_simple_structure() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.StructureDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.StructureDeclarationContext)
     TestLogger.success("Simple structure parsed")
     TestLogger.complete()
 
@@ -26,7 +26,7 @@ def test_parse_structure_with_extension() -> None:
     """Test parsing a structure with base type."""
     TestLogger.header("MetaParser: Structure with Extension")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.structureDeclaration('''
         structure Point3D : Point {
             Int4 z
@@ -34,7 +34,7 @@ def test_parse_structure_with_extension() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.StructureDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.StructureDeclarationContext)
     TestLogger.success("Structure with extension parsed")
     TestLogger.complete()
 
@@ -43,7 +43,7 @@ def test_parse_structure_with_pointer_member() -> None:
     """Test parsing a structure with pointer member."""
     TestLogger.header("MetaParser: Structure with Pointer")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.structureDeclaration('''
         structure Node {
             Int4 value
@@ -52,7 +52,7 @@ def test_parse_structure_with_pointer_member() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.StructureDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.StructureDeclarationContext)
     TestLogger.success("Structure with pointer parsed")
     TestLogger.complete()
 
@@ -61,7 +61,7 @@ def test_parse_structure_with_array_member() -> None:
     """Test parsing a structure with array member."""
     TestLogger.header("MetaParser: Structure with Array")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.structureDeclaration('''
         structure Buffer {
             Unt4 size
@@ -70,6 +70,6 @@ def test_parse_structure_with_array_member() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.StructureDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.StructureDeclarationContext)
     TestLogger.success("Structure with array parsed")
     TestLogger.complete()

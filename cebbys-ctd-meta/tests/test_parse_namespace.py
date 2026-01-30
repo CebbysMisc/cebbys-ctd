@@ -8,7 +8,7 @@ def test_parse_simple_namespace() -> None:
     """Test parsing a simple namespace."""
     TestLogger.header("MetaParser: Simple Namespace")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.namespaceDeclaration('''
         namespace example {
             typedef int MyInt
@@ -16,7 +16,7 @@ def test_parse_simple_namespace() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.NamespaceDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.NamespaceDeclarationContext)
     TestLogger.success("Simple namespace parsed")
     TestLogger.complete()
 
@@ -25,7 +25,7 @@ def test_parse_nested_namespace() -> None:
     """Test parsing a nested namespace."""
     TestLogger.header("MetaParser: Nested Namespace")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.namespaceDeclaration('''
         namespace foo::bar::baz {
             typedef int MyInt
@@ -33,6 +33,6 @@ def test_parse_nested_namespace() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.NamespaceDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.NamespaceDeclarationContext)
     TestLogger.success("Nested namespace parsed")
     TestLogger.complete()

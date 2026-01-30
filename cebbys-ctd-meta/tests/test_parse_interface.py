@@ -8,7 +8,7 @@ def test_parse_simple_interface() -> None:
     """Test parsing a simple interface."""
     TestLogger.header("MetaParser: Simple Interface")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.interfaceDeclaration('''
         interface IExample {
             Void doSomething()
@@ -17,7 +17,7 @@ def test_parse_simple_interface() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.InterfaceDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.InterfaceDeclarationContext)
     TestLogger.success("Simple interface parsed")
     TestLogger.complete()
 
@@ -26,7 +26,7 @@ def test_parse_interface_with_extension() -> None:
     """Test parsing an interface with base type."""
     TestLogger.header("MetaParser: Interface with Extension")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.interfaceDeclaration('''
         interface IExtended : IBase {
             Void extendedMethod()
@@ -34,7 +34,7 @@ def test_parse_interface_with_extension() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.InterfaceDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.InterfaceDeclarationContext)
     TestLogger.success("Interface with extension parsed")
     TestLogger.complete()
 
@@ -43,7 +43,7 @@ def test_parse_interface_with_parameters() -> None:
     """Test parsing an interface with method parameters."""
     TestLogger.header("MetaParser: Interface with Parameters")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.interfaceDeclaration('''
         interface ICalculator {
             Int4 add(Int4 a, Int4 b)
@@ -52,6 +52,6 @@ def test_parse_interface_with_parameters() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.InterfaceDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.InterfaceDeclarationContext)
     TestLogger.success("Interface with parameters parsed")
     TestLogger.complete()

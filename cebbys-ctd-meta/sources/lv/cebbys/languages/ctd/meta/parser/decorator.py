@@ -3,23 +3,23 @@ import lv.cebbys.languages.ctd.meta.parser.__api__ as Api
 import lv.cebbys.languages.ctd.types.meta as Meta
 
 
-class CtdDecoratorContextParser(Api.CtdContextParserBase[Api.CtdParser.DecoratorContext, Meta.DecoratorMeta]):
+class CtdDecoratorContextParser(Api.CtdContextParserBase[Api.CtdGrammar.DecoratorContext, Meta.DecoratorMeta]):
     @staticmethod
     def instance() -> 'CtdDecoratorContextParser':
         return INSTANCE
 
-    def parse(self, ctx: Api.CtdParser.DecoratorContext) -> Meta.DecoratorMeta:
+    def parse(self, ctx: Api.CtdGrammar.DecoratorContext) -> Meta.DecoratorMeta:
         """Parse decorator and create DecoratorMeta.
 
         Args:
             ctx: Decorator context
         """
-        name = self.text(self.token(ctx, Api.CtdParser.IDENTIFIER))
+        name = self.text(self.token(ctx, Api.CtdGrammar.IDENTIFIER))
         arguments: list[str] = []
 
-        args_ctx = self.optional_rule(ctx, Api.CtdParser.DecoratorArgumentsContext)
+        args_ctx = self.optional_rule(ctx, Api.CtdGrammar.DecoratorArgumentsContext)
         if args_ctx:
-            for arg_ctx in self.rules(args_ctx, Api.CtdParser.DecoratorArgumentContext):
+            for arg_ctx in self.rules(args_ctx, Api.CtdGrammar.DecoratorArgumentContext):
                 arg_text = self.text(arg_ctx)
                 # Strip quotes from string literals
                 if arg_text.startswith('"') and arg_text.endswith('"'):
@@ -28,7 +28,7 @@ class CtdDecoratorContextParser(Api.CtdContextParserBase[Api.CtdParser.Decorator
 
         return Meta.DecoratorMeta(name, arguments)
 
-    def parse_all(self, contexts: Iterable[Api.CtdParser.DecoratorContext]) -> list[Meta.DecoratorMeta]:
+    def parse_all(self, contexts: Iterable[Api.CtdGrammar.DecoratorContext]) -> list[Meta.DecoratorMeta]:
         """Parse multiple decorator contexts.
 
         Args:

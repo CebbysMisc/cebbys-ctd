@@ -8,11 +8,11 @@ def test_parse_simple_function() -> None:
     """Test parsing a simple function."""
     TestLogger.header("MetaParser: Simple Function")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.functionDeclaration("Int4 getValue()")
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.FunctionDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.FunctionDeclarationContext)
     TestLogger.success("Simple function parsed")
     TestLogger.complete()
 
@@ -21,11 +21,11 @@ def test_parse_function_with_parameters() -> None:
     """Test parsing a function with parameters."""
     TestLogger.header("MetaParser: Function with Parameters")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.functionDeclaration("Int4 add(Int4 a, Int4 b)")
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.FunctionDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.FunctionDeclarationContext)
     TestLogger.success("Function with parameters parsed")
     TestLogger.complete()
 
@@ -34,14 +34,14 @@ def test_parse_function_with_decorator() -> None:
     """Test parsing a function with decorator."""
     TestLogger.header("MetaParser: Function with Decorator")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.functionDeclaration('''
         @WinApi
         Int4 CreateWindow(Unt4 style, Unt4 flags)
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.FunctionDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.FunctionDeclarationContext)
     TestLogger.success("Function with decorator parsed")
     TestLogger.complete()
 
@@ -50,10 +50,10 @@ def test_parse_function_with_pointer_return() -> None:
     """Test parsing a function with pointer return type."""
     TestLogger.header("MetaParser: Function with Pointer Return")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.functionDeclaration("Void* allocate(Unt4 size)")
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.FunctionDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.FunctionDeclarationContext)
     TestLogger.success("Function with pointer return parsed")
     TestLogger.complete()

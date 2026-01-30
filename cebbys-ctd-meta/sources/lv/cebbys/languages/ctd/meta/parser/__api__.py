@@ -1,8 +1,8 @@
 import lv.cebbys.languages.ctd.antlr4 as Antlr4
 import typing as Typing
-from lv.cebbys.languages.ctd.antlr4 import CtdParser
+from lv.cebbys.languages.ctd.antlr4 import CtdGrammar
 
-__all__ = ["CtdParser", "CtdContextParser"]
+__all__ = ["CtdGrammar", "CtdContextParser"]
 
 R = Typing.TypeVar("R", bound=Antlr4.ParserRuleContext)
 O = Typing.TypeVar("O")
@@ -45,7 +45,7 @@ class ParserBase(Antlr4.CtdVisitor):
         except:
             return None
 
-    def qualified_name(self, ctx: Antlr4.CtdParser.QualifiedNameContext):
+    def qualified_name(self, ctx: Antlr4.CtdGrammar.QualifiedNameContext):
         """Extract qualified name from context.
 
         Args:
@@ -56,7 +56,7 @@ class ParserBase(Antlr4.CtdVisitor):
         """
         return '::'.join([
             self.text(id_token)
-            for id_token in self.tokens(ctx, Antlr4.CtdParser.IDENTIFIER)
+            for id_token in self.tokens(ctx, Antlr4.CtdGrammar.IDENTIFIER)
         ])
 
 

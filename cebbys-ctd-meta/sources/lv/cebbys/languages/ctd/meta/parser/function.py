@@ -4,42 +4,42 @@ import lv.cebbys.languages.ctd.meta.parser.__api__ as Api
 import lv.cebbys.languages.ctd.types.meta as Meta
 
 
-class CtdFunctionContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdParser.FunctionDeclarationContext, Meta.FunctionMeta]):
+class CtdFunctionContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGrammar.FunctionDeclarationContext, Meta.FunctionMeta]):
     @staticmethod
-    def instance() -> Api.CtdDeclaractionContextParser[Api.CtdParser.FunctionDeclarationContext, Meta.FunctionMeta]:
+    def instance() -> Api.CtdDeclaractionContextParser[Api.CtdGrammar.FunctionDeclarationContext, Meta.FunctionMeta]:
         return INSTANCE
 
-    def parse(self, namespace: str, ctx: Api.CtdParser.FunctionDeclarationContext) -> Meta.FunctionMeta:
+    def parse(self, namespace: str, ctx: Api.CtdGrammar.FunctionDeclarationContext) -> Meta.FunctionMeta:
         """Parse function declaration and create FunctionMeta.
 
         Args:
             namespace: Namespace to which this function belongs
             ctx: Function declaration context
         """
-        name = self.text(self.token(ctx, Api.CtdParser.IDENTIFIER))
+        name = self.text(self.token(ctx, Api.CtdGrammar.IDENTIFIER))
 
         # Get return type
-        typespec_ctx = self.rule(ctx, Api.CtdParser.TypeSpecContext)
+        typespec_ctx = self.rule(ctx, Api.CtdGrammar.TypeSpecContext)
         return_type = TypeSpecModule.CtdTypeSpecContextParser.instance().parse(typespec_ctx)
 
         # Parse decorators
         decorators: list[Meta.DecoratorMeta] = []
         decorator_parser = DecoratorModule.CtdDecoratorContextParser.instance()
-        for decorator_ctx in self.rules(ctx, Api.CtdParser.DecoratorContext):
+        for decorator_ctx in self.rules(ctx, Api.CtdGrammar.DecoratorContext):
             decorators.append(decorator_parser.parse(decorator_ctx))
 
         # Parse parameters
         parameters: list[Meta.ParameterMeta] = []
-        param_list_ctx = self.optional_rule(ctx, Api.CtdParser.ParameterListContext)
+        param_list_ctx = self.optional_rule(ctx, Api.CtdGrammar.ParameterListContext)
         if param_list_ctx:
-            for param_ctx in self.rules(param_list_ctx, Api.CtdParser.ParameterContext):
-                param_name = self.text(self.token(param_ctx, Api.CtdParser.IDENTIFIER))
-                param_typespec_ctx = self.rule(param_ctx, Api.CtdParser.TypeSpecContext)
+            for param_ctx in self.rules(param_list_ctx, Api.CtdGrammar.ParameterContext):
+                param_name = self.text(self.token(param_ctx, Api.CtdGrammar.IDENTIFIER))
+                param_typespec_ctx = self.rule(param_ctx, Api.CtdGrammar.TypeSpecContext)
                 param_typespec = TypeSpecModule.CtdTypeSpecContextParser.instance().parse(param_typespec_ctx)
 
                 # Parse parameter decorators
                 param_decorators: list[Meta.DecoratorMeta] = []
-                for param_decorator_ctx in self.rules(param_ctx, Api.CtdParser.DecoratorContext):
+                for param_decorator_ctx in self.rules(param_ctx, Api.CtdGrammar.DecoratorContext):
                     param_decorators.append(decorator_parser.parse(param_decorator_ctx))
 
                 parameters.append(Meta.ParameterMeta(

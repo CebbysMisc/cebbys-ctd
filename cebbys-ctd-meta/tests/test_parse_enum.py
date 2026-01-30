@@ -8,7 +8,7 @@ def test_parse_simple_enum() -> None:
     """Test parsing a simple enum."""
     TestLogger.header("MetaParser: Simple Enum")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.enumDeclaration('''
         enum Color : Int4 {
             RED
@@ -18,7 +18,7 @@ def test_parse_simple_enum() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.EnumDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.EnumDeclarationContext)
     TestLogger.success("Simple enum parsed")
     TestLogger.complete()
 
@@ -27,7 +27,7 @@ def test_parse_enum_with_values() -> None:
     """Test parsing an enum with explicit values."""
     TestLogger.header("MetaParser: Enum with Values")
 
-    parser = Meta.CtdInterpreter()
+    parser = Antlr4.CtdParser()
     result = parser.enumDeclaration('''
         enum Status : Unt4 {
             OK = 0
@@ -37,6 +37,6 @@ def test_parse_enum_with_values() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.EnumDeclarationContext)
+    assert isinstance(result, Antlr4.CtdGrammar.EnumDeclarationContext)
     TestLogger.success("Enum with values parsed")
     TestLogger.complete()
