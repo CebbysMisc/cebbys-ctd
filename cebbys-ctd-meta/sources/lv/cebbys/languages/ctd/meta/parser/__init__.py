@@ -1,6 +1,17 @@
 from lv.cebbys.languages.ctd.meta.parser.__api__ import CtdDeclaractionContextParser
 from lv.cebbys.languages.ctd.meta.parser.__api__ import CtdContextParser
-import lv.cebbys.languages.ctd.types.meta as Meta
+import lv.cebbys.languages.ctd.meta.parser.module as ModuleModule
+import lv.cebbys.languages.ctd.meta.parser.namespace as NamespaceModule
+import lv.cebbys.languages.ctd.meta.parser.include as IncludeModule
+import lv.cebbys.languages.ctd.meta.parser.decorator as DecoratorModule
+import lv.cebbys.languages.ctd.meta.parser.typespec as TypeSpecModule
+import lv.cebbys.languages.ctd.meta.parser.typedef as TypedefModule
+import lv.cebbys.languages.ctd.meta.parser.alias as AliasModule
+import lv.cebbys.languages.ctd.meta.parser.enum as EnumModule
+import lv.cebbys.languages.ctd.meta.parser.flag as FlagModule
+import lv.cebbys.languages.ctd.meta.parser.structure as StructureModule
+import lv.cebbys.languages.ctd.meta.parser.interface as InterfaceModule
+import lv.cebbys.languages.ctd.meta.parser.function as FunctionModule
 import lv.cebbys.languages.ctd.antlr4 as Antlr4
 import typing as Typing
 
@@ -8,29 +19,29 @@ C = Typing.TypeVar("C", bound=Antlr4.ParserRuleContext)
 M = Typing.TypeVar("M")
 
 
-def parser(ctx: type[C], meta: type[M]) -> type[CtdContextParser[C, M]]:
-    return CtdContextParser[ctx, meta]
+def parser(parser: type[CtdContextParser[C, M]]) -> type[CtdContextParser[C, M]]:
+    return parser
 
 
-def declaration_parser(ctx: type[C], meta: type[M]) -> type[CtdDeclaractionContextParser[C, M]]:
-    return CtdDeclaractionContextParser[ctx, meta]
+def declaration_parser(parser: type[CtdDeclaractionContextParser[C, M]]) -> type[CtdDeclaractionContextParser[C, M]]:
+    return parser
 
 
 # Context parsers (no namespace required)
-CtdModuleContextParser = parser(Antlr4.CtdParser.ModuleDeclarationContext, Meta.ModuleMeta)
-CtdNamespaceContextParser = parser(Antlr4.CtdParser.NamespaceDeclarationContext, Meta.NamespaceMeta)
-CtdIncludeContextParser = parser(Antlr4.CtdParser.ImportDeclarationContext, Meta.IncludeMeta)
-CtdDecoratorContextParser = parser(Antlr4.CtdParser.DecoratorContext, Meta.DecoratorMeta)
-CtdTypeSpecContextParser = parser(Antlr4.CtdParser.TypeSpecContext, str)
+CtdModuleContextParser = parser(ModuleModule.CtdModuleContextParser)
+CtdNamespaceContextParser = parser(NamespaceModule.CtdNamespaceContextParser)
+CtdIncludeContextParser = parser(IncludeModule.CtdIncludeContextParser)
+CtdDecoratorContextParser = parser(DecoratorModule.CtdDecoratorContextParser)
+CtdTypeSpecContextParser = parser(TypeSpecModule.CtdTypeSpecContextParser)
 
 # Declaration context parsers (namespace required)
-CtdTypedefContextParser = declaration_parser(Antlr4.CtdParser.TypedefDeclarationContext, Meta.TypedefMeta)
-CtdAliasContextParser = declaration_parser(Antlr4.CtdParser.AliasDeclarationContext, Meta.AliasMeta)
-CtdEnumContextParser = declaration_parser(Antlr4.CtdParser.EnumDeclarationContext, Meta.EnumMeta)
-CtdFlagContextParser = declaration_parser(Antlr4.CtdParser.FlagDeclarationContext, Meta.FlagMeta)
-CtdStructureContextParser = declaration_parser(Antlr4.CtdParser.StructureDeclarationContext, Meta.StructureMeta)
-CtdInterfaceContextParser = declaration_parser(Antlr4.CtdParser.InterfaceDeclarationContext, Meta.InterfaceMeta)
-CtdFunctionContextParser = declaration_parser(Antlr4.CtdParser.FunctionDeclarationContext, Meta.FunctionMeta)
+CtdTypedefContextParser = declaration_parser(TypedefModule.CtdTypedefContextParser)
+CtdAliasContextParser = declaration_parser(AliasModule.CtdAliasContextParser)
+CtdEnumContextParser = declaration_parser(EnumModule.CtdEnumContextParser)
+CtdFlagContextParser = declaration_parser(FlagModule.CtdFlagContextParser)
+CtdStructureContextParser = declaration_parser(StructureModule.CtdStructureContextParser)
+CtdInterfaceContextParser = declaration_parser(InterfaceModule.CtdInterfaceContextParser)
+CtdFunctionContextParser = declaration_parser(FunctionModule.CtdFunctionContextParser)
 
 __all__ = [
     # Base interfaces
