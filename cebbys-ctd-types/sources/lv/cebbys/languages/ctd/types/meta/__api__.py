@@ -3,9 +3,8 @@
 This module contains common types for metadata classes.
 """
 import lv.cebbys.languages.ctd.types.__api__ as Api
-from lv.cebbys.languages.ctd.types.meta.decorator import DecoratorMeta
 
-__all__ = ['ModulePath', 'Meta', 'DecoratorMeta', 'DecoratableMeta']
+__all__ = ['ModulePath', 'Meta', 'DecoratorMeta', 'DecoratableMeta', 'DeclarationMeta']
 
 # Re-export ModulePath for use in meta classes
 ModulePath = Api.ModulePath
@@ -33,6 +32,53 @@ class Meta:
     def name(self):
         """Get the alias name."""
         return self._name
+
+
+class DecoratorMeta:
+    """Metadata for a decorator.
+
+    Decorators provide metadata for definitions and parameters.
+    They can have optional arguments of various types (strings, integers, identifiers).
+
+    Examples:
+    ```
+        @WinApi
+        @Nullable
+        @Storage("reg", "ecx")
+        @Offset(0x10)
+    ```
+    """
+
+    def __init__(
+        self,
+        name: str,
+        arguments: list[str] = []
+    ):
+        """Initialize decorator metadata.
+
+        Args:
+            name: The decorator name (e.g., "WinApi", "Nullable")
+            arguments: List of argument values as strings
+        """
+        self._name = name
+        self._arguments = tuple(arguments)
+
+    @property
+    def name(self) -> str:
+        """Get the decorator name."""
+        return self._name
+
+    @property
+    def arguments(self) -> tuple[str, ...]:
+        """Get the decorator arguments (immutable)."""
+        return self._arguments
+
+    def __repr__(self) -> str:
+        """String representation."""
+        if self._arguments:
+            args_str = ", ".join(self._arguments)
+            return f"@{self._name}({args_str})"
+        return f"@{self._name}"
 
 
 class DecoratableMeta(Meta):

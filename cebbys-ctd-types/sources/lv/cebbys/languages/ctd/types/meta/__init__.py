@@ -3,12 +3,13 @@
 This package contains metadata types and the loader for CTD files.
 """
 from lv.cebbys.languages.ctd.types.meta.__api__ import ModulePath
+from lv.cebbys.languages.ctd.types.meta.__api__ import DeclarationMeta
 from lv.cebbys.languages.ctd.types.meta.collection import DefinitionCollectionMeta
 from lv.cebbys.languages.ctd.types.meta.namespace import NamespaceMeta
 from lv.cebbys.languages.ctd.types.meta.structure import StructureMemberMeta
 from lv.cebbys.languages.ctd.types.meta.structure import StructureMeta
 from lv.cebbys.languages.ctd.types.meta.interface import InterfaceMeta
-from lv.cebbys.languages.ctd.types.meta.decorator import DecoratorMeta
+from lv.cebbys.languages.ctd.types.meta.__api__ import DecoratorMeta
 from lv.cebbys.languages.ctd.types.meta.function import ParameterMeta
 from lv.cebbys.languages.ctd.types.meta.function import FunctionMeta
 from lv.cebbys.languages.ctd.types.meta.include import IncludeMeta
@@ -47,5 +48,6 @@ __all__ = [
     'DefinitionCollectionMeta',
     'IncludeMeta',
     'NamespaceMeta',
-    'ModuleMeta'
+    'ModuleMeta',
+    'DeclarationMeta'
 ]
