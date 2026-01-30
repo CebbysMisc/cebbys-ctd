@@ -1,6 +1,12 @@
 import lv.cebbys.languages.ctd.meta.parser.__api__ as Api
 import lv.cebbys.languages.ctd.types.meta as Meta
 import lv.cebbys.languages.ctd.meta.parser.typedef as TypedefModule
+import lv.cebbys.languages.ctd.meta.parser.alias as AliasModule
+import lv.cebbys.languages.ctd.meta.parser.enum as EnumModule
+import lv.cebbys.languages.ctd.meta.parser.flag as FlagModule
+import lv.cebbys.languages.ctd.meta.parser.structure as StructureModule
+import lv.cebbys.languages.ctd.meta.parser.interface as InterfaceModule
+import lv.cebbys.languages.ctd.meta.parser.function as FunctionModule
 import typing as Typing
 
 
@@ -46,5 +52,29 @@ INSTANCE = CtdNamespaceContextParser({
     Api.CtdParser.TypedefDeclarationContext: (
         TypedefModule.CtdTypedefContextParser,
         lambda namespace: namespace.add_typedef
-    )
+    ),
+    Api.CtdParser.AliasDeclarationContext: (
+        AliasModule.CtdAliasContextParser,
+        lambda namespace: namespace.add_alias
+    ),
+    Api.CtdParser.EnumDeclarationContext: (
+        EnumModule.CtdEnumContextParser,
+        lambda namespace: namespace.add_enum
+    ),
+    Api.CtdParser.FlagDeclarationContext: (
+        FlagModule.CtdFlagContextParser,
+        lambda namespace: namespace.add_flag
+    ),
+    Api.CtdParser.StructureDeclarationContext: (
+        StructureModule.CtdStructureContextParser,
+        lambda namespace: namespace.add_structure
+    ),
+    Api.CtdParser.InterfaceDeclarationContext: (
+        InterfaceModule.CtdInterfaceContextParser,
+        lambda namespace: namespace.add_interface
+    ),
+    Api.CtdParser.FunctionDeclarationContext: (
+        FunctionModule.CtdFunctionContextParser,
+        lambda namespace: namespace.add_function
+    ),
 })
