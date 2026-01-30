@@ -8,8 +8,8 @@ def test_parse_simple_flag() -> None:
     """Test parsing a simple flag."""
     TestLogger.header("MetaParser: Simple Flag")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseFlagDeclaration('''
+    parser = Meta.CtdInterpreter()
+    result = parser.flagDeclaration('''
         flag Options : Unt4 {
             OPTION_A
             OPTION_B
@@ -27,8 +27,8 @@ def test_parse_flag_with_offsets() -> None:
     """Test parsing a flag with manual offsets."""
     TestLogger.header("MetaParser: Flag with Offsets")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseFlagDeclaration('''
+    parser = Meta.CtdInterpreter()
+    result = parser.flagDeclaration('''
         flag Permissions : Unt4 {
             READ
             WRITE

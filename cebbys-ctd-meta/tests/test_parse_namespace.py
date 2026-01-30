@@ -8,8 +8,8 @@ def test_parse_simple_namespace() -> None:
     """Test parsing a simple namespace."""
     TestLogger.header("MetaParser: Simple Namespace")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseNamespaceDeclaration('''
+    parser = Meta.CtdInterpreter()
+    result = parser.namespaceDeclaration('''
         namespace example {
             typedef int MyInt
         }
@@ -25,8 +25,8 @@ def test_parse_nested_namespace() -> None:
     """Test parsing a nested namespace."""
     TestLogger.header("MetaParser: Nested Namespace")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseNamespaceDeclaration('''
+    parser = Meta.CtdInterpreter()
+    result = parser.namespaceDeclaration('''
         namespace foo::bar::baz {
             typedef int MyInt
         }

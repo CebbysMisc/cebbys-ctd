@@ -9,6 +9,11 @@ import typing as Typing
 __all__ = ['MetaVisitor']
 
 
+class MetaParser(Antlr4.CtdVisitor):
+    def parse(self, ctx: Antlr4.ParserRuleContext):
+        pass
+    pass
+
 class MetaVisitor(Antlr4.CtdVisitor):
     """Visitor that transforms ANTLR4 parse tree into Meta objects."""
 

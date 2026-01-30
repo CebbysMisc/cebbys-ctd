@@ -8,8 +8,8 @@ def test_parse_simple_function() -> None:
     """Test parsing a simple function."""
     TestLogger.header("MetaParser: Simple Function")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseFunctionDeclaration("Int4 getValue()")
+    parser = Meta.CtdInterpreter()
+    result = parser.functionDeclaration("Int4 getValue()")
 
     assert result is not None
     assert isinstance(result, Antlr4.CtdParser.FunctionDeclarationContext)
@@ -21,8 +21,8 @@ def test_parse_function_with_parameters() -> None:
     """Test parsing a function with parameters."""
     TestLogger.header("MetaParser: Function with Parameters")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseFunctionDeclaration("Int4 add(Int4 a, Int4 b)")
+    parser = Meta.CtdInterpreter()
+    result = parser.functionDeclaration("Int4 add(Int4 a, Int4 b)")
 
     assert result is not None
     assert isinstance(result, Antlr4.CtdParser.FunctionDeclarationContext)
@@ -34,8 +34,8 @@ def test_parse_function_with_decorator() -> None:
     """Test parsing a function with decorator."""
     TestLogger.header("MetaParser: Function with Decorator")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseFunctionDeclaration('''
+    parser = Meta.CtdInterpreter()
+    result = parser.functionDeclaration('''
         @WinApi
         Int4 CreateWindow(Unt4 style, Unt4 flags)
     ''')
@@ -50,8 +50,8 @@ def test_parse_function_with_pointer_return() -> None:
     """Test parsing a function with pointer return type."""
     TestLogger.header("MetaParser: Function with Pointer Return")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseFunctionDeclaration("Void* allocate(Unt4 size)")
+    parser = Meta.CtdInterpreter()
+    result = parser.functionDeclaration("Void* allocate(Unt4 size)")
 
     assert result is not None
     assert isinstance(result, Antlr4.CtdParser.FunctionDeclarationContext)

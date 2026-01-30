@@ -49,10 +49,10 @@ def parse_ctd_file(file_path: Pathlib.Path, module_root: Pathlib.Path | None = N
     lexer = CtdAntlr4.CtdLexer(input_stream)
     token_stream = Antlr4.CommonTokenStream(lexer)
     parser = CtdAntlr4.CtdParser(token_stream)
-    parse_tree = parser.compilationUnit()
+    parse_tree = parser.moduleDeclaration()
 
     visitor = Visitor.MetaVisitor()
-    visitor.visitCompilationUnit(parse_tree)
+    visitor.visitModuleDeclaration(parse_tree)
     return visitor
 
 

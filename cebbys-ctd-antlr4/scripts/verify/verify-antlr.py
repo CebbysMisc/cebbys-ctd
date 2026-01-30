@@ -44,8 +44,8 @@ namespace test::name {
     # Create parser
     parser = Ctd.CtdParser(token_stream)
 
-    # Parse and return compilation unit
-    unit = parser.compilationUnit()
+    # Parse and return module declaration
+    unit = parser.moduleDeclaration()
 
 
 def main() -> int:

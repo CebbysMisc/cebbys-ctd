@@ -8,8 +8,8 @@ def test_parse_simple_type() -> None:
     """Test parsing a simple type."""
     TestLogger.header("MetaParser: Simple Type")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseTypeSpec("Int4")
+    parser = Meta.CtdInterpreter()
+    result = parser.typeSpec("Int4")
 
     assert result is not None
     assert isinstance(result, Antlr4.CtdParser.TypeSpecContext)
@@ -21,8 +21,8 @@ def test_parse_pointer_type() -> None:
     """Test parsing a pointer type."""
     TestLogger.header("MetaParser: Pointer Type")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseTypeSpec("Void*")
+    parser = Meta.CtdInterpreter()
+    result = parser.typeSpec("Void*")
 
     assert result is not None
     assert isinstance(result, Antlr4.CtdParser.TypeSpecContext)
@@ -34,8 +34,8 @@ def test_parse_double_pointer_type() -> None:
     """Test parsing a double pointer type."""
     TestLogger.header("MetaParser: Double Pointer Type")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseTypeSpec("Int4**")
+    parser = Meta.CtdInterpreter()
+    result = parser.typeSpec("Int4**")
 
     assert result is not None
     assert isinstance(result, Antlr4.CtdParser.TypeSpecContext)
@@ -47,8 +47,8 @@ def test_parse_array_type() -> None:
     """Test parsing an array type."""
     TestLogger.header("MetaParser: Array Type")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseTypeSpec("Unt1[8]")
+    parser = Meta.CtdInterpreter()
+    result = parser.typeSpec("Unt1[8]")
 
     assert result is not None
     assert isinstance(result, Antlr4.CtdParser.TypeSpecContext)
@@ -60,8 +60,8 @@ def test_parse_qualified_type() -> None:
     """Test parsing a qualified type."""
     TestLogger.header("MetaParser: Qualified Type")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseTypeSpec("std::lib::Int4")
+    parser = Meta.CtdInterpreter()
+    result = parser.typeSpec("std::lib::Int4")
 
     assert result is not None
     assert isinstance(result, Antlr4.CtdParser.TypeSpecContext)

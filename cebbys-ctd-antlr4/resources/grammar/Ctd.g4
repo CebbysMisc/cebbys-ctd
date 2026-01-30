@@ -1,7 +1,7 @@
 grammar Ctd;
 
 // Parser rules
-compilationUnit: importDeclaration* namespaceDeclaration* EOF;
+moduleDeclaration: importDeclaration* namespaceDeclaration* EOF;
 
 importDeclaration: 'import' STRING_LITERAL;
 

@@ -8,11 +8,11 @@ def test_parse_empty_compilation_unit() -> None:
     """Test parsing an empty compilation unit."""
     TestLogger.header("MetaParser: Empty Compilation Unit")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseCompilationUnit("")
+    parser = Meta.CtdInterpreter()
+    result = parser.moduleDeclaration("")
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.CompilationUnitContext)
+    assert isinstance(result, Antlr4.CtdParser.ModuleDeclarationContext)
     TestLogger.success("Empty compilation unit parsed successfully")
     TestLogger.complete()
 
@@ -21,15 +21,15 @@ def test_parse_compilation_unit_with_namespace() -> None:
     """Test parsing a compilation unit with a namespace."""
     TestLogger.header("MetaParser: Compilation Unit with Namespace")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseCompilationUnit('''
+    parser = Meta.CtdInterpreter()
+    result = parser.moduleDeclaration('''
         namespace test::example {
             typedef int MyInt
         }
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.CompilationUnitContext)
+    assert isinstance(result, Antlr4.CtdParser.ModuleDeclarationContext)
     TestLogger.success("Compilation unit with namespace parsed")
     TestLogger.complete()
 
@@ -38,8 +38,8 @@ def test_parse_compilation_unit_with_import() -> None:
     """Test parsing a compilation unit with imports."""
     TestLogger.header("MetaParser: Compilation Unit with Import")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseCompilationUnit('''
+    parser = Meta.CtdInterpreter()
+    result = parser.moduleDeclaration('''
         import "std-types"
 
         namespace test {
@@ -48,6 +48,6 @@ def test_parse_compilation_unit_with_import() -> None:
     ''')
 
     assert result is not None
-    assert isinstance(result, Antlr4.CtdParser.CompilationUnitContext)
+    assert isinstance(result, Antlr4.CtdParser.ModuleDeclarationContext)
     TestLogger.success("Compilation unit with import parsed")
     TestLogger.complete()

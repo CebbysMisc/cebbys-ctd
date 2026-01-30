@@ -5,10 +5,10 @@ into ANTLR4 parse tree contexts.
 """
 import lv.cebbys.languages.ctd.antlr4 as Antlr4
 
-__all__ = ['CtdContextParser']
+__all__ = ['CtdInterpreter']
 
 
-class CtdContextParser:
+class CtdInterpreter:
     """Parser for CTD content strings.
 
     CtdContextParser provides a high-level API for parsing CTD source code into
@@ -65,18 +65,18 @@ class CtdContextParser:
     # Top-level parsing methods
     # =========================================================================
 
-    def parseCompilationUnit(self, content: str) -> Antlr4.CtdParser.CompilationUnitContext:
+    def moduleDeclaration(self, content: str) -> Antlr4.CtdParser.ModuleDeclarationContext:
         """Parse a complete CTD source file.
 
         Args:
             content: Complete CTD source code
 
         Returns:
-            CompilationUnitContext parse tree
+            ModuleDeclarationContext parse tree
         """
-        return self._createParser(content).compilationUnit()
+        return self._createParser(content).moduleDeclaration()
 
-    def parseNamespaceDeclaration(self, content: str) -> Antlr4.CtdParser.NamespaceDeclarationContext:
+    def namespaceDeclaration(self, content: str) -> Antlr4.CtdParser.NamespaceDeclarationContext:
         """Parse a namespace declaration.
 
         Args:
@@ -87,7 +87,7 @@ class CtdContextParser:
         """
         return self._createParser(content).namespaceDeclaration()
 
-    def parseImportDeclaration(self, content: str) -> Antlr4.CtdParser.ImportDeclarationContext:
+    def importDeclaration(self, content: str) -> Antlr4.CtdParser.ImportDeclarationContext:
         """Parse an import declaration.
 
         Args:
@@ -98,7 +98,7 @@ class CtdContextParser:
         """
         return self._createParser(content).importDeclaration()
 
-    def parseUseDeclaration(self, content: str) -> Antlr4.CtdParser.UseDeclarationContext:
+    def useDeclaration(self, content: str) -> Antlr4.CtdParser.UseDeclarationContext:
         """Parse a use declaration.
 
         Args:
@@ -109,7 +109,7 @@ class CtdContextParser:
         """
         return self._createParser(content).useDeclaration()
 
-    def parseDeclaration(self, content: str) -> Antlr4.CtdParser.DeclarationContext:
+    def declaration(self, content: str) -> Antlr4.CtdParser.DeclarationContext:
         """Parse any declaration (typedef, enum, struct, interface, function, etc.).
 
         Args:
@@ -124,7 +124,7 @@ class CtdContextParser:
     # Type declaration parsing methods
     # =========================================================================
 
-    def parseTypedefDeclaration(self, content: str) -> Antlr4.CtdParser.TypedefDeclarationContext:
+    def typedefDeclaration(self, content: str) -> Antlr4.CtdParser.TypedefDeclarationContext:
         """Parse a typedef declaration.
 
         Args:
@@ -135,7 +135,7 @@ class CtdContextParser:
         """
         return self._createParser(content).typedefDeclaration()
 
-    def parseAliasDeclaration(self, content: str) -> Antlr4.CtdParser.AliasDeclarationContext:
+    def aliasDeclaration(self, content: str) -> Antlr4.CtdParser.AliasDeclarationContext:
         """Parse an alias declaration.
 
         Args:
@@ -146,7 +146,7 @@ class CtdContextParser:
         """
         return self._createParser(content).aliasDeclaration()
 
-    def parseEnumDeclaration(self, content: str) -> Antlr4.CtdParser.EnumDeclarationContext:
+    def enumDeclaration(self, content: str) -> Antlr4.CtdParser.EnumDeclarationContext:
         """Parse an enum declaration.
 
         Args:
@@ -157,7 +157,7 @@ class CtdContextParser:
         """
         return self._createParser(content).enumDeclaration()
 
-    def parseFlagDeclaration(self, content: str) -> Antlr4.CtdParser.FlagDeclarationContext:
+    def flagDeclaration(self, content: str) -> Antlr4.CtdParser.FlagDeclarationContext:
         """Parse a flag declaration.
 
         Args:
@@ -168,7 +168,7 @@ class CtdContextParser:
         """
         return self._createParser(content).flagDeclaration()
 
-    def parseStructureDeclaration(self, content: str) -> Antlr4.CtdParser.StructureDeclarationContext:
+    def structureDeclaration(self, content: str) -> Antlr4.CtdParser.StructureDeclarationContext:
         """Parse a structure declaration.
 
         Args:
@@ -179,7 +179,7 @@ class CtdContextParser:
         """
         return self._createParser(content).structureDeclaration()
 
-    def parseInterfaceDeclaration(self, content: str) -> Antlr4.CtdParser.InterfaceDeclarationContext:
+    def interfaceDeclaration(self, content: str) -> Antlr4.CtdParser.InterfaceDeclarationContext:
         """Parse an interface declaration.
 
         Args:
@@ -190,7 +190,7 @@ class CtdContextParser:
         """
         return self._createParser(content).interfaceDeclaration()
 
-    def parseFunctionDeclaration(self, content: str) -> Antlr4.CtdParser.FunctionDeclarationContext:
+    def functionDeclaration(self, content: str) -> Antlr4.CtdParser.FunctionDeclarationContext:
         """Parse a function declaration.
 
         Args:
@@ -205,7 +205,7 @@ class CtdContextParser:
     # Component parsing methods
     # =========================================================================
 
-    def parseTypeSpec(self, content: str) -> Antlr4.CtdParser.TypeSpecContext:
+    def typeSpec(self, content: str) -> Antlr4.CtdParser.TypeSpecContext:
         """Parse a type specification.
 
         Args:

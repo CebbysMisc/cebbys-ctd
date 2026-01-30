@@ -8,8 +8,8 @@ def test_parse_simple_typedef() -> None:
     """Test parsing a simple typedef."""
     TestLogger.header("MetaParser: Simple Typedef")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseTypedefDeclaration("typedef int MyInt")
+    parser = Meta.CtdInterpreter()
+    result = parser.typedefDeclaration("typedef int MyInt")
 
     assert result is not None
     assert isinstance(result, Antlr4.CtdParser.TypedefDeclarationContext)
@@ -21,8 +21,8 @@ def test_parse_signed_typedef() -> None:
     """Test parsing a signed typedef."""
     TestLogger.header("MetaParser: Signed Typedef")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseTypedefDeclaration("typedef signed int Snt4")
+    parser = Meta.CtdInterpreter()
+    result = parser.typedefDeclaration("typedef signed int Snt4")
 
     assert result is not None
     assert isinstance(result, Antlr4.CtdParser.TypedefDeclarationContext)
@@ -34,8 +34,8 @@ def test_parse_unsigned_typedef() -> None:
     """Test parsing an unsigned typedef."""
     TestLogger.header("MetaParser: Unsigned Typedef")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseTypedefDeclaration("typedef unsigned int Unt4")
+    parser = Meta.CtdInterpreter()
+    result = parser.typedefDeclaration("typedef unsigned int Unt4")
 
     assert result is not None
     assert isinstance(result, Antlr4.CtdParser.TypedefDeclarationContext)

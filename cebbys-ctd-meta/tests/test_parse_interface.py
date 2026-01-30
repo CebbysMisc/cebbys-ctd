@@ -8,8 +8,8 @@ def test_parse_simple_interface() -> None:
     """Test parsing a simple interface."""
     TestLogger.header("MetaParser: Simple Interface")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseInterfaceDeclaration('''
+    parser = Meta.CtdInterpreter()
+    result = parser.interfaceDeclaration('''
         interface IExample {
             Void doSomething()
             Int4 getValue()
@@ -26,8 +26,8 @@ def test_parse_interface_with_extension() -> None:
     """Test parsing an interface with base type."""
     TestLogger.header("MetaParser: Interface with Extension")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseInterfaceDeclaration('''
+    parser = Meta.CtdInterpreter()
+    result = parser.interfaceDeclaration('''
         interface IExtended : IBase {
             Void extendedMethod()
         }
@@ -43,8 +43,8 @@ def test_parse_interface_with_parameters() -> None:
     """Test parsing an interface with method parameters."""
     TestLogger.header("MetaParser: Interface with Parameters")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseInterfaceDeclaration('''
+    parser = Meta.CtdInterpreter()
+    result = parser.interfaceDeclaration('''
         interface ICalculator {
             Int4 add(Int4 a, Int4 b)
             Int4 multiply(Int4 x, Int4 y)

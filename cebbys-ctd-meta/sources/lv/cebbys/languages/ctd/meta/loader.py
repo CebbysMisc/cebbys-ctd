@@ -104,7 +104,7 @@ class MetaLoader:
             collection: Collection to add parsed types to
             namespace_uses: Dictionary to merge namespace use declarations
         """
-        parse_tree: Antlr4.CtdParser.CompilationUnitContext
+        parse_tree: Antlr4.CtdParser.ModuleDeclarationContext
         visitor: Visitor.MetaVisitor
 
         # Parse the file
@@ -112,7 +112,7 @@ class MetaLoader:
 
         # Create visitor and visit parse tree
         visitor = Visitor.MetaVisitor()
-        visitor.visitCompilationUnit(parse_tree)
+        visitor.visitModuleDeclaration(parse_tree)
 
         # Merge visitor's collection into main collection
         collection.add_all(visitor.collection)
@@ -123,7 +123,7 @@ class MetaLoader:
                 namespace_uses[ns] = []
             namespace_uses[ns].extend(used_list)
 
-    def _parse_file(self, file_path: Api.FilePath) -> Antlr4.CtdParser.CompilationUnitContext:
+    def _parse_file(self, file_path: Api.FilePath) -> Antlr4.CtdParser.ModuleDeclarationContext:
         """Parse a CTD file using ANTLR4.
 
         Args:
@@ -153,5 +153,5 @@ class MetaLoader:
         # Create parser
         parser = Antlr4.CtdParser(token_stream)
 
-        # Parse and return compilation unit
-        return parser.compilationUnit()
+        # Parse and return module declaration
+        return parser.moduleDeclaration()

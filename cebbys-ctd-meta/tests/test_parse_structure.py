@@ -8,8 +8,8 @@ def test_parse_simple_structure() -> None:
     """Test parsing a simple structure."""
     TestLogger.header("MetaParser: Simple Structure")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseStructureDeclaration('''
+    parser = Meta.CtdInterpreter()
+    result = parser.structureDeclaration('''
         structure Point {
             Int4 x
             Int4 y
@@ -26,8 +26,8 @@ def test_parse_structure_with_extension() -> None:
     """Test parsing a structure with base type."""
     TestLogger.header("MetaParser: Structure with Extension")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseStructureDeclaration('''
+    parser = Meta.CtdInterpreter()
+    result = parser.structureDeclaration('''
         structure Point3D : Point {
             Int4 z
         }
@@ -43,8 +43,8 @@ def test_parse_structure_with_pointer_member() -> None:
     """Test parsing a structure with pointer member."""
     TestLogger.header("MetaParser: Structure with Pointer")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseStructureDeclaration('''
+    parser = Meta.CtdInterpreter()
+    result = parser.structureDeclaration('''
         structure Node {
             Int4 value
             Node* next
@@ -61,8 +61,8 @@ def test_parse_structure_with_array_member() -> None:
     """Test parsing a structure with array member."""
     TestLogger.header("MetaParser: Structure with Array")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseStructureDeclaration('''
+    parser = Meta.CtdInterpreter()
+    result = parser.structureDeclaration('''
         structure Buffer {
             Unt4 size
             Unt1[256] data

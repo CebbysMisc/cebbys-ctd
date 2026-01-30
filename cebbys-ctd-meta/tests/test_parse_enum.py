@@ -8,8 +8,8 @@ def test_parse_simple_enum() -> None:
     """Test parsing a simple enum."""
     TestLogger.header("MetaParser: Simple Enum")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseEnumDeclaration('''
+    parser = Meta.CtdInterpreter()
+    result = parser.enumDeclaration('''
         enum Color : Int4 {
             RED
             GREEN
@@ -27,8 +27,8 @@ def test_parse_enum_with_values() -> None:
     """Test parsing an enum with explicit values."""
     TestLogger.header("MetaParser: Enum with Values")
 
-    parser = Meta.CtdContextParser()
-    result = parser.parseEnumDeclaration('''
+    parser = Meta.CtdInterpreter()
+    result = parser.enumDeclaration('''
         enum Status : Unt4 {
             OK = 0
             ERROR = 1
