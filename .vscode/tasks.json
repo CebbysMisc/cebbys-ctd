@@ -261,6 +261,32 @@
             "problemMatcher": []
         },
         {
+            "label": "Run All Tests (all modules)",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "pytest",
+                "cebbys-ctd-meta/tests",
+                "cebbys-ctd-resolver/tests",
+                "cebbys-ctd-loader/tests",
+                "-v"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Generate ANTLR4 Sources",
             "type": "shell",
             "command": "pwsh",

@@ -3,23 +3,21 @@
 Tests that meta objects are correctly transformed into Definition instances.
 At this stage, Definition objects are created but type references are not resolved.
 """
-import lv.cebbys.languages.ctd.meta as MetaLoader
 import lv.cebbys.languages.ctd.resolver.__api__ as ResolverApi
 import lv.cebbys.languages.ctd.resolver.typedef as TypedefModule
 import lv.cebbys.languages.ctd.resolver.enum as EnumModule
 import lv.cebbys.languages.ctd.resolver.structure as StructureModule
 import lv.cebbys.languages.ctd.resolver.function as FunctionModule
-from conftest import TestLogger, get_resource_path
+from conftest import TestLogger, get_resource_path, load_meta_collection
 
 
 def test_typedef_definition_creation() -> None:
     """Test that TypedefMeta creates TypedefDefinition instances."""
     TestLogger.header("Stage 2: Typedef Definition Creation")
 
-    # Load meta collection
+    # Load meta collection using helper
     paths = [get_resource_path('resources/test/ctd/std-types.ctd')]
-    meta_loader = MetaLoader.MetaLoader(paths)
-    meta_collection, namespace_uses = meta_loader.load()
+    meta_collection, namespace_uses = load_meta_collection(paths)
 
     # Create resolver context with empty type cache
     type_cache = {}
@@ -49,8 +47,7 @@ def test_enum_definition_creation() -> None:
     TestLogger.header("Stage 2: Enum Definition Creation")
 
     paths = [get_resource_path('resources/test/ctd/std-types.ctd')]
-    meta_loader = MetaLoader.MetaLoader(paths)
-    meta_collection, namespace_uses = meta_loader.load()
+    meta_collection, namespace_uses = load_meta_collection(paths)
 
     type_cache = {}
     context = ResolverApi.ResolverContext(type_cache, meta_collection, namespace_uses)
@@ -77,8 +74,7 @@ def test_structure_definition_creation() -> None:
     TestLogger.header("Stage 2: Structure Definition Creation")
 
     paths = [get_resource_path('resources/test/ctd/structures.ctd')]
-    meta_loader = MetaLoader.MetaLoader(paths)
-    meta_collection, namespace_uses = meta_loader.load()
+    meta_collection, namespace_uses = load_meta_collection(paths)
 
     type_cache = {}
     context = ResolverApi.ResolverContext(type_cache, meta_collection, namespace_uses)
@@ -101,8 +97,7 @@ def test_function_definition_creation() -> None:
     TestLogger.header("Stage 2: Function Definition Creation")
 
     paths = [get_resource_path('resources/test/ctd/functions.ctd')]
-    meta_loader = MetaLoader.MetaLoader(paths)
-    meta_collection, namespace_uses = meta_loader.load()
+    meta_collection, namespace_uses = load_meta_collection(paths)
 
     type_cache = {}
     context = ResolverApi.ResolverContext(type_cache, meta_collection, namespace_uses)
@@ -131,8 +126,7 @@ def test_type_cache_singleton_guarantee() -> None:
     TestLogger.header("Stage 2: Type Cache Singleton Guarantee")
 
     paths = [get_resource_path('resources/test/ctd/std-types.ctd')]
-    meta_loader = MetaLoader.MetaLoader(paths)
-    meta_collection, namespace_uses = meta_loader.load()
+    meta_collection, namespace_uses = load_meta_collection(paths)
 
     type_cache = {}
     context = ResolverApi.ResolverContext(type_cache, meta_collection, namespace_uses)

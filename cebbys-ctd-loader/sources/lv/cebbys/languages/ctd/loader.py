@@ -58,15 +58,39 @@ class CtdLoader:
         Returns:
             DefinitionCollection containing all resolved type definitions
         """
-        # TODO: Replace this with proper implementation using CebbysTypeDefinitions
+        # TODO: Implement using new transformation chain
+        # For now, build collection from existing stages
         meta_collection: TypeMeta.DefinitionCollectionMeta
         namespace_uses: dict[str, list[str]]
-        loader: Meta.MetaLoader
         resolver: Resolver.MetaResolver
+        file_path: Api.FilePath
+        module_meta: TypeMeta.ModuleMeta
+        visitor: Meta.MetaVisitor
 
-        # Load metadata using MetaLoader
-        loader = Meta.MetaLoader(self._dirs)
-        meta_collection, namespace_uses = loader.load()
+        # Aggregate module_metas into DefinitionCollectionMeta
+        meta_collection = TypeMeta.DefinitionCollectionMeta()
+        namespace_uses = {}
+
+        for file_path, module_meta in self._module_metas:
+            # For each module, we need to extract its namespaces
+            # Since ModuleMeta is currently empty, this won't work yet
+            # TODO: Implement once MetaVisitor.to_module_meta() is ready
+            pass
+
+        # Temporary fallback: Re-parse using visitor directly
+        # This duplicates work but allows load() to function until Stage 4 is complete
+        for file_path, context in self._module_contexts:
+            visitor = Meta.MetaVisitor()
+            visitor.visitModuleDeclaration(context)
+            
+            # Merge visitor's collection
+            meta_collection.add_all(visitor.collection)
+            
+            # Merge namespace uses
+            for ns, used_list in visitor.namespace_uses.items():
+                if ns not in namespace_uses:
+                    namespace_uses[ns] = []
+                namespace_uses[ns].extend(used_list)
 
         # Resolve type references using MetaResolver
         resolver = Resolver.MetaResolver()

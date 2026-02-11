@@ -48,12 +48,49 @@ def parse_ctd_file(file_path: Pathlib.Path, module_root: Pathlib.Path | None = N
     input_stream = Antlr4.InputStream(content)
     lexer = CtdAntlr4.CtdLexer(input_stream)
     token_stream = Antlr4.CommonTokenStream(lexer)
-    parser = CtdAntlr4.CtdParser(token_stream)
+    parser = CtdAntlr4.CtdGrammar(token_stream)
     parse_tree = parser.moduleDeclaration()
 
     visitor = Visitor.MetaVisitor()
     visitor.visitModuleDeclaration(parse_tree)
     return visitor
+
+
+def load_meta_collection(paths: list[Pathlib.Path]) -> tuple:
+    """Load meta collection and namespace uses from CTD files.
+    
+    Helper function for tests that need meta collections.
+    Replaces deprecated MetaLoader.
+    
+    Args:
+        paths: List of CTD file paths to load
+        
+    Returns:
+        Tuple of (DefinitionCollectionMeta, namespace_uses dict)
+    """
+    import lv.cebbys.languages.ctd.types.meta as TypeMeta
+    
+    meta_collection: TypeMeta.DefinitionCollectionMeta
+    namespace_uses: dict[str, list[str]]
+    file_path: Pathlib.Path
+    visitor: Visitor.MetaVisitor
+    
+    meta_collection = TypeMeta.DefinitionCollectionMeta()
+    namespace_uses = {}
+    
+    for file_path in paths:
+        visitor = parse_ctd_file(file_path)
+        
+        # Merge visitor's collection
+        meta_collection.add_all(visitor.collection)
+        
+        # Merge namespace uses
+        for ns, used_list in visitor.namespace_uses.items():
+            if ns not in namespace_uses:
+                namespace_uses[ns] = []
+            namespace_uses[ns].extend(used_list)
+    
+    return meta_collection, namespace_uses
 
 
 # Meta module fixtures
