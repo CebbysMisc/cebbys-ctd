@@ -214,11 +214,12 @@
             "args": [
                 "run",
                 "pytest",
+                "cebbys-ctd-loader/tests",
                 "-v",
                 "-s"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/cebbys-ctd-loader"
+                "cwd": "${workspaceFolder}"
             },
             "group": {
                 "kind": "test",
@@ -235,17 +236,37 @@
             "problemMatcher": []
         },
         {
-            "label": "Generate ANTLR4 Sources",
+            "label": "Run Loader Test (test_loader.py)",
             "type": "shell",
             "command": "uv",
             "args": [
                 "run",
-                "antlr4",
-                "-Dlanguage=Python3",
-                "-visitor",
-                "resources/grammar/Gtd.g4",
-                "-o",
-                "sources/lv/cebbys/languages/ctd/antlr4"
+                "pytest",
+                "cebbys-ctd-loader/tests/test_loader.py",
+                "-v",
+                "-s"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Generate ANTLR4 Sources",
+            "type": "shell",
+            "command": "pwsh",
+            "args": [
+                "-Command",
+                "New-Item -ItemType Directory -Force -Path sources/lv/cebbys/languages/ctd/antlr4/__generated__ | Out-Null; uv run antlr4 -Dlanguage=Python3 -visitor resources/grammar/Ctd.g4 -o sources/lv/cebbys/languages/ctd/antlr4/__generated__"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/cebbys-ctd-antlr4"

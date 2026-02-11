@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Main loader for CTD language"
 requires-python = ">=3.13"
 dependencies = [
+    "cebbys-ctd-antlr4",
     "cebbys-ctd-resolver",
     "cebbys-ctd-meta",
     "cebbys-ctd-types",
@@ -17,9 +18,10 @@ build-backend = "hatchling.build"
 packages = ["sources/lv"]
 
 [tool.uv.sources]
+cebbys-ctd-antlr4 = { workspace = true }
 cebbys-ctd-resolver = { workspace = true }
 cebbys-ctd-meta = { workspace = true }
 cebbys-ctd-types = { workspace = true }
 
 [tool.pytest.ini_options]
-pythonpath = ["sources"]
+pythonpath = ["sources", ".."]
