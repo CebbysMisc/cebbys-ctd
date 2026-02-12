@@ -4,7 +4,8 @@
         "${workspaceFolder}/cebbys-ctd-types/sources",
         "${workspaceFolder}/cebbys-ctd-meta/sources",
         "${workspaceFolder}/cebbys-ctd-resolver/sources",
-        "${workspaceFolder}/cebbys-ctd-loader/sources"
+        "${workspaceFolder}/cebbys-ctd-loader/sources",
+        "${workspaceFolder}/cebbys-ctd-utility/sources"
     ],
     "python.analysis.ignore": [
         "**/lv/cebbys/languages/ctd/antlr4/**"
@@ -21,6 +22,7 @@
         "${workspaceFolder}/cebbys-ctd-meta/sources",
         "${workspaceFolder}/cebbys-ctd-resolver/sources",
         "${workspaceFolder}/cebbys-ctd-loader/sources",
+        "${workspaceFolder}/cebbys-ctd-utility/sources",
         "${workspaceFolder}/hints"
     ],
     "files.associations": {
