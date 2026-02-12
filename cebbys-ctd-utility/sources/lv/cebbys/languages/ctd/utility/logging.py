@@ -191,7 +191,7 @@ class Logger:
 
 # Global logger registry
 _LOGGERS: dict[str, Logger] = {}
-_CONFIGURED: bool = False
+_configured: bool = False
 
 
 def configure_logging(
@@ -206,7 +206,7 @@ def configure_logging(
         colored: Whether to use colored output
         format_string: Custom format string (if not using colored formatter)
     """
-    global _CONFIGURED
+    global _configured
     
     handler: Logging.StreamHandler[Typing.Any]
     formatter: Logging.Formatter
@@ -232,7 +232,7 @@ def configure_logging(
     handler.setFormatter(formatter)
     root_logger.addHandler(handler)
     
-    _CONFIGURED = True
+    _configured = True
 
 
 def get_logger(name: str, level: LogLevel | None = None) -> Logger:
@@ -249,13 +249,13 @@ def get_logger(name: str, level: LogLevel | None = None) -> Logger:
         >>> logger = get_logger('cebbys.ctd.loader')
         >>> logger.info('Loading CTD files...')
     """
-    global _CONFIGURED, _LOGGERS
+    global _configured, _LOGGERS
     
     logger: Logger
     py_logger: Logging.Logger
     
     # Configure logging if not already done
-    if not _CONFIGURED:
+    if not _configured:
         configure_logging()
     
     # Return cached logger if exists
