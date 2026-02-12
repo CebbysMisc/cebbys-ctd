@@ -138,6 +138,53 @@ self._module_metas = self._convert_contexts_to_metas(self._module_contexts)
 **Commits**:
 - `9f4cd0f` - CtdLoader transformation chain + meta test refactoring
 - `0e4f94d` - MetaLoader deprecation and removal
+- `8c7ea4b` - PLAN.md documentation
+- `049b1b4` - cebbys-ctd-utility module with logging
+
+### ✅ Phase 5: Utility Module (Commit: 049b1b4)
+
+**Module**: `cebbys-ctd-utility`
+
+Created new workspace module for support classes and scripts:
+
+**Structure**:
+```
+cebbys-ctd-utility/
+├── pyproject.toml
+├── sources/lv/cebbys/languages/ctd/utility/
+│   ├── __init__.py
+│   └── logging.py
+└── tests/
+    └── test_logging.py
+```
+
+**Logging Module Features**:
+- ✅ `LogLevel` enum - Type-safe log levels (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+- ✅ `ColoredFormatter` - ANSI color formatting for console output
+- ✅ `Logger` wrapper class - Clean API around Python's logging.Logger
+- ✅ `configure_logging()` - Global logger configuration
+- ✅ `get_logger()` - Logger factory with caching
+
+**Test Results**: 8/8 passing ✅
+
+**Workspace Integration**:
+- ✅ Added to root `pyproject.toml` workspace members
+- ✅ Added to pytest configuration pythonpath
+- ✅ Added VSCode task "Run All Tests (utility)"
+- ✅ Updated "Run All Tests (all modules)" task
+- ✅ Ran `uv sync --all-packages`
+
+## Current Status
+
+**Overall Test Results**: 43/50 passing (86% pass rate)
+- ✅ cebbys-ctd-meta: 27/27 passing
+- ✅ cebbys-ctd-loader: 3/3 passing
+- ✅ cebbys-ctd-utility: 8/8 passing
+- ⚠️ cebbys-ctd-resolver: 5/12 passing
+  - 5 tests in test_definition_creation.py passing ✅
+  - 7 tests in test_type_resolution.py failing (pre-existing)
+
+**Commits**:
 
 ## Remaining Work
 
