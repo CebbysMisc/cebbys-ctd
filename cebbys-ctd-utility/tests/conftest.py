@@ -1,7 +1,6 @@
-"""Pytest configuration for loader tests."""
+"""Pytest configuration for utility tests."""
 
 import pathlib as Pathlib
-import sys as Sys
 import importlib.util as ImportUtil
 import pytest as Pytest
 import lv.cebbys.languages.ctd.utility.logging as CtdLogging

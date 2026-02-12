@@ -14,8 +14,14 @@ from enum import Enum
 __all__ = ['Logger', 'LogLevel', 'get_logger', 'configure_logging']
 
 
+# Register TRACE level with Python's logging module
+TRACE_LEVEL = 5
+Logging.addLevelName(TRACE_LEVEL, 'TRACE')
+
+
 class LogLevel(Enum):
     """Log level enumeration."""
+    TRACE = TRACE_LEVEL
     DEBUG = Logging.DEBUG
     INFO = Logging.INFO
     WARNING = Logging.WARNING
@@ -53,8 +59,9 @@ class ColoredFormatter(Logging.Formatter):
     """Custom formatter that adds colors to log messages."""
     
     LEVEL_COLORS = {
-        Logging.DEBUG: ColorCode.BRIGHT_BLACK,
-        Logging.INFO: ColorCode.BRIGHT_CYAN,
+        TRACE_LEVEL: ColorCode.BRIGHT_BLACK,
+        Logging.DEBUG: ColorCode.BRIGHT_BLUE,
+        Logging.INFO: ColorCode.BRIGHT_GREEN,
         Logging.WARNING: ColorCode.BRIGHT_YELLOW,
         Logging.ERROR: ColorCode.BRIGHT_RED,
         Logging.CRITICAL: ColorCode.RED + ColorCode.BOLD,
@@ -102,7 +109,17 @@ class Logger:
         """
         self._logger: Typing.Final[Logging.Logger]
         self._logger = logger
-    
+
+    def trace(self, message: str, *args: Typing.Any, **kwargs: Typing.Any) -> None:
+        """Log a trace message.
+        
+        Args:
+            message: Message to log
+            *args: Format arguments
+            **kwargs: Additional logging arguments
+        """
+        self._logger.log(TRACE_LEVEL, message, *args, **kwargs)
+        
     def debug(self, message: str, *args: Typing.Any, **kwargs: Typing.Any) -> None:
         """Log a debug message.
         

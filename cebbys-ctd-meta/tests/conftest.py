@@ -8,6 +8,6 @@ import lv.cebbys.languages.ctd.utility.logging as CtdLogging
 def configure_logging():
     """Configure logging for test runs - enable DEBUG level."""
     CtdLogging.configure_logging(
-        level=CtdLogging.LogLevel.DEBUG,
+        level=CtdLogging.LogLevel.TRACE,
         colored=True
     )

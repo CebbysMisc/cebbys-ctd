@@ -4,6 +4,10 @@ import lv.cebbys.languages.ctd.meta.parser.__api__ as Api
 import lv.cebbys.languages.ctd.types.meta as Meta
 
 
+import lv.cebbys.languages.ctd.utility.logging as Logging
+LOGGER = Logging.get_logger(__name__)
+
+
 class CtdAliasContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGrammar.AliasDeclarationContext, Meta.AliasMeta]):
     @staticmethod
     def instance() -> Api.CtdDeclaractionContextParser[Api.CtdGrammar.AliasDeclarationContext, Meta.AliasMeta]:
@@ -16,6 +20,8 @@ class CtdAliasContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGrammar.
             namespace: Namespace to which this alias belongs
             ctx: Alias declaration context
         """
+        LOGGER.trace("Parsing alias declaration")
+
         name = self.text(self.token(ctx, Api.CtdGrammar.IDENTIFIER))
         typespec_rule = self.rule(ctx, Api.CtdGrammar.TypeSpecContext)
         typespec = TypeSpecModule.CtdTypeSpecContextParser.instance().parse(typespec_rule)
@@ -23,7 +29,7 @@ class CtdAliasContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGrammar.
         decorators = DecoratorModule.CtdDecoratorContextParser.instance().parse_all(
             self.rules(ctx, Api.CtdGrammar.DecoratorContext)
         )
-        return Meta.AliasMeta(name, typespec, namespace, decorators)
-
+        out = Meta.AliasMeta(name, typespec, namespace, decorators)
+        return out
 
 INSTANCE = CtdAliasContextParser()

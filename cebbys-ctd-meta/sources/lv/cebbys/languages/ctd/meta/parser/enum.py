@@ -4,6 +4,10 @@ import lv.cebbys.languages.ctd.meta.parser.__api__ as Api
 import lv.cebbys.languages.ctd.types.meta as Meta
 
 
+import lv.cebbys.languages.ctd.utility.logging as Logging
+LOGGER = Logging.get_logger(__name__)
+
+
 class CtdEnumContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGrammar.EnumDeclarationContext, Meta.EnumMeta]):
     @staticmethod
     def instance() -> Api.CtdDeclaractionContextParser[Api.CtdGrammar.EnumDeclarationContext, Meta.EnumMeta]:
@@ -16,6 +20,8 @@ class CtdEnumContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGrammar.E
             namespace: Namespace to which this enum belongs
             ctx: Enum declaration context
         """
+        LOGGER.trace("Parsing enum declaration")
+
         name = self.text(self.token(ctx, Api.CtdGrammar.IDENTIFIER))
 
         # Get base type

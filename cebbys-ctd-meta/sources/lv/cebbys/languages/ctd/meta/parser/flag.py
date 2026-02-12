@@ -4,6 +4,10 @@ import lv.cebbys.languages.ctd.meta.parser.__api__ as Api
 import lv.cebbys.languages.ctd.types.meta as Meta
 
 
+import lv.cebbys.languages.ctd.utility.logging as Logging
+LOGGER = Logging.get_logger(__name__)
+
+
 class CtdFlagContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGrammar.FlagDeclarationContext, Meta.FlagMeta]):
     @staticmethod
     def instance() -> Api.CtdDeclaractionContextParser[Api.CtdGrammar.FlagDeclarationContext, Meta.FlagMeta]:
@@ -16,6 +20,8 @@ class CtdFlagContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGrammar.F
             namespace: Namespace to which this flag belongs
             ctx: Flag declaration context
         """
+        LOGGER.trace("Parsing flag declaration")
+
         name = self.text(self.token(ctx, Api.CtdGrammar.IDENTIFIER))
 
         # Get base type

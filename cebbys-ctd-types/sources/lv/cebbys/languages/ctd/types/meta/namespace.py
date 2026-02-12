@@ -68,6 +68,10 @@ class NamespaceMeta:
     def functions(self):
         """Get the list of function definitions."""
         return self._functions
+    
+    @property
+    def declarations(self):
+        return [d for collection in self._collections for d in collection]
 
     def add_use(self, use: str) -> None:
         self._uses.append(use)

@@ -4,6 +4,10 @@ import lv.cebbys.languages.ctd.types.meta as Meta
 import typing as Typing
 
 
+import lv.cebbys.languages.ctd.utility.logging as Logging
+LOGGER = Logging.get_logger(__name__)
+
+
 class CtdNamespaceContextParser(Api.CtdContextParserBase[Api.CtdGrammar.NamespaceDeclarationContext, Meta.NamespaceMeta]):
     def __init__(
         self,
@@ -22,14 +26,19 @@ class CtdNamespaceContextParser(Api.CtdContextParserBase[Api.CtdGrammar.Namespac
         return INSTANCE
 
     def parse(self, ctx: Api.CtdGrammar.NamespaceDeclarationContext):
+        LOGGER.trace("Parsing namespace declaration")
+
+        namespace: str = self.qualified_name(self.rule(ctx, Api.CtdGrammar.QualifiedNameContext))
+
         out = Meta.NamespaceMeta()
         for use_ctx in self.rules(ctx, Api.CtdGrammar.UseDeclarationContext):
             out.add_use(self.qualified_name(self.rule(use_ctx, Api.CtdGrammar.QualifiedNameContext)))
 
-        namespace: str = self.qualified_name(self.rule(ctx, Api.CtdGrammar.QualifiedNameContext))
         for declaration_ctx in self.rules(ctx, Api.CtdGrammar.DeclarationContext):
             meta = DeclarationModule.CtdDeclarationContextParser.instance().parse(namespace, declaration_ctx)
             self._consumers[type(meta)](out)(meta)
+        
+        LOGGER.debug(f"Namespace '{namespace}' parsing complete: {len(out.uses)} use(s) and {len(out.declarations)} declaration(s) statements")
 
         return out
 

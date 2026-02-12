@@ -3,6 +3,10 @@ import lv.cebbys.languages.ctd.meta.parser.__api__ as Api
 import lv.cebbys.languages.ctd.types.meta as Meta
 
 
+import lv.cebbys.languages.ctd.utility.logging as Logging
+LOGGER = Logging.get_logger(__name__)
+
+
 class CtdDecoratorContextParser(Api.CtdContextParserBase[Api.CtdGrammar.DecoratorContext, Meta.DecoratorMeta]):
     @staticmethod
     def instance() -> 'CtdDecoratorContextParser':
@@ -14,6 +18,7 @@ class CtdDecoratorContextParser(Api.CtdContextParserBase[Api.CtdGrammar.Decorato
         Args:
             ctx: Decorator context
         """
+        LOGGER.trace("Parsing decorator declaration")
         name = self.text(self.token(ctx, Api.CtdGrammar.IDENTIFIER))
         arguments: list[str] = []
 

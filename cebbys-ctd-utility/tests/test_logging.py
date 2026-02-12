@@ -3,10 +3,6 @@ import sys
 import io
 import logging as Logging
 import lv.cebbys.languages.ctd.utility as Utility
-
-# Import TestLogger from workspace conftest
-import pathlib as Pathlib
-sys.path.insert(0, str(Pathlib.Path(__file__).parent.parent.parent))
 from conftest import TestLogger
 
 
