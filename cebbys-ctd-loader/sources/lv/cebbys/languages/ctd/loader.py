@@ -52,7 +52,7 @@ class CtdLoader:
 
         # Stage 4: TODO - Resolve and build CebbysTypeDefinitions
         # self._definitions: CebbysTypeDefinitions
-        # self._definitions = self._build_type_definitions(self._module_metas)
+        self._definitions = self._build_type_definitions(self.metas)
 
     def load(self) -> Define.DefinitionCollection:
         """Load and parse all CTD modules from configured paths.
@@ -223,23 +223,23 @@ class CtdLoader:
     # Stage 4: Build CebbysTypeDefinitions (TODO)
     # =========================================================================
 
-    # def _build_type_definitions(
-    #     self,
-    #     module_metas: list[tuple[Api.FilePath, TypeMeta.ModuleMeta]]
-    # ) -> CebbysTypeDefinitions:
-    #     """Resolve type references and build final type definitions.
-    #
-    #     Args:
-    #         module_metas: List of tuples (file_path, module_meta)
-    #
-    #     Returns:
-    #         CebbysTypeDefinitions with resolved singleton types
-    #     """
-    #     # TODO: Implement resolution and singleton creation
-    #     # 1. Aggregate ModuleMeta into DefinitionCollectionMeta
-    #     # 2. Create singletons for all types
-    #     # 3. Resolve type references
-    #     # 4. Build file→definition metadata
-    #     # 5. Construct CebbysTypeDefinitions
-    #     pass
+    def _build_type_definitions(
+        self,
+        module_metas: list[tuple[Api.FilePath, TypeMeta.ModuleMeta]]
+    ) -> Typing.Any:
+        """Resolve type references and build final type definitions.
+    
+        Args:
+            module_metas: List of tuples (file_path, module_meta)
+    
+        Returns:
+            CebbysTypeDefinitions with resolved singleton types
+        """
+        # TODO: Implement resolution and singleton creation
+        # 1. Aggregate ModuleMeta into DefinitionCollectionMeta
+        # 2. Create singletons for all types
+        # 3. Resolve type references
+        # 4. Build file→definition metadata
+        # 5. Construct CebbysTypeDefinitions
+        pass
 

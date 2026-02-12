@@ -11,11 +11,16 @@ import lv.cebbys.languages.ctd.resolver.enum as EnumModule
 import lv.cebbys.languages.ctd.resolver.flag as FlagModule
 import lv.cebbys.languages.ctd.resolver.structure as StructureModule
 import lv.cebbys.languages.ctd.resolver.function as FunctionModule
+import lv.cebbys.languages.ctd.resolver.dependency_graph as DependencyGraphModule
 
-__all__ = ['MetaResolver', 'ResolutionError']
+__all__ = ['MetaResolver', 'ResolutionError', 'DependencyGraph', 'DependencyGraphBuilder']
 
 # Re-export ResolutionError from API
 ResolutionError = Api.ResolutionError
+
+# Re-export dependency graph classes
+DependencyGraph = DependencyGraphModule.DependencyGraph
+DependencyGraphBuilder = DependencyGraphModule.DependencyGraphBuilder
 
 
 class MetaResolver:

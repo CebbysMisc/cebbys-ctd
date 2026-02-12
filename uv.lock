@@ -109,12 +109,14 @@ source = { editable = "cebbys-ctd-resolver" }
 dependencies = [
     { name = "cebbys-ctd-meta" },
     { name = "cebbys-ctd-types" },
+    { name = "cebbys-ctd-utility" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "cebbys-ctd-meta", editable = "cebbys-ctd-meta" },
     { name = "cebbys-ctd-types", editable = "cebbys-ctd-types" },
+    { name = "cebbys-ctd-utility", editable = "cebbys-ctd-utility" },
 ]
 
 [[package]]
