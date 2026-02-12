@@ -208,7 +208,7 @@ def configure_logging(
     """
     global _CONFIGURED
     
-    handler: Logging.StreamHandler
+    handler: Logging.StreamHandler[Typing.Any]
     formatter: Logging.Formatter
     
     # Configure root logger

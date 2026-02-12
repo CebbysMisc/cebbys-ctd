@@ -73,7 +73,8 @@
                 "cebbys-ctd-loader",
                 "cebbys-ctd-meta",
                 "cebbys-ctd-resolver",
-                "cebbys-ctd-types"
+                "cebbys-ctd-types",
+                "cebbys-ctd-utility"
             ],
             "format": "svg"
         }

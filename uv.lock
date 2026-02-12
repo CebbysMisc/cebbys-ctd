@@ -92,12 +92,14 @@ source = { editable = "cebbys-ctd-meta" }
 dependencies = [
     { name = "cebbys-ctd-antlr4" },
     { name = "cebbys-ctd-types" },
+    { name = "cebbys-ctd-utility" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "cebbys-ctd-antlr4", editable = "cebbys-ctd-antlr4" },
     { name = "cebbys-ctd-types", editable = "cebbys-ctd-types" },
+    { name = "cebbys-ctd-utility", editable = "cebbys-ctd-utility" },
 ]
 
 [[package]]
