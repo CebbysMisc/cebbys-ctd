@@ -10,6 +10,8 @@ import lv.cebbys.languages.ctd.antlr4 as Antlr4
 import lv.cebbys.languages.ctd.meta as Meta
 import lv.cebbys.languages.ctd.resolver as Resolver
 
+from lv.cebbys.languages.ctd.meta.parser import CtdMetaParser
+
 __all__ = ['CtdLoader']
 
 
@@ -35,18 +37,18 @@ class CtdLoader:
 
         # Stage 1: Gather all .ctd file paths from directories
         # list[Path] - file paths to load
-        self._ctd_files: list[Api.FilePath]
-        self._ctd_files = self._list_ctd_from_dirs(dirs)
+        self.ctds: list[Api.FilePath]
+        self.ctds = self._list_ctd_from_dirs(dirs)
 
         # Stage 2: Parse each file to ANTLR4 ModuleDeclarationContext
         # list[tuple[Path, ModuleDeclarationContext]] - parsed contexts with file paths
-        self._module_contexts: list[tuple[Api.FilePath, Antlr4.CtdGrammar.ModuleDeclarationContext]]
-        self._module_contexts = self._parse_files_to_contexts(self._ctd_files)
+        self.contexts: list[tuple[Api.FilePath, Antlr4.CtdGrammar.ModuleDeclarationContext]]
+        self.contexts = self._parse_files_to_contexts(self.ctds)
 
         # Stage 3: Convert each context to ModuleMeta
         # list[tuple[Path, ModuleMeta]] - meta objects with file paths
-        self._module_metas: list[tuple[Api.FilePath, TypeMeta.ModuleMeta]]
-        self._module_metas = self._convert_contexts_to_metas(self._module_contexts)
+        self.metas: list[tuple[Api.FilePath, TypeMeta.ModuleMeta]]
+        self.metas = self._convert_contexts_to_metas(self.contexts)
 
         # Stage 4: TODO - Resolve and build CebbysTypeDefinitions
         # self._definitions: CebbysTypeDefinitions
@@ -71,7 +73,7 @@ class CtdLoader:
         meta_collection = TypeMeta.DefinitionCollectionMeta()
         namespace_uses = {}
 
-        for file_path, module_meta in self._module_metas:
+        for file_path, module_meta in self.metas:
             # For each module, we need to extract its namespaces
             # Since ModuleMeta is currently empty, this won't work yet
             # TODO: Implement once MetaVisitor.to_module_meta() is ready
@@ -79,7 +81,7 @@ class CtdLoader:
 
         # Temporary fallback: Re-parse using visitor directly
         # This duplicates work but allows load() to function until Stage 4 is complete
-        for file_path, context in self._module_contexts:
+        for file_path, context in self.contexts:
             visitor = Meta.MetaVisitor()
             visitor.visitModuleDeclaration(context)
             
@@ -192,31 +194,19 @@ class CtdLoader:
         Returns:
             List of tuples (file_path, module_meta)
         """
+        module_context: Antlr4.CtdGrammar.ModuleDeclarationContext
         module_metas: list[tuple[Api.FilePath, TypeMeta.ModuleMeta]]
         ctd_file: Api.FilePath
-        context: Antlr4.CtdGrammar.ModuleDeclarationContext
-        visitor: Meta.MetaVisitor
-        module_meta: TypeMeta.ModuleMeta
 
         module_metas = []
 
         # Convert each context to ModuleMeta
-        for ctd_file, context in module_contexts:
+        for ctd_file, module_context in module_contexts:
             try:
-                # Create visitor and visit context
-                visitor = Meta.MetaVisitor()
-                visitor.visitModuleDeclaration(context)
-
-                # TODO: Extract ModuleMeta from visitor
-                # For now, visitor builds DefinitionCollectionMeta
-                # We need to add a method to build ModuleMeta
-                # module_meta = visitor.to_module_meta()
-
-                # Placeholder - just store empty ModuleMeta
-                module_meta = TypeMeta.ModuleMeta()
-
-                # Store file path with meta
-                module_metas.append((ctd_file, module_meta))
+                module_metas.append((
+                    ctd_file,
+                    CtdMetaParser.parse_module(module_context)
+                ))
 
             except Exception as e:
                 # TODO: Collect meta conversion error

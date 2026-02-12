@@ -27,26 +27,26 @@ def test_loader_transformation_chain() -> None:
     loader = Loader.CtdLoader([test_dir])
     
     # Verify Stage 1: File discovery
-    TestLogger.info(f"Stage 1: Found {len(loader._ctd_files)} .ctd files")
-    assert len(loader._ctd_files) > 0, "Should find at least one .ctd file"
-    assert all(f.suffix == '.ctd' for f in loader._ctd_files), "All files should be .ctd"
+    TestLogger.info(f"Stage 1: Found {len(loader.ctds)} .ctd files")
+    assert len(loader.ctds) > 0, "Should find at least one .ctd file"
+    assert all(f.suffix == '.ctd' for f in loader.ctds), "All files should be .ctd"
     
     # Verify Stage 2: ANTLR4 parsing
-    TestLogger.info(f"Stage 2: Parsed {len(loader._module_contexts)} contexts")
-    assert len(loader._module_contexts) > 0, "Should parse at least one context"
+    TestLogger.info(f"Stage 2: Parsed {len(loader.contexts)} contexts")
+    assert len(loader.contexts) > 0, "Should parse at least one context"
     
     # Check context structure
-    for file_path, context in loader._module_contexts:
+    for file_path, context in loader.contexts:
         assert file_path.exists(), f"File should exist: {file_path}"
         assert context is not None, "Context should not be None"
         TestLogger.info(f"  - {file_path.name}: {type(context).__name__}")
     
     # Verify Stage 3: Meta conversion
-    TestLogger.info(f"Stage 3: Converted {len(loader._module_metas)} meta objects")
-    assert len(loader._module_metas) > 0, "Should convert at least one meta"
+    TestLogger.info(f"Stage 3: Converted {len(loader.metas)} meta objects")
+    assert len(loader.metas) > 0, "Should convert at least one meta"
     
     # Check meta structure
-    for file_path, module_meta in loader._module_metas:
+    for file_path, module_meta in loader.metas:
         assert file_path.exists(), f"File should exist: {file_path}"
         assert module_meta is not None, "ModuleMeta should not be None"
         TestLogger.info(f"  - {file_path.name}: {type(module_meta).__name__}")
@@ -72,9 +72,9 @@ def test_loader_with_existing_resources() -> None:
     # Create loader
     loader = Loader.CtdLoader([resources_dir])
     
-    TestLogger.info(f"Found {len(loader._ctd_files)} files")
-    TestLogger.info(f"Parsed {len(loader._module_contexts)} contexts")
-    TestLogger.info(f"Converted {len(loader._module_metas)} metas")
+    TestLogger.info(f"Found {len(loader.ctds)} files")
+    TestLogger.info(f"Parsed {len(loader.contexts)} contexts")
+    TestLogger.info(f"Converted {len(loader.metas)} metas")
     
     # Test existing load() method still works
     collection = loader.load()
@@ -101,9 +101,9 @@ def test_loader_empty_directory() -> None:
     loader = Loader.CtdLoader([empty_dir])
     
     # Should handle empty gracefully
-    assert len(loader._ctd_files) == 0, "Should find no files"
-    assert len(loader._module_contexts) == 0, "Should parse no contexts"
-    assert len(loader._module_metas) == 0, "Should convert no metas"
+    assert len(loader.ctds) == 0, "Should find no files"
+    assert len(loader.contexts) == 0, "Should parse no contexts"
+    assert len(loader.metas) == 0, "Should convert no metas"
     
     TestLogger.success("Handled empty directory gracefully")
     TestLogger.complete("Test passed")

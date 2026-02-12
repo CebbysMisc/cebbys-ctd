@@ -2,10 +2,10 @@
 
 This package contains metadata types and the visitor for CTD files.
 """
-from lv.cebbys.languages.ctd.meta.visitor import MetaVisitor as CtdMetaVisitor
+from lv.cebbys.languages.ctd.meta.visitor import MetaVisitor
 
 # Alias for convenience
-MetaVisitor = CtdMetaVisitor
+CtdMetaVisitor = MetaVisitor
 
 __all__ = [
     'CtdMetaVisitor',

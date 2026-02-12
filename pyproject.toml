@@ -13,6 +13,7 @@ members = [
     "cebbys-ctd-meta",
     "cebbys-ctd-resolver",
     "cebbys-ctd-loader",
+    "cebbys-ctd-utility",
 ]
 
 [tool.uv.sources]
@@ -21,6 +22,7 @@ cebbys-ctd-types = { workspace = true }
 cebbys-ctd-meta = { workspace = true }
 cebbys-ctd-resolver = { workspace = true }
 cebbys-ctd-loader = { workspace = true }
+cebbys-ctd-utility = { workspace = true }
 
 [dependency-groups]
 dev = [
@@ -36,10 +38,12 @@ pythonpath = [
     "cebbys-ctd-meta/sources",
     "cebbys-ctd-resolver/sources",
     "cebbys-ctd-loader/sources",
+    "cebbys-ctd-utility/sources",
 ]
 testpaths = [
     "cebbys-ctd-antlr4/tests",
     "cebbys-ctd-meta/tests",
     "cebbys-ctd-resolver/tests",
+    "cebbys-ctd-utility/tests",
 ]
 addopts = "--import-mode=importlib"

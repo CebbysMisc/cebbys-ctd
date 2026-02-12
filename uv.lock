@@ -10,6 +10,7 @@ members = [
     "cebbys-ctd-meta",
     "cebbys-ctd-resolver",
     "cebbys-ctd-types",
+    "cebbys-ctd-utility",
 ]
 
 [[package]]
@@ -118,6 +119,11 @@ requires-dist = [
 name = "cebbys-ctd-types"
 version = "0.1.0"
 source = { editable = "cebbys-ctd-types" }
+
+[[package]]
+name = "cebbys-ctd-utility"
+version = "0.1.0"
+source = { editable = "cebbys-ctd-utility" }
 
 [[package]]
 name = "colorama"
