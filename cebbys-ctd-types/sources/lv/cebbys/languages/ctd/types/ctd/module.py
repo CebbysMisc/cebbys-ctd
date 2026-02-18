@@ -11,3 +11,6 @@ class Module:
         out = f"// module \"{self.name}\"\n\n"
         out += "\n".join([f"include \"{i.name}\"" for i in self.includes])
         return out
+    
+    def __repr__(self) -> str:
+        return f"Module[{self.name}]"

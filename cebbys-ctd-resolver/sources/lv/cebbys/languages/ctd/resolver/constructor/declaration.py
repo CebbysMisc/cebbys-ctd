@@ -1,11 +1,22 @@
 import lv.cebbys.languages.ctd.types.meta as Meta
 import lv.cebbys.languages.ctd.types.ctd as Ctd
 import lv.cebbys.languages.ctd.utility.logging as Logging
+import typing as Typing
 
 logger = Logging.get_logger(__name__)
 
 
 class DeclarationConstructor:
+    MAPPINGS: Typing.Final[dict[type, type[Ctd.Declaration]]] = {
+        Meta.AliasMeta: Ctd.Alias,
+        Meta.TypedefMeta: Ctd.Typedef,
+        Meta.EnumMeta: Ctd.Enum,
+        Meta.FlagMeta: Ctd.Flag,
+        Meta.StructureMeta: Ctd.Structure,
+        Meta.InterfaceMeta: Ctd.Interface,
+        Meta.FunctionMeta: Ctd.Function,
+    }
+
     @staticmethod
     def construct(meta: Meta.DeclarationMeta) -> Ctd.Declaration:
         """Construct a CTD declaration from metadata.
@@ -21,45 +32,16 @@ class DeclarationConstructor:
         """
         out: Ctd.Declaration
 
-        logger.trace(f"Constructing declaration: {type(meta).__name__}")
+        meta_type = type(meta)
+        logger.trace(f"Constructing declaration: {meta_type.__name__}")
 
-        if isinstance(meta, Meta.AliasMeta):
-            out = Ctd.Alias()
-            logger.trace(f"Created Alias: {meta.name}")
-            
-        elif isinstance(meta, Meta.TypedefMeta):
-            out = Ctd.Typedef()
-            logger.trace(f"Created Typedef: {meta.name}")
-            
-        elif isinstance(meta, Meta.EnumMeta):
-            out = Ctd.Enum()
-            out.members = []
-            logger.trace(f"Created Enum: {meta.name}")
-            
-        elif isinstance(meta, Meta.FlagMeta):
-            out = Ctd.Flag()
-            out.members = []
-            logger.trace(f"Created Flag: {meta.name}")
-            
-        elif isinstance(meta, Meta.StructureMeta):
-            out = Ctd.Structure()
-            out.members = []
-            logger.trace(f"Created Structure: {meta.name}")
-            
-        elif isinstance(meta, Meta.InterfaceMeta):
-            out = Ctd.Interface()
-            logger.trace(f"Created Interface: {meta.name}")
-            
-        elif isinstance(meta, Meta.FunctionMeta):
-            out = Ctd.Function()
-            out.parameters = []
-            logger.trace(f"Created Function: {meta.name}")
-        else:
-            raise NotImplementedError(
-                f"Construction for declaration type '{type(meta).__name__}' not implemented"
-            )
+        if meta_type not in DeclarationConstructor.MAPPINGS:
+            raise BaseException(f"Mapping of Meta to Ctd not implemented for {meta_type}")
+
+        ctd_type = DeclarationConstructor.MAPPINGS[meta_type]
+        out = ctd_type()
+        logger.trace(f"Created {type(out).__name__}: {meta.name}")
         out.name = meta.name
-        out.decorators = []
-        out.meta = meta # type: ignore
+        out.meta = meta
         return out
 

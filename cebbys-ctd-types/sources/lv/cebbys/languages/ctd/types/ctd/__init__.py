@@ -5,7 +5,9 @@ from lv.cebbys.languages.ctd.types.ctd.namespace import (
     Namespace
 )
 from lv.cebbys.languages.ctd.types.ctd.builtin import (
-    Builtin
+    Builtin,
+    Pointer,
+    Array
 )
 from lv.cebbys.languages.ctd.types.ctd.typedef import (
     Typedef
@@ -40,6 +42,8 @@ __all__ = [
     "Declaration",
     "Namespace",
     "Builtin",
+    "Pointer",
+    "Array",
     "Typedef",
     "Module",
     "Alias",

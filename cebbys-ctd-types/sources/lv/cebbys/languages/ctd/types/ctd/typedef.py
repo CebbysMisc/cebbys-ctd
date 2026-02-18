@@ -10,6 +10,11 @@ class Typedef(Declaration):
     base: Declaration
     meta: TypedefMeta
 
+    def __init__(self) -> None:
+        super().__init__()
+        self.decorators = []
+        self.signed = None
+
     def __str__(self) -> str:
         try:
             return f"{self.namespace.path}::{self.name} ({self.base})"

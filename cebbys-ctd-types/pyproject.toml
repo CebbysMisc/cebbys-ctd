@@ -14,3 +14,4 @@ packages = ["sources/lv"]
 
 [tool.pytest.ini_options]
 pythonpath = ["sources"]
+addopts = "--color=yes"

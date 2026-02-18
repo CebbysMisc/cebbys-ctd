@@ -12,9 +12,14 @@ class EnumMember:
     meta: EnumMemberMeta
 
 
-class Enum(Declaration):
+class Enum(Declaration[EnumMeta]):
     """Represents an enum declaration."""
     decorators: list[Decorator]
-    base: Declaration | None
     members: list[EnumMember]
-    meta: EnumMeta
+    base: Declaration | None
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.decorators = []
+        self.members = []
+        self.base = None

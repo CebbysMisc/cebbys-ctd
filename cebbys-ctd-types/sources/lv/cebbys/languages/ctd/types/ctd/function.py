@@ -8,14 +8,19 @@ from lv.cebbys.languages.ctd.types.meta import (
 
 class Parameter:
     """Represents a function parameter."""
-    name: str
-    type: Declaration
     meta: ParameterMeta
+    type: Declaration
+    name: str
 
 
-class Function(Declaration):
+class Function(Declaration[FunctionMeta]):
     """Represents a function declaration."""
-    decorators: list[Decorator]
     return_type: Declaration | None
+    decorators: list[Decorator]
     parameters: list[Parameter]
-    meta: FunctionMeta
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.decorators = []
+        self.parameters = []
+        self.base = None

@@ -13,9 +13,14 @@ class FlagMember:
     meta: FlagMemberMeta
 
 
-class Flag(Declaration):
+class Flag(Declaration[FlagMeta]):
     """Represents a flag declaration."""
     decorators: list[Decorator]
-    base: Declaration | None
     members: list[FlagMember]
-    meta: FlagMeta
+    base: Declaration | None
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.decorators = []
+        self.members = []
+        self.base = None

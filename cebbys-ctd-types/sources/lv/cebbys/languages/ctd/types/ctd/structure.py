@@ -18,3 +18,9 @@ class Structure(Declaration):
     base: Declaration | None
     members: list[StructureMember]
     meta: StructureMeta
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.decorators = []
+        self.members = []
+        self.base = None

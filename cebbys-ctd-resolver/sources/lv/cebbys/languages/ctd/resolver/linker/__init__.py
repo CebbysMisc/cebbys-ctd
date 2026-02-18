@@ -14,9 +14,58 @@ class ModuleLinkerCtx:
     def __init__(self, modules: dict[str, Ctd.Module]) -> None:
         self.modules: Final[dict[str, Ctd.Module]] = modules
 
+
 class ModuleLinker:
+    def __init__(self, modules: dict[str, Ctd.Module]) -> None:
+        self.builtin_cache: dict[str, object] = {
+
+        }
+        self.type_cache: dict[str, Ctd.Declaration | None] = {
+
+        }
+        self.modules = modules
+
+    def resolve(self, paths:list[str], typespec: Meta.TypespecMeta) -> Ctd.Declaration:
+        if isinstance(typespec, Meta.PointerTypespecMeta):
+            out = Ctd.Pointer(self.resolve(paths, typespec.base))
+        
+        elif isinstance(typespec, Meta.ArrayTypespecMeta):
+            
+            out = Ctd.Pointer()
+
+        raise BaseException(f"Typespec {typespec} not found in paths {paths}")
+    
+    def resolve(self, path: str, typespec: Meta.TypespecMeta) -> Ctd.Declaration | None:
+        # key = f"{path}::{typespec}"
+        # if key in self.type_cache:
+        #     return self.type_cache[key]
+
+        out = None
+
+        # if isinstance(typespec, Meta.PointerTypespecMeta):
+        #     base = self.resolve(path, typespec.base)
+        #     if base is not None:
+        #         out = Ctd.Pointer(base)
+        #         self.type_cache[key] = out
+        # elif isinstance(typespec, Meta.ArrayTypespecMeta):
+        #     base = self.resolve(path, typespec.base)
+        #     if base is not None:
+        #         out = Ctd.Array(base, typespec.size)
+        #         self.type_cache[key] = out
+        # elif isinstance(typespec, Meta.TypedTypespecMeta):
+        #     if typespec.qualified_name in self.builtin_cache:
+        #         return 
+
+        #     pass
+
+            
+        
+        return out
+
     @staticmethod
     def link(modules: dict[str, Ctd.Module]):
+        instance = ModuleLinker(modules)
+
         for _, module in modules.items():
             module.includes = [ modules[i.path] for i in module.meta.includes ]
 

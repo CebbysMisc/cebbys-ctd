@@ -8,3 +8,8 @@ class Interface(Declaration):
     decorators: list[Decorator]
     base: Declaration | None
     meta: InterfaceMeta
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.decorators = []
+        self.base = None

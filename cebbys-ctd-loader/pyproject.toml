@@ -25,3 +25,4 @@ cebbys-ctd-types = { workspace = true }
 
 [tool.pytest.ini_options]
 pythonpath = ["sources", ".."]
+addopts = "--color=yes"

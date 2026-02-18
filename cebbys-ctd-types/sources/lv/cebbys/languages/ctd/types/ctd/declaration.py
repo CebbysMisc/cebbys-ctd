@@ -1,9 +1,17 @@
-from typing import TYPE_CHECKING
+from typing import (
+    TYPE_CHECKING,
+    Generic,
+    TypeVar,
+    Any
+)
+from lv.cebbys.languages.ctd.types.meta import DeclarationMeta
 
 if TYPE_CHECKING:
     from lv.cebbys.languages.ctd.types.ctd.namespace import Namespace
 
+M = TypeVar("M", bound=DeclarationMeta, default=Any)
 
-class Declaration:
+class Declaration(Generic[M]):
     namespace: "Namespace"
-    name: str
+    meta: "M"
+    name: "str"
