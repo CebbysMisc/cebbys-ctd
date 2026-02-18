@@ -1,0 +1,17 @@
+from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
+from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
+from lv.cebbys.languages.ctd.types.meta import TypedefMeta
+
+
+class Typedef(Declaration):
+    """Represents a typedef declaration."""
+    decorators: list[Decorator]
+    signed: bool|None
+    base: Declaration
+    meta: TypedefMeta
+
+    def __str__(self) -> str:
+        try:
+            return f"{self.namespace.path}::{self.name} ({self.base})"
+        except:
+            return f"{self.namespace.path}::{self.name}"

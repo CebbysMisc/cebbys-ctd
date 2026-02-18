@@ -24,7 +24,14 @@ if spec and spec.loader:
     workspace_conftest = ImportUtil.module_from_spec(spec)
     spec.loader.exec_module(workspace_conftest)
     TestLogger = workspace_conftest.TestLogger
+    get_resource_path = workspace_conftest.get_resource_path
+    load_meta_collection = workspace_conftest.load_meta_collection
 else:
     raise ImportError("Could not load workspace conftest.py")
 
-__all__ = ['TestLogger', 'configure_logging']
+__all__ = [
+    'TestLogger',
+    'configure_logging',
+    'get_resource_path',
+    'load_meta_collection',
+]

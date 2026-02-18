@@ -295,8 +295,6 @@ class MetaVisitor(Antlr4.CtdVisitor):
             Type specification string
         """
         parts: list[str]
-        array_ctx: Antlr4.CtdGrammar.ArrayModifierContext | None
-        pointer_ctx: Antlr4.CtdGrammar.PointerModifierContext | None
 
         parts = []
 
@@ -304,29 +302,13 @@ class MetaVisitor(Antlr4.CtdVisitor):
         if ctx.signModifier():
             parts.append(ctx.signModifier().getText())
 
-        # Handle primitive type
-        if ctx.primitiveType():
-            parts.append(ctx.primitiveType().getText())
-
-        # Handle type reference
+        # Handle type reference (always present now)
         if ctx.typeReference():
             parts.append(ctx.typeReference().qualifiedName().getText())
 
-        # Handle array modifier - check in typeSpec first, then in typeReference
-        array_ctx = ctx.arrayModifier()
-        if array_ctx is None and ctx.typeReference():
-            array_ctx = ctx.typeReference().arrayModifier()
-
-        if array_ctx:
-            parts.append(array_ctx.getText())
-
-        # Handle pointer modifier - check in typeSpec first, then in typeReference
-        pointer_ctx = ctx.pointerModifier()
-        if pointer_ctx is None and ctx.typeReference():
-            pointer_ctx = ctx.typeReference().pointerModifier()
-
-        if pointer_ctx:
-            parts.append(pointer_ctx.getText())
+            # Handle type extensions (multiple pointers and arrays)
+            for ext_ctx in ctx.typeReference().typeExtension():
+                parts.append(ext_ctx.getText())
 
         return ' '.join(parts)
 

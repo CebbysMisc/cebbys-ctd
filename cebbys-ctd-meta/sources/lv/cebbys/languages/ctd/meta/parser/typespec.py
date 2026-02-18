@@ -22,10 +22,6 @@ class CtdTypeSpecContextParser(Api.CtdContextParserBase[Api.CtdGrammar.TypeSpecC
         if sign_ctx:
             parts.append(self.text(sign_ctx))
 
-        primitive_ctx = self.optional_rule(ctx, Api.CtdGrammar.PrimitiveTypeContext)
-        if primitive_ctx:
-            parts.append(self.text(primitive_ctx))
-
         # Handle type reference
         type_ctx = self.optional_rule(ctx, Api.CtdGrammar.TypeReferenceContext)
         if type_ctx:
@@ -33,21 +29,14 @@ class CtdTypeSpecContextParser(Api.CtdContextParserBase[Api.CtdGrammar.TypeSpecC
             if qualified_ctx:
                 parts.append(self.text(qualified_ctx))
 
-        # Handle array modifier - check in typeSpec first, then in typeReference
-        array_ctx = self.optional_rule(ctx, Api.CtdGrammar.ArrayModifierContext)
-        if array_ctx is None and type_ctx:
-            array_ctx = self.optional_rule(type_ctx, Api.CtdGrammar.ArrayModifierContext)
+        # Handle type extensions (multiple pointers and arrays in any order)
+        # Check in typeSpec first, then in typeReference
+        extension_contexts = self.rules(ctx, Api.CtdGrammar.TypeExtensionContext)
+        if not extension_contexts and type_ctx:
+            extension_contexts = self.rules(type_ctx, Api.CtdGrammar.TypeExtensionContext)
 
-        if array_ctx:
-            parts.append(self.text(array_ctx))
-
-        # Handle pointer modifier - check in typeSpec first, then in typeReference
-        pointer_ctx = self.optional_rule(ctx, Api.CtdGrammar.PointerModifierContext)
-        if pointer_ctx is None and type_ctx:
-            pointer_ctx = self.optional_rule(type_ctx, Api.CtdGrammar.PointerModifierContext)
-
-        if pointer_ctx:
-            parts.append(self.text(pointer_ctx))
+        for ext_ctx in extension_contexts:
+            parts.append(self.text(ext_ctx))
 
         return ' '.join(parts)
 

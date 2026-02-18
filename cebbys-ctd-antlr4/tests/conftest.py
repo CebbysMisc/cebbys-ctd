@@ -1,19 +1,7 @@
-"""Pytest configuration for meta tests."""
+"""Pytest configuration for antlr4 tests."""
 
 import pathlib as Pathlib
 import importlib.util as ImportUtil
-import pytest as Pytest
-import lv.cebbys.languages.ctd.utility.logging as CtdLogging
-
-
-@Pytest.fixture(scope="session", autouse=True)
-def configure_logging():
-    """Configure logging for test runs - enable DEBUG level."""
-    CtdLogging.configure_logging(
-        level=CtdLogging.LogLevel.TRACE,
-        colored=True
-    )
-
 
 # Load workspace conftest and import TestLogger
 workspace_root = Pathlib.Path(__file__).parent.parent.parent
@@ -27,4 +15,4 @@ if spec and spec.loader:
 else:
     raise ImportError("Could not load workspace conftest.py")
 
-__all__ = ['TestLogger', 'configure_logging']
+__all__ = ['TestLogger']

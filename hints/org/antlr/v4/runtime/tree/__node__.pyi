@@ -8,6 +8,5 @@ class RuleNode(_Tree.ParseTree):
 class TerminalNode(_Tree.ParseTree):
     ...
 
-
 class ErrorNode(TerminalNode):
     ...

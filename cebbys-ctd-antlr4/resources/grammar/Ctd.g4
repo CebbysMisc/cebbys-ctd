@@ -66,19 +66,17 @@ decoratorArgument:
     | HEX_LITERAL
     | IDENTIFIER;
 
-typeSpec:
-    signModifier? primitiveType arrayModifier? pointerModifier?
-    | typeReference;
+typeSpec: signModifier? typeReference;
 
-typeReference: qualifiedName arrayModifier? pointerModifier?;
+typeReference: qualifiedName typeExtension*;
+
+typeExtension: arrayModifier | pointerModifier;
 
 arrayModifier: '[' INTEGER_LITERAL ']';
 
 signModifier: 'signed' | 'unsigned';
 
-primitiveType: 'char' | 'short' | 'int' | 'long' | 'void';
-
-pointerModifier: '*'+;
+pointerModifier: '*';
 
 qualifiedName: IDENTIFIER ('::' IDENTIFIER)*;
 

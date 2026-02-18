@@ -8,7 +8,9 @@ class IncludeMeta:
         self._path: str | None = None
 
     @property
-    def path(self):
+    def path(self) -> str:
+        if not self._path:
+            raise BaseException("Path is not initialized")
         return self._path
 
     def set_path(self, path: str) -> None:

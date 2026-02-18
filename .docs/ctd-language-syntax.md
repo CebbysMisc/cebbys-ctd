@@ -318,18 +318,43 @@ Note: Annotations are stored as string metadata and their interpretation is left
 
 - `signed` - Indicates a signed numeric type (optional, default for primitive types)
 - `unsigned` - Indicates an unsigned numeric type
-- `*` - Pointer modifier (suffix), can be chained (`**`, `***`)
+- `*` - Pointer modifier (suffix), can be chained with arrays in any combination
 - `[N]` - Array modifier (suffix) - defines a fixed-size array of N elements
 
-**Array Modifier Example**:
+**Type Extensions**:
+
+Type extensions can be chained arbitrarily to create complex types. Each extension modifies the type to its left:
+- `*` - Creates a pointer to the type
+- `[N]` - Creates a fixed-size array of N elements
+
+Extensions are applied left-to-right, so `int[3]*` is "array of 3 ints, then pointer" (pointer to array), while `int*[3]` is "int pointer, then array of 3" (array of 3 pointers).
+
+**Type Extension Examples**:
 ```ctd
-structure Guid {
-    Unt4    data1
-    Unt2    data2
-    Unt2    data3
-    Unt1[8] data4    // Fixed-size array of 8 bytes
+structure ComplexTypes {
+    Unt1[8]         simple_array        // Array of 8 bytes
+    Unt4*           simple_pointer      // Pointer to Unt4
+    Unt4**          double_pointer      // Pointer to pointer to Unt4
+    int[3]*         ptr_to_array        // Pointer to array of 3 ints
+    int*[4]         array_of_ptrs       // Array of 4 int pointers
+    int[3]**[4]*    complex_type        // Complex chained extensions:
+                                        // 1. int[3] - array of 3 ints
+                                        // 2. int[3]* - pointer to array of 3 ints
+                                        // 3. int[3]** - pointer to pointer to array of 3 ints
+                                        // 4. int[3]**[4] - array of 4 pointers to pointers to arrays
+                                        // 5. int[3]**[4]* - pointer to array of 4 pointers to pointers to arrays
 }
 ```
+
+**Reading Complex Types**: Read from left to right, applying each modifier:
+- `int[3]**[4]*[12]` reads as:
+  1. Start with `int`
+  2. `[3]` → array of 3 ints
+  3. `*` → pointer to (array of 3 ints)
+  4. `*` → pointer to pointer to (array of 3 ints)
+  5. `[4]` → array of 4 (pointers to pointers to arrays of 3 ints)
+  6. `*` → pointer to (array of 4 pointers to pointers to arrays of 3 ints)
+  7. `[12]` → array of 12 (pointers to arrays of 4 pointers to pointers to arrays of 3 ints)
 
 ### Primitive Types
 

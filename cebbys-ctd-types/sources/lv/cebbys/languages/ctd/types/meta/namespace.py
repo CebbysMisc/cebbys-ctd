@@ -13,9 +13,10 @@ __all__ = ['NamespaceMeta']
 class NamespaceMeta:
     # TODO: Add code comments as TypedefMeta
 
-    def __init__(self):
+    def __init__(self, name:str):
         self._collections: list[list[Typing.Any]] = []
         self._uses: list[str] = []
+        self.path = name
 
         def create_collection[T](_: type[T]) -> list[T]:
             out: list[T] = []

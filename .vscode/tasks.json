@@ -318,7 +318,7 @@
             "command": "pwsh",
             "args": [
                 "-Command",
-                "New-Item -ItemType Directory -Force -Path sources/lv/cebbys/languages/ctd/antlr4/__generated__ | Out-Null; uv run antlr4 -Dlanguage=Python3 -visitor resources/grammar/Ctd.g4 -o sources/lv/cebbys/languages/ctd/antlr4/__generated__"
+                "New-Item -ItemType Directory -Force -Path sources/lv/cebbys/languages/ctd/antlr4/__generated__ | Out-Null; uv run antlr4 -Dlanguage=Python3 -visitor resources/grammar/Ctd.g4 -o sources/lv/cebbys/languages/ctd/antlr4/__generated__; uv run python scripts/enrich/enrich_parser_with_type_decorators.py sources/lv/cebbys/languages/ctd/antlr4/__generated__/CtdParser.py"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/cebbys-ctd-antlr4"

@@ -10,7 +10,7 @@
     "python.analysis.ignore": [
         "**/lv/cebbys/languages/ctd/antlr4/**"
     ],
-    // "python.analysis.stubPath": "hints",
+    "python.analysis.stubPath": "hints",
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
         "tests"
@@ -96,5 +96,12 @@
                 "silent": true
             }
         ]
+    },
+    "files.exclude": {
+        "**/cebbys-ctd-utility": true,
+        // "**/cebbys-ctd-antlr4": true,
+        "**/.pytest_cache": true,
+        "**/__pycache__": true,
+        "**/.venv": true,
     }
 }

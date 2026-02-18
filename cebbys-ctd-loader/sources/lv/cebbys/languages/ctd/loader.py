@@ -10,6 +10,7 @@ import lv.cebbys.languages.ctd.antlr4 as Antlr4
 import lv.cebbys.languages.ctd.meta as Meta
 import lv.cebbys.languages.ctd.resolver as Resolver
 
+from lv.cebbys.languages.ctd.resolver.resolver import CtdMetaResolver
 from lv.cebbys.languages.ctd.meta.parser import CtdMetaParser
 
 __all__ = ['CtdLoader']
@@ -37,17 +38,17 @@ class CtdLoader:
 
         # Stage 1: Gather all .ctd file paths from directories
         # list[Path] - file paths to load
-        self.ctds: list[Api.FilePath]
+        self.ctds: list[tuple[Api.FilePath, str]]
         self.ctds = self._list_ctd_from_dirs(dirs)
 
         # Stage 2: Parse each file to ANTLR4 ModuleDeclarationContext
         # list[tuple[Path, ModuleDeclarationContext]] - parsed contexts with file paths
-        self.contexts: list[tuple[Api.FilePath, Antlr4.CtdGrammar.ModuleDeclarationContext]]
+        self.contexts: list[tuple[Api.FilePath, str, Antlr4.CtdGrammar.ModuleDeclarationContext]]
         self.contexts = self._parse_files_to_contexts(self.ctds)
 
         # Stage 3: Convert each context to ModuleMeta
         # list[tuple[Path, ModuleMeta]] - meta objects with file paths
-        self.metas: list[tuple[Api.FilePath, TypeMeta.ModuleMeta]]
+        self.metas: list[tuple[Api.FilePath, str, TypeMeta.ModuleMeta]]
         self.metas = self._convert_contexts_to_metas(self.contexts)
 
         # Stage 4: TODO - Resolve and build CebbysTypeDefinitions
@@ -102,7 +103,7 @@ class CtdLoader:
     # Stage 1: List all .ctd files from directories
     # =========================================================================
 
-    def _list_ctd_from_dirs(self, dirs: list[Api.FilePath]) -> list[Api.FilePath]:
+    def _list_ctd_from_dirs(self, dirs: list[Api.FilePath]) -> list[tuple[Api.FilePath, str]]:
         """Recursively gather all .ctd files from directories.
 
         Args:
@@ -111,7 +112,7 @@ class CtdLoader:
         Returns:
             List of .ctd file paths found
         """
-        ctd_files: list[Api.FilePath]
+        ctd_files: list[tuple[Api.FilePath, str]]
         directory: Api.FilePath
         ctd_file: Api.FilePath
 
@@ -126,7 +127,10 @@ class CtdLoader:
             # Recursively find all .ctd files in directory
             for ctd_file in directory.rglob('*.ctd'):
                 if ctd_file.is_file():
-                    ctd_files.append(ctd_file)
+                    name = str(ctd_file.absolute())
+                    name = name.removeprefix(str(directory))[1:-4]
+                    name = name.replace("\\", "/")
+                    ctd_files.append((ctd_file, name))
 
         return ctd_files
 
@@ -136,8 +140,8 @@ class CtdLoader:
 
     def _parse_files_to_contexts(
         self,
-        ctd_files: list[Api.FilePath]
-    ) -> list[tuple[Api.FilePath, Antlr4.CtdGrammar.ModuleDeclarationContext]]:
+        ctd_files: list[tuple[Api.FilePath, str]]
+    ) -> list[tuple[Api.FilePath, str, Antlr4.CtdGrammar.ModuleDeclarationContext]]:
         """Parse each .ctd file to ANTLR4 ModuleDeclarationContext.
 
         Args:
@@ -146,7 +150,7 @@ class CtdLoader:
         Returns:
             List of tuples (file_path, parsed_context)
         """
-        contexts: list[tuple[Api.FilePath, Antlr4.CtdGrammar.ModuleDeclarationContext]]
+        contexts: list[tuple[Api.FilePath, str, Antlr4.CtdGrammar.ModuleDeclarationContext]]
         ctd_file: Api.FilePath
         content: str
         parser: Antlr4.CtdParser
@@ -155,7 +159,7 @@ class CtdLoader:
         contexts = []
 
         # Parse each file
-        for ctd_file in ctd_files:
+        for (ctd_file, module_name) in ctd_files:
             try:
                 # Read file content
                 content = ctd_file.read_text(encoding='utf-8')
@@ -165,7 +169,7 @@ class CtdLoader:
                 context = parser.moduleDeclaration(content)
 
                 # Store file path with context
-                contexts.append((ctd_file, context))
+                contexts.append((ctd_file, module_name, context))
 
             except Exception as e:
                 # TODO: Collect parse error
@@ -184,8 +188,8 @@ class CtdLoader:
 
     def _convert_contexts_to_metas(
         self,
-        module_contexts: list[tuple[Api.FilePath, Antlr4.CtdGrammar.ModuleDeclarationContext]]
-    ) -> list[tuple[Api.FilePath, TypeMeta.ModuleMeta]]:
+        module_contexts: list[tuple[Api.FilePath, str, Antlr4.CtdGrammar.ModuleDeclarationContext]]
+    ) -> list[tuple[Api.FilePath, str, TypeMeta.ModuleMeta]]:
         """Convert ANTLR4 contexts to ModuleMeta objects.
 
         Args:
@@ -195,16 +199,17 @@ class CtdLoader:
             List of tuples (file_path, module_meta)
         """
         module_context: Antlr4.CtdGrammar.ModuleDeclarationContext
-        module_metas: list[tuple[Api.FilePath, TypeMeta.ModuleMeta]]
+        module_metas: list[tuple[Api.FilePath, str, TypeMeta.ModuleMeta]]
         ctd_file: Api.FilePath
 
         module_metas = []
 
         # Convert each context to ModuleMeta
-        for ctd_file, module_context in module_contexts:
+        for ctd_file, module_name, module_context in module_contexts:
             try:
                 module_metas.append((
                     ctd_file,
+                    module_name,
                     CtdMetaParser.parse_module(module_context)
                 ))
 
@@ -225,7 +230,7 @@ class CtdLoader:
 
     def _build_type_definitions(
         self,
-        module_metas: list[tuple[Api.FilePath, TypeMeta.ModuleMeta]]
+        module_metas: list[tuple[Api.FilePath, str, TypeMeta.ModuleMeta]]
     ) -> Typing.Any:
         """Resolve type references and build final type definitions.
     
@@ -235,6 +240,10 @@ class CtdLoader:
         Returns:
             CebbysTypeDefinitions with resolved singleton types
         """
+        modules = CtdMetaResolver.resolve({
+            module_name: module for _, module_name, module in module_metas
+        })
+        print(modules)
         # TODO: Implement resolution and singleton creation
         # 1. Aggregate ModuleMeta into DefinitionCollectionMeta
         # 2. Create singletons for all types
