@@ -1,4 +1,5 @@
 import lv.cebbys.languages.ctd.types.ctd as Ctd
+import lv.cebbys.languages.ctd.types.meta as Meta
 from typing import (
     Final,
     Any
@@ -28,26 +29,20 @@ class ModuleLinker:
                 for declaration in namespace.declarations:
                     if isinstance(declaration, Ctd.Typedef):
                         meta = declaration.meta
-                        if " " in meta.type_spec:
-                            parts = meta.type_spec.split(" ")
-                            if len(parts) == 2:
-                                if parts[0] == "signed":
-                                    declaration.signed = True
-                                    type_name = parts[1]
-                                elif parts[0] == "unsigned":
-                                    declaration.signed = False
-                                    type_name = parts[1]
-                                else:
-                                    declaration.signed = None
-                                    type_name = parts[0]
-                            else:
-                                raise BaseException("Not implemented") 
-                            
+                        type_spec = meta.type_spec
+                        
+                        # Unwrap to get base type (handle arrays and pointers)
+                        while isinstance(type_spec, (Meta.ArrayTypespecMeta, Meta.PointerTypespecMeta)):
+                            type_spec = type_spec.base
+                        
+                        # Now we have TypedTypespecMeta
+                        if isinstance(type_spec, Meta.TypedTypespecMeta):
+                            declaration.signed = type_spec.signed
+                            type_name = type_spec.qualified_name
                             declaration.base = find_type_in_paths(module, paths, type_name)
                             LOGGER.warning(f"{declaration}")
                         else:
-                            declaration.base = find_type_in_paths(module, paths, meta.type_spec)
-                            LOGGER.warning(f"{declaration}")
+                            raise TypeError(f"Expected TypedTypespecMeta but got {type(type_spec)}")
 
                     elif isinstance(declaration, Ctd.Alias):
                         alias_meta = declaration.meta

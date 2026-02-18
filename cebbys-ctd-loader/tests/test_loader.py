@@ -25,27 +25,27 @@ def test_loader_transformation_chain() -> None:
     # Verify Stage 1: File discovery
     TestLogger.info(f"Stage 1: Found {len(loader.ctds)} .ctd files")
     assert len(loader.ctds) > 0, "Should find at least one .ctd file"
-    assert all(f.suffix == '.ctd' for f in loader.ctds), "All files should be .ctd"
+    assert all(f[0].suffix == '.ctd' for f in loader.ctds), "All files should be .ctd"
     
     # Verify Stage 2: ANTLR4 parsing
     TestLogger.info(f"Stage 2: Parsed {len(loader.contexts)} contexts")
     assert len(loader.contexts) > 0, "Should parse at least one context"
     
     # Check context structure
-    for file_path, context in loader.contexts:
+    for file_path, module_name, context in loader.contexts:
         assert file_path.exists(), f"File should exist: {file_path}"
         assert context is not None, "Context should not be None"
-        TestLogger.info(f"  - {file_path.name}: {type(context).__name__}")
+        TestLogger.info(f"  - {file_path.name} ({module_name}): {type(context).__name__}")
     
     # Verify Stage 3: Meta conversion
     TestLogger.info(f"Stage 3: Converted {len(loader.metas)} meta objects")
     assert len(loader.metas) > 0, "Should convert at least one meta"
     
     # Check meta structure
-    for file_path, module_meta in loader.metas:
+    for file_path, module_name, module_meta in loader.metas:
         assert file_path.exists(), f"File should exist: {file_path}"
         assert module_meta is not None, "ModuleMeta should not be None"
-        TestLogger.info(f"  - {file_path.name}: {type(module_meta).__name__}")
+        TestLogger.info(f"  - {file_path.name} ({module_name}): {type(module_meta).__name__}")
     
     TestLogger.success("All transformation stages executed successfully")
     TestLogger.complete("Test passed")
