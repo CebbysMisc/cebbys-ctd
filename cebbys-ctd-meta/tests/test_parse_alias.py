@@ -58,7 +58,7 @@ def test_parse_simple_alias() -> None:
 
     # Validate Meta object attributes
     assert alias_meta.name == "InterfaceId", f"Expected name 'InterfaceId', got '{alias_meta.name}'"
-    assert alias_meta.type_spec == "Guid", f"Expected type_spec 'Guid', got '{alias_meta.type_spec}'"
+    assert str(alias_meta.type_spec) == "Guid", f"Expected type_spec 'Guid', got '{alias_meta.type_spec}'"
     assert alias_meta.namespace == "test", f"Expected namespace 'test', got '{alias_meta.namespace}'"
     assert len(alias_meta.decorators) == 0, f"Expected no decorators, got {len(alias_meta.decorators)}"
     TestLogger.success("All attributes validated")
@@ -77,7 +77,7 @@ def test_parse_pointer_alias() -> None:
 
     # Validate Meta object attributes
     assert alias_meta.name == "REFIID", f"Expected name 'REFIID', got '{alias_meta.name}'"
-    assert alias_meta.type_spec == "IID *", f"Expected type_spec 'IID *', got '{alias_meta.type_spec}'"
+    assert str(alias_meta.type_spec) == "IID*", f"Expected type_spec 'IID*', got '{alias_meta.type_spec}'"
     assert alias_meta.namespace == "test", f"Expected namespace 'test', got '{alias_meta.namespace}'"
     assert len(alias_meta.decorators) == 0, f"Expected no decorators, got {len(alias_meta.decorators)}"
     TestLogger.success("All attributes validated")
@@ -96,7 +96,7 @@ def test_parse_alias_with_decorator() -> None:
 
     # Validate Meta object attributes including decorators
     assert alias_meta.name == "NewGuid", f"Expected name 'NewGuid', got '{alias_meta.name}'"
-    assert alias_meta.type_spec == "OldGuid", f"Expected type_spec 'OldGuid', got '{alias_meta.type_spec}'"
+    assert str(alias_meta.type_spec) == "OldGuid", f"Expected type_spec 'OldGuid', got '{alias_meta.type_spec}'"
     assert alias_meta.namespace == "test", f"Expected namespace 'test', got '{alias_meta.namespace}'"
 
     assert len(alias_meta.decorators) == 1, f"Expected 1 decorator, got {len(alias_meta.decorators)}"

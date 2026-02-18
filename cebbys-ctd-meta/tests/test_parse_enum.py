@@ -64,7 +64,7 @@ def test_parse_simple_enum() -> None:
 
     # Validate Meta object attributes
     assert enum_meta.name == "Color", f"Expected name 'Color', got '{enum_meta.name}'"
-    assert enum_meta.base_type == "Int4", f"Expected base_type 'Int4', got '{enum_meta.base_type}'"
+    assert str(enum_meta.base_type) == "Int4", f"Expected base_type 'Int4', got '{enum_meta.base_type}'"
     assert enum_meta.namespace == "test", f"Expected namespace 'test', got '{enum_meta.namespace}'"
     assert len(enum_meta.decorators) == 0, f"Expected no decorators, got {len(enum_meta.decorators)}"
     
@@ -100,7 +100,7 @@ def test_parse_enum_with_values() -> None:
 
     # Validate Meta object attributes
     assert enum_meta.name == "Status", f"Expected name 'Status', got '{enum_meta.name}'"
-    assert enum_meta.base_type == "Unt4", f"Expected base_type 'Unt4', got '{enum_meta.base_type}'"
+    assert str(enum_meta.base_type) == "Unt4", f"Expected base_type 'Unt4', got '{enum_meta.base_type}'"
     assert enum_meta.namespace == "test", f"Expected namespace 'test', got '{enum_meta.namespace}'"
     
     # Validate members with explicit values

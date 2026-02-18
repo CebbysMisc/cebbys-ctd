@@ -21,7 +21,7 @@ class TypedefMeta(Api.DeclarationMeta):
     def __init__(
         self,
         name: str,
-        type_spec: str,
+        type_spec: Api.TypespecMeta,
         namespace: Api.ModulePath,
         decorators: list[Api.DecoratorMeta] = []
     ):
@@ -36,6 +36,6 @@ class TypedefMeta(Api.DeclarationMeta):
         self._type_spec = type_spec
 
     @property
-    def type_spec(self):
+    def type_spec(self) -> Api.TypespecMeta:
         """Get the type specification."""
         return self._type_spec

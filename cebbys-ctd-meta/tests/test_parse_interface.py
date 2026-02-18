@@ -70,10 +70,10 @@ def test_parse_simple_interface() -> None:
     # Validate methods
     assert len(interface_meta.methods) == 2, f"Expected 2 methods, got {len(interface_meta.methods)}"
     assert interface_meta.methods[0].name == "doSomething", f"Expected method 'doSomething', got '{interface_meta.methods[0].name}'"
-    assert interface_meta.methods[0].return_type == "Void", f"Expected return type 'Void', got '{interface_meta.methods[0].return_type}'"
+    assert str(interface_meta.methods[0].return_type) == "Void", f"Expected return type 'Void', got '{interface_meta.methods[0].return_type}'"
     
     assert interface_meta.methods[1].name == "getValue", f"Expected method 'getValue', got '{interface_meta.methods[1].name}'"
-    assert interface_meta.methods[1].return_type == "Int4", f"Expected return type 'Int4', got '{interface_meta.methods[1].return_type}'"
+    assert str(interface_meta.methods[1].return_type) == "Int4", f"Expected return type 'Int4', got '{interface_meta.methods[1].return_type}'"
     
     TestLogger.success("All attributes validated")
     TestLogger.complete()
@@ -94,7 +94,7 @@ def test_parse_interface_with_extension() -> None:
 
     # Validate Meta object attributes
     assert interface_meta.name == "IExtended", f"Expected name 'IExtended', got '{interface_meta.name}'"
-    assert interface_meta.base_type == "IBase", f"Expected base_type 'IBase', got '{interface_meta.base_type}'"
+    assert str(interface_meta.base_type) == "IBase", f"Expected base_type 'IBase', got '{interface_meta.base_type}'"
     assert interface_meta.namespace == "test", f"Expected namespace 'test', got '{interface_meta.namespace}'"
     
     # Validate methods
@@ -130,7 +130,7 @@ def test_parse_interface_with_parameters() -> None:
     assert interface_meta.methods[0].name == "add", f"Expected method 'add', got '{interface_meta.methods[0].name}'"
     assert len(interface_meta.methods[0].parameters) == 2, f"Expected 2 parameters, got {len(interface_meta.methods[0].parameters)}"
     assert interface_meta.methods[0].parameters[0].name == "a", f"Expected param 'a', got '{interface_meta.methods[0].parameters[0].name}'"
-    assert interface_meta.methods[0].parameters[0].type_spec == "Int4", f"Expected type 'Int4', got '{interface_meta.methods[0].parameters[0].type_spec}'"
+    assert str(interface_meta.methods[0].parameters[0].type_spec) == "Int4", f"Expected type 'Int4', got '{interface_meta.methods[0].parameters[0].type_spec}'"
     
     # Validate second method
     assert interface_meta.methods[1].name == "multiply", f"Expected method 'multiply', got '{interface_meta.methods[1].name}'"

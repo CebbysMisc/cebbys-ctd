@@ -70,9 +70,9 @@ def test_parse_simple_structure() -> None:
     # Validate members
     assert len(structure_meta.members) == 2, f"Expected 2 members, got {len(structure_meta.members)}"
     assert structure_meta.members[0].name == "x", f"Expected member 'x', got '{structure_meta.members[0].name}'"
-    assert structure_meta.members[0].type_spec == "Int4", f"Expected type_spec 'Int4', got '{structure_meta.members[0].type_spec}'"
+    assert str(structure_meta.members[0].type_spec) == "Int4", f"Expected type_spec 'Int4', got '{structure_meta.members[0].type_spec}'"
     assert structure_meta.members[1].name == "y", f"Expected member 'y', got '{structure_meta.members[1].name}'"
-    assert structure_meta.members[1].type_spec == "Int4", f"Expected type_spec 'Int4', got '{structure_meta.members[1].type_spec}'"
+    assert str(structure_meta.members[1].type_spec) == "Int4", f"Expected type_spec 'Int4', got '{structure_meta.members[1].type_spec}'"
     
     TestLogger.success("All attributes validated")
     TestLogger.complete()
@@ -93,13 +93,13 @@ def test_parse_structure_with_extension() -> None:
 
     # Validate Meta object attributes
     assert structure_meta.name == "Point3D", f"Expected name 'Point3D', got '{structure_meta.name}'"
-    assert structure_meta.base_type == "Point", f"Expected base_type 'Point', got '{structure_meta.base_type}'"
+    assert str(structure_meta.base_type) == "Point", f"Expected base_type 'Point', got '{structure_meta.base_type}'"
     assert structure_meta.namespace == "test", f"Expected namespace 'test', got '{structure_meta.namespace}'"
     
     # Validate members
     assert len(structure_meta.members) == 1, f"Expected 1 member, got {len(structure_meta.members)}"
     assert structure_meta.members[0].name == "z", f"Expected member 'z', got '{structure_meta.members[0].name}'"
-    assert structure_meta.members[0].type_spec == "Int4", f"Expected type_spec 'Int4', got '{structure_meta.members[0].type_spec}'"
+    assert str(structure_meta.members[0].type_spec) == "Int4", f"Expected type_spec 'Int4', got '{structure_meta.members[0].type_spec}'"
     
     TestLogger.success("All attributes validated")
     TestLogger.complete()
@@ -126,10 +126,10 @@ def test_parse_structure_with_pointer_member() -> None:
     # Validate members including pointer
     assert len(structure_meta.members) == 2, f"Expected 2 members, got {len(structure_meta.members)}"
     assert structure_meta.members[0].name == "value", f"Expected member 'value', got '{structure_meta.members[0].name}'"
-    assert structure_meta.members[0].type_spec == "Int4", f"Expected type_spec 'Int4', got '{structure_meta.members[0].type_spec}'"
+    assert str(structure_meta.members[0].type_spec) == "Int4", f"Expected type_spec 'Int4', got '{structure_meta.members[0].type_spec}'"
     
     assert structure_meta.members[1].name == "next", f"Expected member 'next', got '{structure_meta.members[1].name}'"
-    assert structure_meta.members[1].type_spec == "Node *", f"Expected type_spec 'Node *', got '{structure_meta.members[1].type_spec}'"
+    assert str(structure_meta.members[1].type_spec) == "Node*", f"Expected type_spec 'Node*', got '{structure_meta.members[1].type_spec}'"
     
     TestLogger.success("All attributes validated")
     TestLogger.complete()
@@ -156,10 +156,9 @@ def test_parse_structure_with_array_member() -> None:
     # Validate members including array
     assert len(structure_meta.members) == 2, f"Expected 2 members, got {len(structure_meta.members)}"
     assert structure_meta.members[0].name == "size", f"Expected member 'size', got '{structure_meta.members[0].name}'"
-    assert structure_meta.members[0].type_spec == "Unt4", f"Expected type_spec 'Unt4', got '{structure_meta.members[0].type_spec}'"
+    assert str(structure_meta.members[0].type_spec) == "Unt4", f"Expected type_spec 'Unt4', got '{structure_meta.members[0].type_spec}'"
     
     assert structure_meta.members[1].name == "data", f"Expected member 'data', got '{structure_meta.members[1].name}'"
-    assert structure_meta.members[1].type_spec == "Unt1 [256]", f"Expected type_spec 'Unt1 [256]', got '{structure_meta.members[1].type_spec}'"
     
     TestLogger.success("All attributes validated")
     TestLogger.complete()

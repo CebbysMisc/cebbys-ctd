@@ -58,7 +58,7 @@ def test_parse_simple_typedef() -> None:
 
     # Validate Meta object attributes
     assert typedef_meta.name == "MyInt", f"Expected name 'MyInt', got '{typedef_meta.name}'"
-    assert typedef_meta.type_spec == "int", f"Expected type_spec 'int', got '{typedef_meta.type_spec}'"
+    assert str(typedef_meta.type_spec) == "int", f"Expected type_spec 'int', got '{typedef_meta.type_spec}'"
     assert typedef_meta.namespace == "test", f"Expected namespace 'test', got '{typedef_meta.namespace}'"
     assert len(typedef_meta.decorators) == 0, f"Expected no decorators, got {len(typedef_meta.decorators)}"
     TestLogger.success("All attributes validated")
@@ -77,7 +77,7 @@ def test_parse_signed_typedef() -> None:
 
     # Validate Meta object attributes
     assert typedef_meta.name == "Snt4", f"Expected name 'Snt4', got '{typedef_meta.name}'"
-    assert typedef_meta.type_spec == "signed int", f"Expected type_spec 'signed int', got '{typedef_meta.type_spec}'"
+    assert str(typedef_meta.type_spec) == "signed int", f"Expected type_spec 'signed int', got '{typedef_meta.type_spec}'"
     assert typedef_meta.namespace == "test", f"Expected namespace 'test', got '{typedef_meta.namespace}'"
     assert len(typedef_meta.decorators) == 0, f"Expected no decorators, got {len(typedef_meta.decorators)}"
     TestLogger.success("All attributes validated")
@@ -96,7 +96,7 @@ def test_parse_unsigned_typedef() -> None:
 
     # Validate Meta object attributes
     assert typedef_meta.name == "Unt4", f"Expected name 'Unt4', got '{typedef_meta.name}'"
-    assert typedef_meta.type_spec == "unsigned int", f"Expected type_spec 'unsigned int', got '{typedef_meta.type_spec}'"
+    assert str(typedef_meta.type_spec) == "unsigned int", f"Expected type_spec 'unsigned int', got '{typedef_meta.type_spec}'"
     assert typedef_meta.namespace == "test", f"Expected namespace 'test', got '{typedef_meta.namespace}'"
     assert len(typedef_meta.decorators) == 0, f"Expected no decorators, got {len(typedef_meta.decorators)}"
     TestLogger.success("All attributes validated")
@@ -115,7 +115,7 @@ def test_parse_typedef_with_decorator() -> None:
 
     # Validate Meta object attributes including decorators
     assert typedef_meta.name == "Long", f"Expected name 'Long', got '{typedef_meta.name}'"
-    assert typedef_meta.type_spec == "long", f"Expected type_spec 'long', got '{typedef_meta.type_spec}'"
+    assert str(typedef_meta.type_spec) == "long", f"Expected type_spec 'long', got '{typedef_meta.type_spec}'"
     assert typedef_meta.namespace == "test", f"Expected namespace 'test', got '{typedef_meta.namespace}'"
     
     assert len(typedef_meta.decorators) == 1, f"Expected 1 decorator, got {len(typedef_meta.decorators)}"

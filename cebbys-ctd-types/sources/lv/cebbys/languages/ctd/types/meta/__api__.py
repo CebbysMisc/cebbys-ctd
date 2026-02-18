@@ -3,6 +3,7 @@
 This module contains common types for metadata classes.
 """
 import lv.cebbys.languages.ctd.types.__api__ as Api
+from lv.cebbys.languages.ctd.types.meta.typespec import *
 
 __all__ = ['ModulePath', 'Meta', 'DecoratorMeta', 'DecoratableMeta', 'DeclarationMeta']
 

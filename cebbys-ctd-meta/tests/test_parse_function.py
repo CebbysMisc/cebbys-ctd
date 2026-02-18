@@ -58,7 +58,7 @@ def test_parse_simple_function() -> None:
 
     # Validate Meta object attributes
     assert function_meta.name == "getValue", f"Expected name 'getValue', got '{function_meta.name}'"
-    assert function_meta.return_type == "Int4", f"Expected return_type 'Int4', got '{function_meta.return_type}'"
+    assert str(function_meta.return_type) == "Int4", f"Expected return_type 'Int4', got '{function_meta.return_type}'"
     assert function_meta.namespace == "test", f"Expected namespace 'test', got '{function_meta.namespace}'"
     assert len(function_meta.decorators) == 0, f"Expected no decorators, got {len(function_meta.decorators)}"
     assert len(function_meta.parameters) == 0, f"Expected no parameters, got {len(function_meta.parameters)}"
@@ -78,15 +78,15 @@ def test_parse_function_with_parameters() -> None:
 
     # Validate Meta object attributes
     assert function_meta.name == "add", f"Expected name 'add', got '{function_meta.name}'"
-    assert function_meta.return_type == "Int4", f"Expected return_type 'Int4', got '{function_meta.return_type}'"
+    assert str(function_meta.return_type) == "Int4", f"Expected return_type 'Int4', got '{function_meta.return_type}'"
     assert function_meta.namespace == "test", f"Expected namespace 'test', got '{function_meta.namespace}'"
     
     # Validate parameters
     assert len(function_meta.parameters) == 2, f"Expected 2 parameters, got {len(function_meta.parameters)}"
     assert function_meta.parameters[0].name == "a", f"Expected param 'a', got '{function_meta.parameters[0].name}'"
-    assert function_meta.parameters[0].type_spec == "Int4", f"Expected type 'Int4', got '{function_meta.parameters[0].type_spec}'"
+    assert str(function_meta.parameters[0].type_spec) == "Int4", f"Expected type 'Int4', got '{function_meta.parameters[0].type_spec}'"
     assert function_meta.parameters[1].name == "b", f"Expected param 'b', got '{function_meta.parameters[1].name}'"
-    assert function_meta.parameters[1].type_spec == "Int4", f"Expected type 'Int4', got '{function_meta.parameters[1].type_spec}'"
+    assert str(function_meta.parameters[1].type_spec) == "Int4", f"Expected type 'Int4', got '{function_meta.parameters[1].type_spec}'"
     
     TestLogger.success("All attributes validated")
     TestLogger.complete()
@@ -106,7 +106,7 @@ def test_parse_function_with_decorator() -> None:
 
     # Validate Meta object attributes including decorator
     assert function_meta.name == "CreateWindow", f"Expected name 'CreateWindow', got '{function_meta.name}'"
-    assert function_meta.return_type == "Int4", f"Expected return_type 'Int4', got '{function_meta.return_type}'"
+    assert str(function_meta.return_type) == "Int4", f"Expected return_type 'Int4', got '{function_meta.return_type}'"
     assert function_meta.namespace == "test", f"Expected namespace 'test', got '{function_meta.namespace}'"
     
     # Validate decorator
@@ -131,13 +131,13 @@ def test_parse_function_with_pointer_return() -> None:
 
     # Validate Meta object attributes
     assert function_meta.name == "allocate", f"Expected name 'allocate', got '{function_meta.name}'"
-    assert function_meta.return_type == "Void *", f"Expected return_type 'Void *', got '{function_meta.return_type}'"
+    assert str(function_meta.return_type) == "Void*", f"Expected return_type 'Void*', got '{function_meta.return_type}'"
     assert function_meta.namespace == "test", f"Expected namespace 'test', got '{function_meta.namespace}'"
     
     # Validate parameters
     assert len(function_meta.parameters) == 1, f"Expected 1 parameter, got {len(function_meta.parameters)}"
     assert function_meta.parameters[0].name == "size", f"Expected param 'size', got '{function_meta.parameters[0].name}'"
-    assert function_meta.parameters[0].type_spec == "Unt4", f"Expected type 'Unt4', got '{function_meta.parameters[0].type_spec}'"
+    assert str(function_meta.parameters[0].type_spec) == "Unt4", f"Expected type 'Unt4', got '{function_meta.parameters[0].type_spec}'"
     
     TestLogger.success("All attributes validated")
     TestLogger.complete()

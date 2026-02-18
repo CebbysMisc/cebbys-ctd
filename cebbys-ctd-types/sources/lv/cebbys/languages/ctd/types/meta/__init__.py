@@ -20,6 +20,12 @@ from lv.cebbys.languages.ctd.types.meta.enum import EnumMemberMeta
 from lv.cebbys.languages.ctd.types.meta.enum import EnumMeta
 from lv.cebbys.languages.ctd.types.meta.flag import FlagMemberMeta
 from lv.cebbys.languages.ctd.types.meta.flag import FlagMeta
+from lv.cebbys.languages.ctd.types.meta.typespec import (
+    PointerTypespecMeta,
+    ArrayTypespecMeta,
+    TypedTypespecMeta,
+    TypespecMeta
+)
 
 __all__ = [
     # API
@@ -49,5 +55,9 @@ __all__ = [
     'IncludeMeta',
     'NamespaceMeta',
     'ModuleMeta',
-    'DeclarationMeta'
+    'DeclarationMeta',
+    'PointerTypespecMeta',
+    'ArrayTypespecMeta',
+    'TypedTypespecMeta',
+    'TypespecMeta'
 ]

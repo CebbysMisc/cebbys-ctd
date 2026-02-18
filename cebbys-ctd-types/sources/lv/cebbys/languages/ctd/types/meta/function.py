@@ -22,7 +22,7 @@ class ParameterMeta:
     def __init__(
         self,
         name: str,
-        type_spec: str,
+        type_spec: Api.TypespecMeta,
         decorators: list[Api.DecoratorMeta] = []
     ):
         """Initialize parameter metadata.
@@ -42,7 +42,7 @@ class ParameterMeta:
         return self._name
 
     @property
-    def type_spec(self) -> str:
+    def type_spec(self) -> Api.TypespecMeta:
         """Get the type specification."""
         return self._type_spec
 

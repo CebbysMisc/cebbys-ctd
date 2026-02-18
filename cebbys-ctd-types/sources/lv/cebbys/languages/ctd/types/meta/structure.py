@@ -19,18 +19,15 @@ class StructureMemberMeta:
     ```
     """
 
-    def __init__(self, name: str, type_spec: str):
+    def __init__(self, name: str, type_spec: Api.TypespecMeta):
         """Initialize structure member metadata.
 
         Args:
             name: The member identifier
             type_spec: The type specification string
         """
-        self._name: str
-        self._type_spec: str
-
-        self._name = name
         self._type_spec = type_spec
+        self._name = name
 
     @property
     def name(self) -> str:
@@ -38,7 +35,7 @@ class StructureMemberMeta:
         return self._name
 
     @property
-    def type_spec(self) -> str:
+    def type_spec(self) -> Api.TypespecMeta:
         """Get the type specification."""
         return self._type_spec
 
@@ -74,7 +71,7 @@ class StructureMeta(Api.DeclarationMeta):
         self,
         name: str,
         namespace: Api.ModulePath,
-        base_type: str | None = None,
+        base_type: Api.TypespecMeta | None = None,
         members: list[StructureMemberMeta] = [],
         decorators: list[Api.DecoratorMeta] = []
     ):
@@ -92,7 +89,7 @@ class StructureMeta(Api.DeclarationMeta):
         self._members = list(members)
 
     @property
-    def base_type(self):
+    def base_type(self) -> Api.TypespecMeta | None:
         """Get the base type."""
         return self._base_type
 

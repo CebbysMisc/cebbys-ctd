@@ -70,7 +70,7 @@ class FlagMeta(Api.DeclarationMeta):
         self,
         name: str,
         namespace: Api.ModulePath,
-        base_type: str | None = None,
+        base_type: Api.TypespecMeta | None = None,
         members: list[FlagMemberMeta] = [],
         decorators: list[Api.DecoratorMeta] = []
     ):
@@ -88,7 +88,7 @@ class FlagMeta(Api.DeclarationMeta):
         self._members = list(members)
 
     @property
-    def base_type(self) -> str | None:
+    def base_type(self) -> Api.TypespecMeta | None:
         """Get the base type."""
         return self._base_type
 

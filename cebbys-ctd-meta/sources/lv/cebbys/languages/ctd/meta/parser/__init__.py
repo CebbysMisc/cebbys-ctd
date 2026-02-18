@@ -43,8 +43,8 @@ class CtdMetaParser:
     @staticmethod
     def parse_typespec(ctx: _Antlr4.CtdGrammar.TypeSpecContext):
         return _TypeSpecModule.CtdTypeSpecContextParser.instance().parse(ctx)
-
     @staticmethod
+
     def parse_declaration(namespace: str, ctx: _Antlr4.CtdGrammar.DeclarationContext):
         return _DeclarationModule.CtdDeclarationContextParser.instance().parse(namespace, ctx)
 

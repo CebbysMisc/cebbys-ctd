@@ -64,7 +64,7 @@ def test_parse_simple_flag() -> None:
 
     # Validate Meta object attributes
     assert flag_meta.name == "Options", f"Expected name 'Options', got '{flag_meta.name}'"
-    assert flag_meta.base_type == "Unt4", f"Expected base_type 'Unt4', got '{flag_meta.base_type}'"
+    assert str(flag_meta.base_type) == "Unt4", f"Expected base_type 'Unt4', got '{flag_meta.base_type}'"
     assert flag_meta.namespace == "test", f"Expected namespace 'test', got '{flag_meta.namespace}'"
     assert len(flag_meta.decorators) == 0, f"Expected no decorators, got {len(flag_meta.decorators)}"
     
@@ -101,7 +101,7 @@ def test_parse_flag_with_offsets() -> None:
 
     # Validate Meta object attributes
     assert flag_meta.name == "Permissions", f"Expected name 'Permissions', got '{flag_meta.name}'"
-    assert flag_meta.base_type == "Unt4", f"Expected base_type 'Unt4', got '{flag_meta.base_type}'"
+    assert str(flag_meta.base_type) == "Unt4", f"Expected base_type 'Unt4', got '{flag_meta.base_type}'"
     assert flag_meta.namespace == "test", f"Expected namespace 'test', got '{flag_meta.namespace}'"
     
     # Validate members with explicit offset

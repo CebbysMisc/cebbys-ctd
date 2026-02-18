@@ -36,7 +36,7 @@ def _parse_typespec(ctd_string: str) -> str:
     TestLogger.success("ANTLR4 context created")
     
     # Step 2: Map ANTLR4 context to typespec string
-    typespec_str = Parser.CtdMetaParser.parse_typespec(typespec_ctx)
+    typespec_str = str(Parser.CtdMetaParser.parse_typespec(typespec_ctx))
     
     assert typespec_str is not None
     assert isinstance(typespec_str, str)
@@ -103,7 +103,7 @@ def test_parse_array_type() -> None:
     typespec_str = _parse_typespec("Unt1[8]")
 
     # Validate typespec string (parser adds space before array brackets)
-    assert typespec_str == "Unt1 [8]", f"Expected 'Unt1 [8]', got '{typespec_str}'"
+    assert str(typespec_str) == "Unt1[8]", f"Expected 'Unt1[8]', got '{typespec_str}'"
     TestLogger.success("Typespec validated")
 
     TestLogger.complete()

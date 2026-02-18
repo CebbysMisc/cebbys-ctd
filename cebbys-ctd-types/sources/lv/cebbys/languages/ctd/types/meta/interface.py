@@ -31,7 +31,7 @@ class InterfaceMeta(Api.DeclarationMeta):
         self,
         name: str,
         namespace: Api.ModulePath,
-        base_type: str | None = None,
+        base_type: Api.TypespecMeta | None = None,
         methods: list[FunctionModule.FunctionMeta] = [],
         decorators: list[Api.DecoratorMeta] = []
     ):
