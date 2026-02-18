@@ -2,6 +2,16 @@
 
 Custom Type Definition Language - A domain-specific language for defining custom datatypes that can be loaded and instantiated as Python objects.
 
+## ⚠️ Important: Open as Workspace
+
+**This project must be opened as a VSCode workspace, not as a folder.**
+
+```bash
+code cebbys-ctd.code-workspace
+```
+
+See [.vscode/README.md](.vscode/README.md) for details.
+
 ## Project Overview
 
 This project implements a custom language for defining datatypes, which are parsed and interpreted into Python objects. The workflow consists of:

@@ -1,0 +1,152 @@
+{
+	"folders": [
+		{
+			"name": "🏠 root",
+			"path": "."
+		},
+		{
+			"name": "📦 types",
+			"path": "cebbys-ctd-types"
+		},
+		{
+			"name": "📦 antlr4",
+			"path": "cebbys-ctd-antlr4"
+		},
+		{
+			"name": "📦 meta",
+			"path": "cebbys-ctd-meta"
+		},
+		{
+			"name": "📦 resolver",
+			"path": "cebbys-ctd-resolver"
+		},
+		{
+			"name": "📦 loader",
+			"path": "cebbys-ctd-loader"
+		}
+	],
+	"settings": {
+		// Python interpreter
+		"python.defaultInterpreterPath": "${workspaceFolder:🏠 root}/.venv/Scripts/python.exe",
+		
+		// Python analysis settings
+		"python.analysis.extraPaths": [
+			"${workspaceFolder:🏠 root}/cebbys-ctd-antlr4/sources",
+			"${workspaceFolder:🏠 root}/cebbys-ctd-types/sources",
+			"${workspaceFolder:🏠 root}/cebbys-ctd-meta/sources",
+			"${workspaceFolder:🏠 root}/cebbys-ctd-resolver/sources",
+			"${workspaceFolder:🏠 root}/cebbys-ctd-loader/sources",
+			"${workspaceFolder:🏠 root}/hints"
+		],
+		"python.analysis.stubPath": "${workspaceFolder:🏠 root}/hints",
+		"python.analysis.diagnosticSeverityOverrides": {
+			"reportMissingTypeStubs": "none"
+		},
+		"python.analysis.ignore": [
+			"**/lv/cebbys/languages/ctd/antlr4/__generated__/**"
+		],
+		
+		// Test settings - disable for root, enable per-module
+		"python.testing.pytestEnabled": false,
+		"python.testing.autoTestDiscoverOnSaveEnabled": false,
+		
+		// File associations
+		"files.associations": {
+			"*.md": "markdown",
+			"*.g4": "antlr"
+		},
+		
+		// File exclusions
+		"files.exclude": {
+			"**/cebbys-ctd-antlr4/**": true,
+			"**/cebbys-ctd-meta/**": true,
+			"**/cebbys-ctd-resolver/**": true,
+			"**/cebbys-ctd-types/**": true,
+			"**/cebbys-ctd-utility/**": true,
+			"**/.pytest_cache": true,
+			"**/__pycache__": true,
+			"**/.venv": true
+		},
+		
+		// ANTLR4 settings
+		"antlr4.generation": {
+			"mode": "external",
+			"language": "Python3",
+			"outputDir": "../../sources/lv/cebbys/languages/ctd/antlr4/__generated__",
+			"visitors": true,
+			"listeners": false
+		},
+		"antlr4.format": {
+			"alignTrailingComments": true,
+			"allowShortBlocksOnASingleLine": true,
+			"breakBeforeBraces": false,
+			"columnLimit": 100,
+			"continuationIndentWidth": 4,
+			"indentWidth": 4,
+			"keepEmptyLinesAtTheStartOfBlocks": false,
+			"maxEmptyLinesToKeep": 1,
+			"reflowComments": true,
+			"spaceBeforeAssignmentOperators": true,
+			"useTab": false
+		},
+		"[antlr]": {
+			"editor.formatOnSave": true,
+			"editor.defaultFormatter": "mike-lischke.vscode-antlr4"
+		},
+		
+		// VS Icons folder associations
+		"vsicons.associations.folders": [
+			{
+				"icon": "python",
+				"extensions": ["hints"],
+				"format": "svg"
+			},
+			{
+				"icon": "asset",
+				"extensions": ["resources"],
+				"format": "svg"
+			},
+			{
+				"icon": "module",
+				"extensions": [
+					"cebbys-ctd-antlr4",
+					"cebbys-ctd-loader",
+					"cebbys-ctd-meta",
+					"cebbys-ctd-resolver",
+					"cebbys-ctd-types",
+					"cebbys-ctd-utility"
+				],
+				"format": "svg"
+			}
+		],
+		
+		// Spell checker
+		"cSpell.words": [
+			"antlr",
+			"DXGI",
+			"vtable",
+			"WAITABLE"
+		],
+		
+		// Run on save (cleanup temp files)
+		"emeraldwalk.runonsave": {
+			"commands": [
+				{
+					"match": ".*",
+					"cmd": "find . -name \"tmpclaude-*-cwd\" -type f -delete 2>/dev/null || del /s /q tmpclaude-*-cwd 2>nul",
+					"isAsync": true,
+					"silent": true
+				}
+			]
+		}
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-python.python",
+			"ms-python.vscode-pylance",
+			"mike-lischke.vscode-antlr4",
+			"vscode-icons-team.vscode-icons",
+			"emeraldwalk.RunOnSave"
+		]
+	}
+}
