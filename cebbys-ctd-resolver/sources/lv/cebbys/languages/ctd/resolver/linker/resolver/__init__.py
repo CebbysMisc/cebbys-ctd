@@ -93,8 +93,11 @@ class TypespecResolverApi:
         """Initialize resolver with empty cache."""
         self._type_cache: dict[str, Ctd.Declaration | None] = {}
     
-    def resolve(self, module: Ctd.Module, namespace: Ctd.Namespace, typespec: Meta.TypespecMeta) -> Ctd.Declaration:
-        """Resolve CTD type singleton from typespec.
+    def resolve(self, module: Ctd.Module, namespace: Ctd.Namespace, typespec: Meta.TypespecMeta) -> list[Ctd.Declaration]:
+        """Resolve CTD type from typespec, returning all matching declarations.
+
+        Since a type name may exist in multiple namespaces that are in the search
+        path, this method returns ALL matching types found across all search paths.
 
         Example module
         ```
@@ -108,16 +111,17 @@ class TypespecResolverApi:
             use std
 
             structure Fruit {
-                String name     // Type spec String could be std::collection::String or std::String or String 
+                String name     // Type spec String could be std::collection::String or std::String
+                                // Both would be returned if both exist
                 String color    
-                int count       // This is a builtin type and it is immediately found due to being keyword
+                int count       // This is a builtin type - returns single match
             }
 
-            typedef List Fruits
+            typedef List Fruits  // If List exists in multiple namespaces, all are returned
         }
         ```
-        With the example above type String shall be resolved from module "std/types" namespace std
-        And the List would be resolved from "std/collections" std::collection namespace
+        With the example above, if String exists in both std::collection and std,
+        both declarations would be returned in the list.
 
         Args:
             module: Module containing the namespace
@@ -125,11 +129,11 @@ class TypespecResolverApi:
             typespec: The type specification object to resolve
             
         Returns:
-            Resolved type declaration (may be wrapped in Pointer/Array)
+            List of resolved type declarations (may be wrapped in Pointer/Array)
+            Empty list if no matches found
             
         Raises:
             TypeError: If typespec type is unexpected
-            LookupError: If type cannot be found
         """
         raise NotImplementedError("Subclasses must implement resolve()")
     
@@ -142,13 +146,13 @@ class TypespecResolverApi:
         module: Ctd.Module, 
         namespace: Ctd.Namespace, 
         typespec: Meta.TypespecMeta
-    ) -> Ctd.Declaration:
+    ) -> list[Ctd.Declaration]:
         """Algorithm 1: Iterative unwrapping with sequential path search.
         
         Steps:
         1. Collect extension wrappers (pointers/arrays) while unwrapping
-        2. Resolve base type
-        3. Rebuild wrappers in reverse order
+        2. Resolve base type from ALL matching paths
+        3. Rebuild wrappers for each match
         """
         # Step 1: Collect wrappers
         wrappers: list[Meta.TypespecMeta] = []
@@ -158,42 +162,38 @@ class TypespecResolverApi:
             wrappers.append(current)
             current = current.base
         
-        # Step 2: Resolve base type
+        # Step 2: Resolve base type from all paths
         if not isinstance(current, Meta.TypedTypespecMeta):
             raise TypeError(f"Expected TypedTypespecMeta at base, got {type(current)}")
         
         type_name = current.qualified_name
         search_paths = [namespace.path, *namespace.meta.uses]
         
-        # Check builtins
+        # Check builtins first (single match)
         if type_name in self._builtin_cache:
             LOGGER.debug(f"Resolved '{type_name}' as builtin")
-            base_decl = self._builtin_cache[type_name]
+            base_declarations = [self._builtin_cache[type_name]]
         else:
-            # Sequential path search
-            base_decl = None
+            # Collect all matches from all paths
+            base_declarations: list[Ctd.Declaration] = []
             for path in search_paths:
-                result = self._find_in_namespace(module, path, type_name)
-                if result:
+                results = self._find_all_in_namespace(module, path, type_name)
+                for result in results:
                     LOGGER.debug(f"Resolved '{type_name}' from path '{path}'")
-                    base_decl = result
-                    break
-            
-            if base_decl is None:
-                raise LookupError(
-                    f"Type '{type_name}' not found in module '{module.name}' "
-                    f"with search paths {search_paths}"
-                )
+                    base_declarations.append(result)
         
-        # Step 3: Rebuild wrappers in reverse order
-        result = base_decl
-        for wrapper in reversed(wrappers):
-            if isinstance(wrapper, Meta.PointerTypespecMeta):
-                result = Ctd.Pointer(result)
-            elif isinstance(wrapper, Meta.ArrayTypespecMeta):
-                result = Ctd.Array(result, wrapper.size)
+        # Step 3: Rebuild wrappers for each base declaration
+        final_results: list[Ctd.Declaration] = []
+        for base_decl in base_declarations:
+            result = base_decl
+            for wrapper in reversed(wrappers):
+                if isinstance(wrapper, Meta.PointerTypespecMeta):
+                    result = Ctd.Pointer(result)
+                elif isinstance(wrapper, Meta.ArrayTypespecMeta):
+                    result = Ctd.Array(result, wrapper.size)
+            final_results.append(result)
         
-        return result
+        return final_results
     
     # ============================================================================
     # ALGORITHM 2: Recursive Descent with Wrapper Construction
@@ -204,40 +204,40 @@ class TypespecResolverApi:
         module: Ctd.Module,
         namespace: Ctd.Namespace,
         typespec: Meta.TypespecMeta
-    ) -> Ctd.Declaration:
+    ) -> list[Ctd.Declaration]:
         """Algorithm 2: Recursive descent with wrapper construction.
         
         Steps:
-        1. Check if typespec is TypedTypespecMeta (base case) -> resolve
-        2. If pointer -> recurse on base, return Ctd.Pointer(resolved_base)
-        3. If array -> recurse on base, return Ctd.Array(resolved_base, size)
+        1. Check if typespec is TypedTypespecMeta (base case) -> resolve all matches
+        2. If pointer -> recurse on base, return Ctd.Pointer for each result
+        3. If array -> recurse on base, return Ctd.Array for each result
         """
         # Base case: typed typespec
         if isinstance(typespec, Meta.TypedTypespecMeta):
             type_name = typespec.qualified_name
             search_paths = [namespace.path, *namespace.meta.uses]
             
-            # Check builtins
+            # Check builtins (single match)
             if type_name in self._builtin_cache:
-                return self._builtin_cache[type_name]
+                return [self._builtin_cache[type_name]]
             
-            # Search paths
+            # Collect all matches from all paths
+            results: list[Ctd.Declaration] = []
             for path in search_paths:
-                result = self._find_in_namespace(module, path, type_name)
-                if result:
-                    return result
+                matches = self._find_all_in_namespace(module, path, type_name)
+                results.extend(matches)
             
-            raise LookupError(f"Type '{type_name}' not found")
+            return results
         
         # Recursive case: pointer
         elif isinstance(typespec, Meta.PointerTypespecMeta):
-            base_resolved = self._resolve_recursive_descent(module, namespace, typespec.base)
-            return Ctd.Pointer(base_resolved)
+            base_results = self._resolve_recursive_descent(module, namespace, typespec.base)
+            return [Ctd.Pointer(base) for base in base_results]
         
         # Recursive case: array
         elif isinstance(typespec, Meta.ArrayTypespecMeta):
-            base_resolved = self._resolve_recursive_descent(module, namespace, typespec.base)
-            return Ctd.Array(base_resolved, typespec.size)
+            base_results = self._resolve_recursive_descent(module, namespace, typespec.base)
+            return [Ctd.Array(base, typespec.size) for base in base_results]
         
         else:
             raise TypeError(f"Unknown TypespecMeta type: {type(typespec)}")
@@ -251,13 +251,15 @@ class TypespecResolverApi:
         module: Ctd.Module,
         namespace: Ctd.Namespace,
         typespec: Meta.TypespecMeta
-    ) -> Ctd.Declaration:
+    ) -> list[Ctd.Declaration]:
         """Algorithm 3: Cached hierarchical search.
         
         Steps:
         1. Collect wrappers while unwrapping to base
-        2. Resolve base type with caching
-        3. Rebuild wrappers
+        2. Resolve base type with caching - collect ALL matches
+        3. Rebuild wrappers for each match
+        
+        Note: Caches results per (module, path, name) to avoid repeated searches.
         """
         # Collect wrappers
         wrappers: list[Meta.TypespecMeta] = []
@@ -273,13 +275,13 @@ class TypespecResolverApi:
         
         type_name = current.qualified_name
         
-        # Check builtins (always fast)
+        # Check builtins (always fast, single match)
         if type_name in self._builtin_cache:
-            base_decl = self._builtin_cache[type_name]
+            base_declarations = [self._builtin_cache[type_name]]
         else:
-            # Search with caching
+            # Search with caching - collect all matches
             search_paths = [namespace.path, *namespace.meta.uses]
-            base_decl = None
+            base_declarations: list[Ctd.Declaration] = []
             
             for path in search_paths:
                 cache_key = f"{module.name}::{path}::{type_name}"
@@ -289,35 +291,34 @@ class TypespecResolverApi:
                     cached = self._type_cache[cache_key]
                     if cached is not None:
                         LOGGER.debug(f"Cache hit for '{type_name}' at '{path}'")
-                        base_decl = cached
-                        break
-                    # Cached None means we already know it's not in this path
+                        # Cached value is a list
+                        if isinstance(cached, list):
+                            base_declarations.extend(cached)
+                        else:
+                            base_declarations.append(cached)
+                    # Cached None/empty means we already know nothing in this path
                     continue
                 
                 # Not cached, search
-                result = self._find_in_namespace(module, path, type_name)
-                self._type_cache[cache_key] = result
+                results = self._find_all_in_namespace(module, path, type_name)
+                self._type_cache[cache_key] = results if results else None
                 
-                if result:
-                    LOGGER.debug(f"Cached '{type_name}' at '{path}'")
-                    base_decl = result
-                    break
-            
-            if base_decl is None:
-                raise LookupError(
-                    f"Type '{type_name}' not found in module '{module.name}' "
-                    f"with search paths {search_paths}"
-                )
+                if results:
+                    LOGGER.debug(f"Cached {len(results)} result(s) for '{type_name}' at '{path}'")
+                    base_declarations.extend(results)
         
-        # Rebuild wrappers
-        result = base_decl
-        for wrapper in reversed(wrappers):
-            if isinstance(wrapper, Meta.PointerTypespecMeta):
-                result = Ctd.Pointer(result)
-            elif isinstance(wrapper, Meta.ArrayTypespecMeta):
-                result = Ctd.Array(result, wrapper.size)
+        # Rebuild wrappers for each base declaration
+        final_results: list[Ctd.Declaration] = []
+        for base_decl in base_declarations:
+            result = base_decl
+            for wrapper in reversed(wrappers):
+                if isinstance(wrapper, Meta.PointerTypespecMeta):
+                    result = Ctd.Pointer(result)
+                elif isinstance(wrapper, Meta.ArrayTypespecMeta):
+                    result = Ctd.Array(result, wrapper.size)
+            final_results.append(result)
         
-        return result
+        return final_results
     
     # ============================================================================
     # ALGORITHM 4: Breadth-First Multi-Module Search
@@ -328,13 +329,13 @@ class TypespecResolverApi:
         module: Ctd.Module,
         namespace: Ctd.Namespace,
         typespec: Meta.TypespecMeta
-    ) -> Ctd.Declaration:
+    ) -> list[Ctd.Declaration]:
         """Algorithm 4: Breadth-first multi-module search.
         
         Steps:
         1. Collect wrappers while unwrapping
-        2. Resolve base with breadth-first module search
-        3. Rebuild wrappers
+        2. Resolve base with breadth-first module search - collect ALL matches
+        3. Rebuild wrappers for each match
         """
         # Collect wrappers
         wrappers: list[Meta.TypespecMeta] = []
@@ -352,42 +353,36 @@ class TypespecResolverApi:
         
         # Check builtins
         if type_name in self._builtin_cache:
-            base_decl = self._builtin_cache[type_name]
+            base_declarations = [self._builtin_cache[type_name]]
         else:
             # Build module list
             modules = [module, *module.includes]
             search_paths = [namespace.path, *namespace.meta.uses]
             
-            # Breadth-first: each path, all modules
-            base_decl = None
+            # Breadth-first: each path, all modules - collect ALL matches
+            base_declarations: list[Ctd.Declaration] = []
             for path in search_paths:
                 for search_module in modules:
-                    result = self._find_in_namespace(search_module, path, type_name)
-                    if result:
+                    results = self._find_all_in_namespace(search_module, path, type_name)
+                    for result in results:
                         LOGGER.debug(
                             f"Found '{type_name}' in module '{search_module.name}' "
                             f"at path '{path}'"
                         )
-                        base_decl = result
-                        break
-                if base_decl:
-                    break
-            
-            if base_decl is None:
-                raise LookupError(
-                    f"Type '{type_name}' not found across {len(modules)} modules "
-                    f"with search paths {search_paths}"
-                )
+                        base_declarations.append(result)
         
-        # Rebuild wrappers
-        result = base_decl
-        for wrapper in reversed(wrappers):
-            if isinstance(wrapper, Meta.PointerTypespecMeta):
-                result = Ctd.Pointer(result)
-            elif isinstance(wrapper, Meta.ArrayTypespecMeta):
-                result = Ctd.Array(result, wrapper.size)
+        # Rebuild wrappers for each base declaration
+        final_results: list[Ctd.Declaration] = []
+        for base_decl in base_declarations:
+            result = base_decl
+            for wrapper in reversed(wrappers):
+                if isinstance(wrapper, Meta.PointerTypespecMeta):
+                    result = Ctd.Pointer(result)
+                elif isinstance(wrapper, Meta.ArrayTypespecMeta):
+                    result = Ctd.Array(result, wrapper.size)
+            final_results.append(result)
         
-        return result
+        return final_results
     
     # ============================================================================
     # Helper Methods
@@ -399,7 +394,7 @@ class TypespecResolverApi:
         namespace_path: str,
         type_name: str
     ) -> Ctd.Declaration | None:
-        """Search for type in specific namespace of module.
+        """Search for type in specific namespace of module (returns first match).
         
         Args:
             module: Module to search
@@ -419,6 +414,34 @@ class TypespecResolverApi:
         
         return None
     
+    def _find_all_in_namespace(
+        self,
+        module: Ctd.Module,
+        namespace_path: str,
+        type_name: str
+    ) -> list[Ctd.Declaration]:
+        """Search for ALL types matching name in specific namespace of module.
+        
+        Args:
+            module: Module to search
+            namespace_path: Namespace path (e.g., "std::collection")
+            type_name: Simple type name to find
+            
+        Returns:
+            List of all matching declarations (empty if none found)
+        """
+        results: list[Ctd.Declaration] = []
+        
+        for ns in module.namespaces:
+            if ns.path != namespace_path:
+                continue
+            
+            for decl in ns.declarations:
+                if decl.name == type_name:
+                    results.append(decl)
+        
+        return results
+    
     def clear_cache(self) -> None:
         """Clear the type resolution cache."""
         self._type_cache.clear()
@@ -434,6 +457,7 @@ class BasicTypespecResolver(TypespecResolverApi):
     - Simple, predictable behavior
     - Good balance of speed and memory usage
     - Properly constructs Pointer and Array wrappers
+    - Returns ALL matching types from all search paths
     
     Algorithm rationale:
     - Algorithm 1 (Iterative): Too slow for large projects (no caching)
@@ -447,8 +471,12 @@ class BasicTypespecResolver(TypespecResolverApi):
         module: Ctd.Module, 
         namespace: Ctd.Namespace, 
         typespec: Meta.TypespecMeta
-    ) -> Ctd.Declaration:
-        """Resolve typespec to declaration using cached hierarchical search.
+    ) -> list[Ctd.Declaration]:
+        """Resolve typespec to declarations using cached hierarchical search.
+        
+        Returns ALL matching types found across all search paths. For example,
+        if 'String' exists in both 'std::collection' and 'std', both will be
+        returned in the list.
         
         Properly handles pointer and array extensions, returning Ctd.Pointer
         and Ctd.Array instances as needed.
