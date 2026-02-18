@@ -1,150 +1,7 @@
-"""Shared test fixtures and utilities for the workspace."""
+"""Shared test utilities for all modules."""
 import pathlib as Pathlib
-import pytest as Pytest
-import antlr4 as Antlr4
-import lv.cebbys.languages.ctd.meta.visitor as Visitor
-import lv.cebbys.languages.ctd.antlr4 as CtdAntlr4
-
-# Workspace root
-_WORKSPACE_ROOT = Pathlib.Path(__file__).parent
 
 
-def get_module_root(module_name: str) -> Pathlib.Path:
-    """Get the root path of a module within the workspace."""
-    return _WORKSPACE_ROOT / module_name
-
-
-def get_resource_path(relative_path: str, module_name: str = 'cebbys-ctd-resolver') -> Pathlib.Path:
-    """Get absolute path to a resource file relative to a module root.
-
-    Args:
-        relative_path: Path relative to the module root
-        module_name: Module name (defaults to cebbys-ctd-resolver for backwards compatibility)
-
-    Returns:
-        Absolute path to the resource
-    """
-    return get_module_root(module_name) / relative_path
-
-
-def parse_ctd_file(file_path: Pathlib.Path, module_root: Pathlib.Path | None = None) -> Visitor.MetaVisitor:
-    """Parse a CTD file and return the visitor with collected meta objects.
-
-    Args:
-        file_path: Path to the CTD file (absolute or relative to module_root)
-        module_root: Root path for resolving relative paths (defaults to cebbys-ctd-meta)
-
-    Returns:
-        MetaVisitor with parsed meta objects in visitor.collection
-    """
-    if module_root is None:
-        module_root = get_module_root('cebbys-ctd-meta')
-
-    # Resolve relative paths to module root
-    if not file_path.is_absolute():
-        file_path = module_root / file_path
-
-    content = file_path.read_text(encoding='utf-8')
-    input_stream = Antlr4.InputStream(content)
-    lexer = CtdAntlr4.CtdLexer(input_stream)
-    token_stream = Antlr4.CommonTokenStream(lexer)
-    parser = CtdAntlr4.CtdGrammar(token_stream)
-    parse_tree = parser.moduleDeclaration()
-
-    visitor = Visitor.MetaVisitor()
-    visitor.visitModuleDeclaration(parse_tree)
-    return visitor
-
-
-def load_meta_collection(paths: list[Pathlib.Path]) -> tuple:
-    """Load meta collection and namespace uses from CTD files.
-    
-    Helper function for tests that need meta collections.
-    Replaces deprecated MetaLoader.
-    
-    Args:
-        paths: List of CTD file paths to load
-        
-    Returns:
-        Tuple of (DefinitionCollectionMeta, namespace_uses dict)
-    """
-    import lv.cebbys.languages.ctd.types.meta as TypeMeta
-    
-    meta_collection: TypeMeta.DefinitionCollectionMeta
-    namespace_uses: dict[str, list[str]]
-    file_path: Pathlib.Path
-    visitor: Visitor.MetaVisitor
-    
-    meta_collection = TypeMeta.DefinitionCollectionMeta()
-    namespace_uses = {}
-    
-    for file_path in paths:
-        visitor = parse_ctd_file(file_path)
-        
-        # Merge visitor's collection
-        meta_collection.add_all(visitor.collection)
-        
-        # Merge namespace uses
-        for ns, used_list in visitor.namespace_uses.items():
-            if ns not in namespace_uses:
-                namespace_uses[ns] = []
-            namespace_uses[ns].extend(used_list)
-    
-    return meta_collection, namespace_uses
-
-
-# Meta module fixtures
-@Pytest.fixture
-def meta_module_root() -> Pathlib.Path:
-    """Root path of cebbys-ctd-meta module."""
-    return get_module_root('cebbys-ctd-meta')
-
-
-@Pytest.fixture
-def meta_std_types_path(meta_module_root: Pathlib.Path) -> Pathlib.Path:
-    """Path to std-types.ctd file in meta module."""
-    return meta_module_root / 'resources/test/ctd/std-types.ctd'
-
-
-@Pytest.fixture
-def meta_test_ctd_path(meta_module_root: Pathlib.Path) -> Pathlib.Path:
-    """Path to resources/test/ctd directory in meta module."""
-    return meta_module_root / 'resources/test/ctd'
-
-
-# Resolver module fixtures
-@Pytest.fixture
-def resolver_module_root() -> Pathlib.Path:
-    """Root path of cebbys-ctd-resolver module."""
-    return get_module_root('cebbys-ctd-resolver')
-
-
-@Pytest.fixture
-def resolver_std_types_path(resolver_module_root: Pathlib.Path) -> Pathlib.Path:
-    """Path to std-types.ctd file in resolver module."""
-    return resolver_module_root / 'resources/test/ctd/std-types.ctd'
-
-
-@Pytest.fixture
-def resolver_test_ctd_path(resolver_module_root: Pathlib.Path) -> Pathlib.Path:
-    """Path to resources/test/ctd directory in resolver module."""
-    return resolver_module_root / 'resources/test/ctd'
-
-
-# Backwards compatibility - generic fixtures that use meta module paths
-@Pytest.fixture
-def std_types_path(meta_std_types_path: Pathlib.Path) -> Pathlib.Path:
-    """Path to std-types.ctd file (defaults to meta module)."""
-    return meta_std_types_path
-
-
-@Pytest.fixture
-def test_ctd_path(meta_test_ctd_path: Pathlib.Path) -> Pathlib.Path:
-    """Path to resources/test/ctd directory (defaults to meta module)."""
-    return meta_test_ctd_path
-
-
-# Shared test utilities
 class TestLogger:
     """Unified test logging utility."""
 
@@ -175,3 +32,13 @@ class TestLogger:
     def section_break() -> None:
         """Print a section break."""
         print()
+
+
+def get_workspace_root() -> Pathlib.Path:
+    """Get the workspace root directory."""
+    return Pathlib.Path(__file__).parent
+
+
+def get_module_root(module_name: str) -> Pathlib.Path:
+    """Get the root path of a module within the workspace."""
+    return get_workspace_root() / module_name

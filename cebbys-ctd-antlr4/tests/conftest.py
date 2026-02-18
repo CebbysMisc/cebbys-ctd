@@ -1,18 +1,36 @@
 """Pytest configuration for antlr4 tests."""
 
-import pathlib as Pathlib
-import importlib.util as ImportUtil
 
-# Load workspace conftest and import TestLogger
-workspace_root = Pathlib.Path(__file__).parent.parent.parent
-workspace_conftest_path = workspace_root / "conftest.py"
+class TestLogger:
+    """Unified test logging utility."""
 
-spec = ImportUtil.spec_from_file_location("workspace_conftest", workspace_conftest_path)
-if spec and spec.loader:
-    workspace_conftest = ImportUtil.module_from_spec(spec)
-    spec.loader.exec_module(workspace_conftest)
-    TestLogger = workspace_conftest.TestLogger
-else:
-    raise ImportError("Could not load workspace conftest.py")
+    @staticmethod
+    def header(title: str) -> None:
+        """Print a test section header."""
+        print("\n" + "=" * 70)
+        print(title)
+        print("=" * 70)
+
+    @staticmethod
+    def success(message: str) -> None:
+        """Print a success message."""
+        print(f"[OK] {message}")
+
+    @staticmethod
+    def info(message: str, indent: int = 0) -> None:
+        """Print an info message."""
+        prefix = " " * indent
+        print(f"{prefix}{message}")
+
+    @staticmethod
+    def complete(message: str = "Test complete") -> None:
+        """Print test completion message."""
+        print(f"\n[PASS] {message}")
+
+    @staticmethod
+    def section_break() -> None:
+        """Print a section break."""
+        print()
+
 
 __all__ = ['TestLogger']

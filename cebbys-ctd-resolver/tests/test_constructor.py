@@ -24,7 +24,7 @@ def test_construct_typedef() -> None:
 
 
 def test_construct_enum() -> None:
-    """Test that EnumMeta can be constructed."""
+    """Test that EnumMeta can be constructed (without populating members)."""
     meta: Meta.EnumMeta
     member_meta1: Meta.EnumMemberMeta
     member_meta2: Meta.EnumMemberMeta
@@ -41,17 +41,16 @@ def test_construct_enum() -> None:
     
     enum = Constructor.DeclarationConstructor.construct(meta)
     
+    # Phase 1: Only validate instance creation, not property population
     assert isinstance(enum, Ctd.Enum)
     assert enum.name == "Color"
-    assert len(enum.members) == 2
-    assert enum.members[0].name == "Red"
-    assert enum.members[0].value == 0
-    assert enum.members[1].name == "Green"
-    assert enum.members[1].value == 1
+    assert enum.meta == meta
+    assert isinstance(enum.members, list)
+    # Members list is initialized but empty (populated in resolution phase)
 
 
 def test_construct_structure() -> None:
-    """Test that StructureMeta can be constructed."""
+    """Test that StructureMeta can be constructed (without populating members)."""
     meta: Meta.StructureMeta
     member_meta1: Meta.StructureMemberMeta
     member_meta2: Meta.StructureMemberMeta
@@ -68,15 +67,16 @@ def test_construct_structure() -> None:
     
     structure = Constructor.DeclarationConstructor.construct(meta)
     
+    # Phase 1: Only validate instance creation, not property population
     assert isinstance(structure, Ctd.Structure)
     assert structure.name == "Point"
-    assert len(structure.members) == 2
-    assert structure.members[0].name == "x"
-    assert structure.members[1].name == "y"
+    assert structure.meta == meta
+    assert isinstance(structure.members, list)
+    # Members list is initialized but empty (populated in resolution phase)
 
 
 def test_construct_function() -> None:
-    """Test that FunctionMeta can be constructed."""
+    """Test that FunctionMeta can be constructed (without populating parameters)."""
     meta: Meta.FunctionMeta
     param_meta1: Meta.ParameterMeta
     param_meta2: Meta.ParameterMeta
@@ -94,9 +94,10 @@ def test_construct_function() -> None:
     
     function = Constructor.DeclarationConstructor.construct(meta)
     
+    # Phase 1: Only validate instance creation, not property population
     assert isinstance(function, Ctd.Function)
     assert function.name == "add"
-    assert len(function.parameters) == 2
-    assert function.parameters[0].name == "a"
-    assert function.parameters[1].name == "b"
+    assert function.meta == meta
+    assert isinstance(function.parameters, list)
+    # Parameters list is initialized but empty (populated in resolution phase)
 
