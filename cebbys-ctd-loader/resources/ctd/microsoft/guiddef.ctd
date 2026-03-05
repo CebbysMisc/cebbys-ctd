@@ -1,7 +1,7 @@
-import "std-types"
+import "std/types"
 
 namespace com::microsoft::windows::guid {
-    use std::lib
+    use std::types
     
     alias InterfaceId   IID
     alias IID*          REFIID

@@ -1,4 +1,4 @@
-namespace std::lib {
+namespace std::types {
     typedef signed char     Snt1
     typedef signed short    Snt2
     typedef signed int      Snt4
@@ -19,5 +19,18 @@ namespace std::lib {
 
     enum Null : Int4 {
         NULL = 0
+    }
+
+    enum Bool1 : Int1 {
+        FALSE
+        TRUE
+    }
+    enum Bool2 : Int2 {
+        FALSE
+        TRUE
+    }
+    enum Bool4 : Int4 {
+        FALSE
+        TRUE
     }
 }

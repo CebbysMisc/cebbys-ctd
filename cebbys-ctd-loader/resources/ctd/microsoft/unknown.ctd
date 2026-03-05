@@ -1,10 +1,10 @@
 import "microsoft/wincrypt"
 import "microsoft/guiddef"
-import "std-types"
+import "std/types"
 
 namespace com::microsoft::windows {
     use com::microsoft::windows::guid
-    use std::lib
+    use std::types
 
     @CType("Unknown.h", "IUnknown")
     interface IUnknown {

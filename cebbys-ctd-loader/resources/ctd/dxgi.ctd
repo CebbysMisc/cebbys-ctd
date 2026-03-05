@@ -1,9 +1,18 @@
-import "std-types"
+import "microsoft/wincrypt"
+import "microsoft/guiddef"
 import "microsoft/unknown"
+import "std/types"
 
 namespace com::microsoft::direct::graphics::dxgi {
+    use com::microsoft::windows::guid
     use com::microsoft::windows
-    use std::lib
+    use std::types
+
+    // TODO These shall be implemented later
+    alias Any IDXGIOutput
+    alias Any DXGI_SWAP_CHAIN_DESC
+    alias Any DXGI_MODE_DESC
+    alias Any DXGI_FRAME_STATISTICS
 
     @CType("DXGI_SAMPLE_DESC")
     flag Usage : Unt4 {

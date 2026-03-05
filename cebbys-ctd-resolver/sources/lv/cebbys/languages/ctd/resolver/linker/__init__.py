@@ -36,6 +36,76 @@ class ModuleLinker:
         declaration.base = self._resolve_typespec(module, namespace, declaration.meta.type_spec)
         LOGGER.warning(f"{declaration}")
 
+    def _link_enum(self, module: Ctd.Module, namespace: Ctd.Namespace, declaration: Ctd.Enum) -> None:
+        if declaration.meta.base_type is not None:
+            declaration.base = self._resolve_typespec(module, namespace, declaration.meta.base_type)
+
+        for member_meta in declaration.meta.members:
+            member = Ctd.EnumMember()
+            member.name = member_meta.name
+            member.value = member_meta.value
+            member.meta = member_meta
+            declaration.members.append(member)
+
+        LOGGER.warning(f"{declaration}")
+
+    def _link_flag(self, module: Ctd.Module, namespace: Ctd.Namespace, declaration: Ctd.Flag) -> None:
+        if declaration.meta.base_type is not None:
+            declaration.base = self._resolve_typespec(module, namespace, declaration.meta.base_type)
+
+        for member_meta in declaration.meta.members:
+            member = Ctd.FlagMember()
+            member.name = member_meta.name
+            member.offset = member_meta.value
+            member.meta = member_meta
+            declaration.members.append(member)
+
+        LOGGER.warning(f"{declaration}")
+
+    def _link_structure(self, module: Ctd.Module, namespace: Ctd.Namespace, declaration: Ctd.Structure) -> None:
+        if declaration.meta.base_type is not None:
+            declaration.base = self._resolve_typespec(module, namespace, declaration.meta.base_type)
+
+        for member_meta in declaration.meta.members:
+            member = Ctd.StructureMember()
+            member.name = member_meta.name
+            member.type = self._resolve_typespec(module, namespace, member_meta.type_spec)
+            member.meta = member_meta
+            declaration.members.append(member)
+
+        LOGGER.warning(f"{declaration}")
+
+    def _link_function(self, module: Ctd.Module, namespace: Ctd.Namespace, declaration: Ctd.Function) -> None:
+        declaration.return_type = self._resolve_typespec(module, namespace, declaration.meta.return_type)
+
+        for param_meta in declaration.meta.parameters:
+            param = Ctd.Parameter()
+            param.name = param_meta.name
+            param.type = self._resolve_typespec(module, namespace, param_meta.type_spec)
+            param.meta = param_meta
+            declaration.parameters.append(param)
+
+        LOGGER.warning(f"{declaration}")
+
+    def _link_interface(self, module: Ctd.Module, namespace: Ctd.Namespace, declaration: Ctd.Interface) -> None:
+        if declaration.meta.base_type is not None:
+            declaration.base = self._resolve_typespec(module, namespace, declaration.meta.base_type)
+
+        for method_meta in declaration.meta.methods:
+            method = Ctd.Function()
+            method.meta = method_meta
+            method.name = method_meta.name
+            method.return_type = self._resolve_typespec(module, namespace, method_meta.return_type)
+            for param_meta in method_meta.parameters:
+                param = Ctd.Parameter()
+                param.name = param_meta.name
+                param.type = self._resolve_typespec(module, namespace, param_meta.type_spec)
+                param.meta = param_meta
+                method.parameters.append(param)
+            declaration.methods.append(method)
+
+        LOGGER.warning(f"{declaration}")
+
     @staticmethod
     def link(modules: dict[str, Ctd.Module]):
         instance = ModuleLinker(modules)
@@ -50,4 +120,17 @@ class ModuleLinker:
                     elif isinstance(declaration, Ctd.Alias):
                         instance._link_alias(module, namespace, declaration)
 
-                    # TODO implement the rest of Ctd.* parsing
+                    elif isinstance(declaration, Ctd.Enum):
+                        instance._link_enum(module, namespace, declaration)
+
+                    elif isinstance(declaration, Ctd.Flag):
+                        instance._link_flag(module, namespace, declaration)
+
+                    elif isinstance(declaration, Ctd.Structure):
+                        instance._link_structure(module, namespace, declaration)
+
+                    elif isinstance(declaration, Ctd.Function):
+                        instance._link_function(module, namespace, declaration)
+
+                    elif isinstance(declaration, Ctd.Interface):
+                        instance._link_interface(module, namespace, declaration)

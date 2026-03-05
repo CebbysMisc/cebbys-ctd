@@ -1,10 +1,11 @@
-import "std-types"
+import "std/types"
 
 namespace com::microsoft::windows {
-    use std::lib
+    use std::types
 
     alias   ResultCode  HRESULT
     alias   ResultCode  HandleResult
+    alias   Int4        BOOL
 
-    typedef int         ResultCode
+    typedef Int4        ResultCode
 }

@@ -1,9 +1,9 @@
-import "std-types"
+import "std/types"
 import "dxgi"
 
 namespace com::microsoft::direct::graphics::d3d11 {
-    use std::lib
     use com::microsoft::direct::graphics::dxgi
+    use std::types
 
     typedef Int4 ResultCode
     typedef Any ModuleHandle

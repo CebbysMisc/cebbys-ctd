@@ -76,7 +76,7 @@ class FunctionMeta(Api.DeclarationMeta):
         self,
         name: str,
         namespace: Api.ModulePath,
-        return_type: str,
+        return_type: Api.TypespecMeta,
         parameters: list[ParameterMeta] = [],
         decorators: list[Api.DecoratorMeta] = []
     ):
@@ -94,7 +94,7 @@ class FunctionMeta(Api.DeclarationMeta):
         self._parameters = list(parameters)
 
     @property
-    def return_type(self) -> str:
+    def return_type(self) -> Api.TypespecMeta:
         """Get the return type."""
         return self._return_type
 
