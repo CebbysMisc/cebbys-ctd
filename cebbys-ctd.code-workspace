@@ -63,6 +63,7 @@
 			"**/cebbys-ctd-resolver/**": true,
 			"**/cebbys-ctd-types/**": true,
 			"**/cebbys-ctd-utility/**": true,
+			"**/cebbys-ctd-loader/**": true,
 			"**/.pytest_cache": true,
 			"**/__pycache__": true,
 			"**/.venv": true
