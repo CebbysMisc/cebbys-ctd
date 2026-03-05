@@ -24,7 +24,7 @@ import lv.cebbys.languages.ctd.utility.logging as Logging
 LOGGER = Logging.get_logger(__name__)
 
 
-__all__ = ['TypespecResolverApi', 'BasicTypespecResolver']
+__all__ = ['TypespecResolverApi']
 
 
 class TypespecResolverApi:
@@ -165,15 +165,16 @@ class TypespecResolverApi:
             List of all matching declarations (empty if none found)
         """
         results: list[Ctd.Declaration] = []
-        
-        for ns in module.namespaces:
-            if ns.path != namespace_path:
-                continue
-            
-            for decl in ns.declarations:
-                if decl.name == type_name:
-                    results.append(decl)
-        
+
+        for m in [module, *module.includes]:
+            for ns in m.namespaces:
+                if ns.path != namespace_path:
+                    continue
+
+                for decl in ns.declarations:
+                    if decl.name == type_name:
+                        results.append(decl)
+
         return results
     
     def clear_cache(self) -> None:

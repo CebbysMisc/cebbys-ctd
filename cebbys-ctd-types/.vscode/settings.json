@@ -6,5 +6,5 @@
         "tests",
         "-v"
     ],
-    "python.testing.cwd": "${workspaceFolder}",
+    "python.testing.cwd": "${workspaceFolder}"
 }
