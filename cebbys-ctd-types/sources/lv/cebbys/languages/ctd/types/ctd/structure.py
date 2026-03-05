@@ -11,6 +11,12 @@ class StructureMember:
     type: Declaration
     meta: StructureMemberMeta
 
+    def __str__(self) -> str:
+        return f"{self.type} {self.name}"
+
+    def __repr__(self) -> str:
+        return f"StructureMember({self.name!r}, {self.type!r})"
+
 
 class Structure(Declaration):
     """Represents a structure declaration."""
@@ -24,3 +30,12 @@ class Structure(Declaration):
         self.decorators = []
         self.members = []
         self.base = None
+
+    def __str__(self) -> str:
+        try:
+            return f"{self.namespace.path}::{self.name} {{ {len(self.members)} members }}"
+        except:
+            return f"{self.namespace.path}::{self.name}"
+
+    def __repr__(self) -> str:
+        return f"Structure({self.namespace.path}::{self.name})"

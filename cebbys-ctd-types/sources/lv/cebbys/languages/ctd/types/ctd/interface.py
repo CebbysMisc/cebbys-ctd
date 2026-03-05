@@ -16,3 +16,13 @@ class Interface(Declaration):
         self.decorators = []
         self.base = None
         self.methods = []
+
+    def __str__(self) -> str:
+        try:
+            base = f" : {self.base}" if self.base else ""
+            return f"{self.namespace.path}::{self.name}{base} {{ {len(self.methods)} methods }}"
+        except:
+            return f"{self.namespace.path}::{self.name}"
+
+    def __repr__(self) -> str:
+        return f"Interface({self.namespace.path}::{self.name})"

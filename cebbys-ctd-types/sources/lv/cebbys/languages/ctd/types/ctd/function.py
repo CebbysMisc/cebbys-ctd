@@ -12,6 +12,12 @@ class Parameter:
     type: Declaration
     name: str
 
+    def __str__(self) -> str:
+        return f"{self.type} {self.name}"
+
+    def __repr__(self) -> str:
+        return f"Parameter({self.name!r}, {self.type!r})"
+
 
 class Function(Declaration[FunctionMeta]):
     """Represents a function declaration."""
@@ -24,3 +30,13 @@ class Function(Declaration[FunctionMeta]):
         self.decorators = []
         self.parameters = []
         self.base = None
+
+    def __str__(self) -> str:
+        try:
+            params = ", ".join(str(p) for p in self.parameters)
+            return f"{self.return_type} {self.namespace.path}::{self.name}({params})"
+        except:
+            return f"{self.namespace.path}::{self.name}(...)"
+
+    def __repr__(self) -> str:
+        return f"Function({self.namespace.path}::{self.name})"

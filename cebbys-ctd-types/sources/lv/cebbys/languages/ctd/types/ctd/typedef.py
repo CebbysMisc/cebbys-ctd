@@ -20,3 +20,6 @@ class Typedef(Declaration):
             return f"{self.namespace.path}::{self.name} ({self.base})"
         except:
             return f"{self.namespace.path}::{self.name}"
+
+    def __repr__(self) -> str:
+        return f"Typedef({self.namespace.path}::{self.name})"

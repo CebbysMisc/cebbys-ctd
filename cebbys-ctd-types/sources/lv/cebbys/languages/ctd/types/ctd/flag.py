@@ -12,6 +12,12 @@ class FlagMember:
     offset: int | None
     meta: FlagMemberMeta
 
+    def __str__(self) -> str:
+        return f"{self.name} = {self.offset}"
+
+    def __repr__(self) -> str:
+        return f"FlagMember({self.name!r}, {self.offset!r})"
+
 
 class Flag(Declaration[FlagMeta]):
     """Represents a flag declaration."""
@@ -24,3 +30,12 @@ class Flag(Declaration[FlagMeta]):
         self.decorators = []
         self.members = []
         self.base = None
+
+    def __str__(self) -> str:
+        try:
+            return f"{self.namespace.path}::{self.name} : {self.base} {{ {len(self.members)} members }}"
+        except:
+            return f"{self.namespace.path}::{self.name}"
+
+    def __repr__(self) -> str:
+        return f"Flag({self.namespace.path}::{self.name})"

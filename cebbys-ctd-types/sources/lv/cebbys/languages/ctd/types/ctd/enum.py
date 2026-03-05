@@ -11,6 +11,12 @@ class EnumMember:
     value: int | None
     meta: EnumMemberMeta
 
+    def __str__(self) -> str:
+        return f"{self.name} = {self.value}"
+
+    def __repr__(self) -> str:
+        return f"EnumMember({self.name!r}, {self.value!r})"
+
 
 class Enum(Declaration[EnumMeta]):
     """Represents an enum declaration."""
@@ -23,3 +29,12 @@ class Enum(Declaration[EnumMeta]):
         self.decorators = []
         self.members = []
         self.base = None
+
+    def __str__(self) -> str:
+        try:
+            return f"{self.namespace.path}::{self.name} : {self.base} {{ {len(self.members)} members }}"
+        except:
+            return f"{self.namespace.path}::{self.name}"
+
+    def __repr__(self) -> str:
+        return f"Enum({self.namespace.path}::{self.name})"

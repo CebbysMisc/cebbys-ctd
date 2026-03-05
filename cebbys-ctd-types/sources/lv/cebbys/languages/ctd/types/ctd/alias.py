@@ -11,3 +11,12 @@ class Alias(Declaration[AliasMeta]):
     def __init__(self) -> None:
         super().__init__()
         self.decorators = []
+
+    def __str__(self) -> str:
+        try:
+            return f"{self.namespace.path}::{self.name} -> {self.base}"
+        except:
+            return f"{self.namespace.path}::{self.name}"
+
+    def __repr__(self) -> str:
+        return f"Alias({self.namespace.path}::{self.name})"
