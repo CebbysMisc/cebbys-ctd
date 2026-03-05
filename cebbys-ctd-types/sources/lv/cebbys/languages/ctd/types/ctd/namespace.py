@@ -10,3 +10,9 @@ class Namespace:
     declarations: list["Declaration"]
     meta: NamespaceMeta
     path: str
+
+    def __str__(self) -> str:
+        return f"{self.path} {{ {len(self.declarations)} declarations }}"
+
+    def __repr__(self) -> str:
+        return f"Namespace({self.path!r})"
