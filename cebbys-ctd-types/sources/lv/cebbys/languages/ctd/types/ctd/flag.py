@@ -9,7 +9,7 @@ from lv.cebbys.languages.ctd.types.meta import (
 class FlagMember:
     """Represents a flag member."""
     name: str
-    offset: int | None
+    offset: int
     meta: FlagMemberMeta
 
     def __str__(self) -> str:

@@ -8,7 +8,7 @@ from lv.cebbys.languages.ctd.types.meta import (
 class EnumMember:
     """Represents an enum member."""
     name: str
-    value: int | None
+    value: int
     meta: EnumMemberMeta
 
     def __str__(self) -> str:

@@ -40,10 +40,12 @@ class ModuleLinker:
         if declaration.meta.base_type is not None:
             declaration.base = self._resolve_typespec(module, namespace, declaration.meta.base_type)
 
+        next_value: int = 0
         for member_meta in declaration.meta.members:
             member = Ctd.EnumMember()
             member.name = member_meta.name
-            member.value = member_meta.value
+            member.value = member_meta.value if member_meta.value is not None else next_value
+            next_value = member.value + 1
             member.meta = member_meta
             declaration.members.append(member)
 
@@ -53,10 +55,12 @@ class ModuleLinker:
         if declaration.meta.base_type is not None:
             declaration.base = self._resolve_typespec(module, namespace, declaration.meta.base_type)
 
+        next_offset: int = 0
         for member_meta in declaration.meta.members:
             member = Ctd.FlagMember()
             member.name = member_meta.name
-            member.offset = member_meta.value
+            member.offset = member_meta.value if member_meta.value is not None else next_offset
+            next_offset = member.offset + 1
             member.meta = member_meta
             declaration.members.append(member)
 
