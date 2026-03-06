@@ -41,13 +41,15 @@ class CtdDeclarationStorage:
     def start():
         CtdDeclarationStorage.open = True
         CtdDeclarationStorage.storage.clear()
-        CtdDeclarationStorage.register(Builtin("char"))
+        CtdDeclarationStorage.register(Builtin("void"))
+        CtdDeclarationStorage.register(Builtin("byte"))
         CtdDeclarationStorage.register(Builtin("short"))
         CtdDeclarationStorage.register(Builtin("int"))
         CtdDeclarationStorage.register(Builtin("long"))
         CtdDeclarationStorage.register(Builtin("float"))
         CtdDeclarationStorage.register(Builtin("double"))
-        CtdDeclarationStorage.register(Builtin("void"))
+        CtdDeclarationStorage.register(Builtin("char"))
+        CtdDeclarationStorage.register(Builtin("wchar"))
     
     @staticmethod
     def stop():

@@ -46,8 +46,7 @@ class CtdLoader:
         self.metas = self._convert_contexts_to_metas(self.contexts)
 
         # Stage 4: Resolve and link via ModuleConstructor + ModuleLinker
-        self.definitions = self._build_type_definitions(self.metas)
-        print(self.definitions)
+        self.definitions, self.tree = self._build_type_definitions(self.metas)
 
     # =========================================================================
     # Stage 1: List all .ctd files from directories
@@ -133,7 +132,7 @@ class CtdLoader:
     def _build_type_definitions(
         self,
         module_metas: list[tuple[Api.FilePath, str, TypeMeta.ModuleMeta]]
-    ) -> Typing.Any:
+    ):
         return CtdMetaResolver.resolve({
             module_name: module for _, module_name, module in module_metas
         })

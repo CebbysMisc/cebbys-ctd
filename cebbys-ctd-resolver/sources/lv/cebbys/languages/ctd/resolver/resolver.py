@@ -26,4 +26,4 @@ class CtdMetaResolver:
         ModuleLinker.link_all(modules)
 
         CtdDeclarationStorage.stop()
-        return CtdDeclarationStorage.tree()
+        return CtdDeclarationStorage.storage, CtdDeclarationStorage.tree()
