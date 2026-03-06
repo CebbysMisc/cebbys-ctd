@@ -135,7 +135,16 @@ class TypespecResolverApi:
         # Rebuild wrappers for each base declaration
         final_results: list[Ctd.Declaration] = []
         for base_decl in base_declarations:
-            result = base_decl
+            # Erase aliases — resolve to underlying type
+            resolved = base_decl
+            visited_aliases: set[int] = set()
+            while isinstance(resolved, Ctd.Alias):
+                if id(resolved) in visited_aliases:
+                    break
+                visited_aliases.add(id(resolved))
+                resolved = resolved.base
+
+            result = resolved
             for wrapper in reversed(wrappers):
                 if isinstance(wrapper, Meta.PointerTypespecMeta):
                     result = Ctd.Pointer(result)
