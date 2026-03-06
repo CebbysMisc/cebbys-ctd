@@ -1,5 +1,5 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
-from lv.cebbys.languages.ctd.types.ctd.__api__ import IReference
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 
 class Builtin(Declaration):
     """Represents a builtin member."""
@@ -15,7 +15,7 @@ class Builtin(Declaration):
         return f"Builtin({self.name!r})"
 
 class Array(Declaration):
-    _base: IReference
+    _base: Reference
 
     def __init__(self, base, size: int) -> None:
         super().__init__()
@@ -28,7 +28,7 @@ class Array(Declaration):
 
     @base.setter
     def base(self, value) -> None:
-        if isinstance(value, IReference):
+        if isinstance(value, Reference):
             self._base = value
         else:
             from lv.cebbys.languages.ctd.resolver.manager import DirectReference
@@ -41,7 +41,7 @@ class Array(Declaration):
         return f"Array({self.base!r}, {self.size})"
 
 class Pointer(Declaration):
-    _base: IReference
+    _base: Reference
 
     def __init__(self, base) -> None:
         super().__init__()
@@ -53,7 +53,7 @@ class Pointer(Declaration):
 
     @base.setter
     def base(self, value) -> None:
-        if isinstance(value, IReference):
+        if isinstance(value, Reference):
             self._base = value
         else:
             from lv.cebbys.languages.ctd.resolver.manager import DirectReference

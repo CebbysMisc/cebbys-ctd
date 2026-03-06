@@ -18,7 +18,7 @@ Best for:
 
 import lv.cebbys.languages.ctd.types.ctd as Ctd
 import lv.cebbys.languages.ctd.types.meta as Meta
-from lv.cebbys.languages.ctd.types.ctd.__api__ import IReference
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 from lv.cebbys.languages.ctd.resolver.manager import (
     CtdDeclarationManager,
     DeclarationReference,
@@ -34,7 +34,7 @@ __all__ = ['TypespecResolverApi']
 
 
 class TypespecResolverApi:
-    """Resolves type specifications to IReference[Declaration].
+    """Resolves type specifications to Reference[Declaration].
 
     Named types → DeclarationReference (backed by manager, auto-updates on alias erasure).
     Builtins → DirectReference(Builtin).
@@ -56,10 +56,10 @@ class TypespecResolverApi:
     def __init__(self, manager: CtdDeclarationManager):
         """Initialize resolver with manager and empty cache."""
         self._manager = manager
-        self._type_cache: dict[str, list[IReference]] = {}
+        self._type_cache: dict[str, list[Reference]] = {}
     
-    def resolve(self, module: Ctd.Module, namespace: Ctd.Namespace, typespec: Meta.TypespecMeta) -> list[IReference]:
-        """Resolve CTD type from typespec, returning all matching IReferences.
+    def resolve(self, module: Ctd.Module, namespace: Ctd.Namespace, typespec: Meta.TypespecMeta) -> list[Reference]:
+        """Resolve CTD type from typespec, returning all matching References.
 
         Args:
             module: Module containing the namespace
@@ -67,7 +67,7 @@ class TypespecResolverApi:
             typespec: The type specification object to resolve
             
         Returns:
-            List of resolved IReference objects (may wrap Pointer/Array)
+            List of resolved Reference objects (may wrap Pointer/Array)
             Empty list if no matches found
             
         Raises:
@@ -89,7 +89,7 @@ class TypespecResolverApi:
         
         # Check builtins (always fast, single match)
         if type_name in self._builtin_cache:
-            base_refs: list[IReference] = [DirectReference(self._builtin_cache[type_name])]
+            base_refs: list[Reference] = [DirectReference(self._builtin_cache[type_name])]
         else:
             # Search with caching - collect all matches
             search_paths = [namespace.path, *namespace.meta.uses]
@@ -114,9 +114,9 @@ class TypespecResolverApi:
                     base_refs.extend(results)
         
         # Rebuild wrappers for each base reference
-        final_refs: list[IReference] = []
+        final_refs: list[Reference] = []
         for base_ref in base_refs:
-            result_ref: IReference = base_ref
+            result_ref: Reference = base_ref
             for wrapper in reversed(wrappers):
                 if isinstance(wrapper, Meta.PointerTypespecMeta):
                     result_ref = DirectReference(Ctd.Pointer(result_ref))
@@ -134,12 +134,12 @@ class TypespecResolverApi:
         module: Ctd.Module,
         namespace_path: str,
         type_name: str
-    ) -> list[IReference]:
+    ) -> list[Reference]:
         """Search for ALL type references matching name in specific namespace of module.
 
         Returns DeclarationReference objects backed by the manager.
         """
-        results: list[IReference] = []
+        results: list[Reference] = []
 
         for m in [module, *module.includes]:
             for ns in m.namespaces:

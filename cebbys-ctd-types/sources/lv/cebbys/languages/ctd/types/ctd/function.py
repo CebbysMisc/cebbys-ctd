@@ -1,5 +1,5 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
-from lv.cebbys.languages.ctd.types.ctd.__api__ import IReference
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
 from lv.cebbys.languages.ctd.types.meta import (
     ParameterMeta,
@@ -10,8 +10,13 @@ from lv.cebbys.languages.ctd.types.meta import (
 class Parameter:
     """Represents a function parameter."""
     meta: ParameterMeta
-    _type: IReference
+    _type: Reference
     name: str
+    decorators: list[Decorator]
+
+    def __init__(self) -> None:
+        self.decorators = []
+        self._type = None
 
     @property
     def type(self) -> Declaration:
@@ -19,7 +24,7 @@ class Parameter:
 
     @type.setter
     def type(self, value) -> None:
-        if isinstance(value, IReference):
+        if isinstance(value, Reference):
             self._type = value
         else:
             from lv.cebbys.languages.ctd.resolver.manager import DirectReference
@@ -34,7 +39,7 @@ class Parameter:
 
 class Function(Declaration[FunctionMeta]):
     """Represents a function declaration."""
-    _return_type: IReference | None
+    _return_type: Reference | None
     decorators: list[Decorator]
     parameters: list[Parameter]
 
@@ -50,7 +55,7 @@ class Function(Declaration[FunctionMeta]):
 
     @return_type.setter
     def return_type(self, value) -> None:
-        if isinstance(value, IReference):
+        if isinstance(value, Reference):
             self._return_type = value
         else:
             from lv.cebbys.languages.ctd.resolver.manager import DirectReference

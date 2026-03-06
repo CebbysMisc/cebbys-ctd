@@ -1,6 +1,9 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import (
     Declaration
 )
+from lv.cebbys.languages.ctd.types.ctd.__api__ import (
+    Reference
+)
 from lv.cebbys.languages.ctd.types.ctd.namespace import (
     Namespace
 )
@@ -39,6 +42,7 @@ from lv.cebbys.languages.ctd.types.ctd.function import (
 )
 
 __all__ = [
+    "Reference",
     "Declaration",
     "Namespace",
     "Builtin",

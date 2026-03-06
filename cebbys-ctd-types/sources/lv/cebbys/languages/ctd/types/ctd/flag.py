@@ -1,5 +1,5 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
-from lv.cebbys.languages.ctd.types.ctd.__api__ import IReference
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
 from lv.cebbys.languages.ctd.types.meta import (
     FlagMemberMeta,
@@ -24,7 +24,7 @@ class Flag(Declaration[FlagMeta]):
     """Represents a flag declaration."""
     decorators: list[Decorator]
     members: list[FlagMember]
-    _base: IReference | None
+    _base: Reference | None
 
     def __init__(self) -> None:
         super().__init__()
@@ -38,7 +38,7 @@ class Flag(Declaration[FlagMeta]):
 
     @base.setter
     def base(self, value) -> None:
-        if isinstance(value, IReference):
+        if isinstance(value, Reference):
             self._base = value
         else:
             from lv.cebbys.languages.ctd.resolver.manager import DirectReference

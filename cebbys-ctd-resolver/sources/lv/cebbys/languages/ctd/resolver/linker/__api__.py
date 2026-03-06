@@ -1,6 +1,6 @@
 import lv.cebbys.languages.ctd.types.ctd as Ctd
 import lv.cebbys.languages.ctd.types.meta as Meta
-from lv.cebbys.languages.ctd.types.ctd.__api__ import IReference
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 from lv.cebbys.languages.ctd.resolver.linker.resolver import TypespecResolverApi
 
 import lv.cebbys.languages.ctd.utility.logging as Logging
@@ -26,7 +26,7 @@ def resolve_typespec(
     module: Ctd.Module,
     namespace: Ctd.Namespace,
     typespec: Meta.TypespecMeta,
-) -> IReference:
+) -> Reference:
     results = resolver.resolve(module, namespace, typespec)
     if not results:
         raise BaseException(f"Type '{typespec}' not found in module '{module.name}'")

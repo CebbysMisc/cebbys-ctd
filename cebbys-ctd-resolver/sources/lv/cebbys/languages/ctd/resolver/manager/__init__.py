@@ -1,5 +1,5 @@
 from typing import TypeVar, Generic
-from lv.cebbys.languages.ctd.types.ctd.__api__ import IReference
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 
 import lv.cebbys.languages.ctd.utility.logging as Logging
 LOGGER = Logging.get_logger(__name__)

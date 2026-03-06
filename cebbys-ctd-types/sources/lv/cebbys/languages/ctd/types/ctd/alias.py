@@ -1,12 +1,12 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
-from lv.cebbys.languages.ctd.types.ctd.__api__ import IReference
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
 from lv.cebbys.languages.ctd.types.meta import AliasMeta
 
 class Alias(Declaration[AliasMeta]):
     """Represents an alias declaration."""
     decorators: list[Decorator]
-    _base: IReference
+    _base: Reference
     meta: AliasMeta
 
     def __init__(self) -> None:
@@ -20,7 +20,7 @@ class Alias(Declaration[AliasMeta]):
 
     @base.setter
     def base(self, value) -> None:
-        if isinstance(value, IReference):
+        if isinstance(value, Reference):
             self._base = value
         else:
             from lv.cebbys.languages.ctd.resolver.manager import DirectReference

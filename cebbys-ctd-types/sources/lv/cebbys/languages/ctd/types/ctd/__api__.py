@@ -1,13 +1,13 @@
-from typing import TypeVar, Generic, Protocol, runtime_checkable
+from typing import Any, TypeVar, Protocol, runtime_checkable
 
-T = TypeVar("T")
+T = TypeVar("T", default=Any)
 
-__all__ = ["IReference"]
+__all__ = ["Reference"]
 
 
 @runtime_checkable
-class IReference(Protocol[T]):
-    """Interface for a mutable reference cell pointing to a Declaration.
+class Reference(Protocol[T]):
+    """Mutable reference cell pointing to a Declaration.
 
     Implementations may hold a registry key (resolved lazily) or a direct
     value. The .value property always returns the current target.

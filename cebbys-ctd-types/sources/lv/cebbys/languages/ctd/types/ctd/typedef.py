@@ -1,5 +1,5 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
-from lv.cebbys.languages.ctd.types.ctd.__api__ import IReference
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
 from lv.cebbys.languages.ctd.types.meta import TypedefMeta
 
@@ -8,7 +8,7 @@ class Typedef(Declaration):
     """Represents a typedef declaration."""
     decorators: list[Decorator]
     signed: bool | None
-    _base: IReference
+    _base: Reference
     meta: TypedefMeta
 
     def __init__(self) -> None:
@@ -23,7 +23,7 @@ class Typedef(Declaration):
 
     @base.setter
     def base(self, value) -> None:
-        from lv.cebbys.languages.ctd.types.ctd.__api__ import IReference as _IRef
+        from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference as _IRef
         if isinstance(value, _IRef):
             self._base = value
         else:

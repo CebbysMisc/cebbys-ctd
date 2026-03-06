@@ -1,5 +1,5 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
-from lv.cebbys.languages.ctd.types.ctd.__api__ import IReference
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
 from lv.cebbys.languages.ctd.types.meta import (
     StructureMemberMeta,
@@ -9,7 +9,7 @@ from lv.cebbys.languages.ctd.types.meta import (
 class StructureMember:
     """Represents a structure member."""
     name: str
-    _type: IReference
+    _type: Reference
     meta: StructureMemberMeta
 
     @property
@@ -18,7 +18,7 @@ class StructureMember:
 
     @type.setter
     def type(self, value) -> None:
-        if isinstance(value, IReference):
+        if isinstance(value, Reference):
             self._type = value
         else:
             from lv.cebbys.languages.ctd.resolver.manager import DirectReference
@@ -34,7 +34,7 @@ class StructureMember:
 class Structure(Declaration):
     """Represents a structure declaration."""
     decorators: list[Decorator]
-    _base: IReference | None
+    _base: Reference | None
     members: list[StructureMember]
     meta: StructureMeta
 
@@ -50,7 +50,7 @@ class Structure(Declaration):
 
     @base.setter
     def base(self, value) -> None:
-        if isinstance(value, IReference):
+        if isinstance(value, Reference):
             self._base = value
         else:
             from lv.cebbys.languages.ctd.resolver.manager import DirectReference
