@@ -5,6 +5,61 @@ from lv.cebbys.languages.ctd.resolver.linker.resolver import TypespecResolverApi
 import lv.cebbys.languages.ctd.utility.logging as Logging
 LOGGER = Logging.get_logger(__name__)
 
+# Builtin C type name → bit width
+_BUILTIN_BITS: dict[str, int] = {
+    "char":  8,
+    "short": 16,
+    "int":   32,
+    "long":  64,
+}
+
+
+def _resolve_integer_range(decl: Ctd.Declaration) -> tuple[int, int] | None:
+    """Walk the type chain to determine the integer range of a declaration.
+
+    Returns (min, max) inclusive, or None if the range cannot be determined.
+    Signed info is taken from the first Typedef encountered in the chain.
+    """
+    visited: set[int] = set()
+    current: Ctd.Declaration | None = decl
+    signed: bool | None = None
+
+    while current is not None:
+        if id(current) in visited:
+            break
+        visited.add(id(current))
+
+        if isinstance(current, Ctd.Builtin):
+            bits = _BUILTIN_BITS.get(current.name)
+            if bits is None:
+                return None
+            is_unsigned = (signed is False) if signed is not None else False
+            if is_unsigned:
+                return (0, (1 << bits) - 1)
+            else:
+                return (-(1 << (bits - 1)), (1 << (bits - 1)) - 1)
+
+        if isinstance(current, Ctd.Typedef):
+            if signed is None and current.signed is not None:
+                signed = current.signed
+            current = getattr(current, "base", None)
+            continue
+
+        if isinstance(current, Ctd.Alias):
+            current = getattr(current, "base", None)
+            continue
+
+        break
+
+    return None
+
+
+def _next_flag_value(prev: int) -> int:
+    """Return the smallest power of 2 strictly greater than prev."""
+    if prev < 0:
+        return 1
+    return 1 << prev.bit_length()
+
 
 class ModuleLinker:
     def __init__(self, modules: dict[str, Ctd.Module]) -> None:
@@ -40,12 +95,19 @@ class ModuleLinker:
         if declaration.meta.base_type is not None:
             declaration.base = self._resolve_typespec(module, namespace, declaration.meta.base_type)
 
+        int_range: tuple[int, int] | None = _resolve_integer_range(declaration.base) if declaration.base else None
+
         next_value: int = 0
         for member_meta in declaration.meta.members:
             member = Ctd.EnumMember()
             member.name = member_meta.name
             member.value = member_meta.value if member_meta.value is not None else next_value
             next_value = member.value + 1
+            if int_range is not None and not (int_range[0] <= member.value <= int_range[1]):
+                raise ValueError(
+                    f"Enum member '{declaration.name}::{member.name}' value {member.value} "
+                    f"is out of range [{int_range[0]}, {int_range[1]}] for base type '{declaration.base}'"
+                )
             member.meta = member_meta
             declaration.members.append(member)
 
@@ -55,12 +117,19 @@ class ModuleLinker:
         if declaration.meta.base_type is not None:
             declaration.base = self._resolve_typespec(module, namespace, declaration.meta.base_type)
 
-        next_offset: int = 0
+        int_range: tuple[int, int] | None = _resolve_integer_range(declaration.base) if declaration.base else None
+
+        next_offset: int = 1  # flags auto-index as powers of 2, starting at 2^0
         for member_meta in declaration.meta.members:
             member = Ctd.FlagMember()
             member.name = member_meta.name
             member.offset = member_meta.value if member_meta.value is not None else next_offset
-            next_offset = member.offset + 1
+            next_offset = _next_flag_value(member.offset)
+            if int_range is not None and not (int_range[0] <= member.offset <= int_range[1]):
+                raise ValueError(
+                    f"Flag member '{declaration.name}::{member.name}' value {member.offset} "
+                    f"is out of range [{int_range[0]}, {int_range[1]}] for base type '{declaration.base}'"
+                )
             member.meta = member_meta
             declaration.members.append(member)
 
