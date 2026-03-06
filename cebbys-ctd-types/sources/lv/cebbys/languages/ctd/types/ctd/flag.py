@@ -1,5 +1,6 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 from lv.cebbys.languages.ctd.types.meta import (
     FlagMemberMeta,
     FlagMeta
@@ -23,7 +24,7 @@ class Flag(Declaration[FlagMeta]):
     """Represents a flag declaration."""
     decorators: list[Decorator]
     members: list[FlagMember]
-    base: Declaration | None
+    base: Reference | None
 
     def __init__(self) -> None:
         super().__init__()

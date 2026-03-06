@@ -15,3 +15,7 @@ class Declaration(Generic[M]):
     namespace: "Namespace"
     meta: "M"
     name: "str"
+
+    @property
+    def typeref(self):
+        return f"{self.namespace.path}::{self.name}"

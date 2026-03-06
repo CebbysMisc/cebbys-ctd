@@ -46,7 +46,8 @@ class CtdLoader:
         self.metas = self._convert_contexts_to_metas(self.contexts)
 
         # Stage 4: Resolve and link via ModuleConstructor + ModuleLinker
-        self._definitions = self._build_type_definitions(self.metas)
+        self.definitions = self._build_type_definitions(self.metas)
+        print(self.definitions)
 
     # =========================================================================
     # Stage 1: List all .ctd files from directories

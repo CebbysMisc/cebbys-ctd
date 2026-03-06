@@ -1,6 +1,6 @@
 import lv.cebbys.languages.ctd.types.ctd as Ctd
 from lv.cebbys.languages.ctd.resolver.linker.resolver import TypespecResolverApi
-from lv.cebbys.languages.ctd.resolver.linker.__api__ import resolve_typespec
+from lv.cebbys.languages.ctd.resolver.linker.__api__ import resolve_typespec_in_namespace
 from lv.cebbys.languages.ctd.resolver.linker.function import FunctionLinker
 
 import lv.cebbys.languages.ctd.utility.logging as Logging
@@ -18,7 +18,7 @@ class InterfaceLinker:
         declaration: Ctd.Interface,
     ) -> None:
         if declaration.meta.base_type is not None:
-            declaration.base = resolve_typespec(resolver, module, namespace, declaration.meta.base_type)
+            declaration.base = resolve_typespec_in_namespace(declaration.meta.base_type, namespace)
 
         for method_meta in declaration.meta.methods:
             method = Ctd.Function()

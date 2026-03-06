@@ -1,6 +1,12 @@
 import lv.cebbys.languages.ctd.types.ctd as Ctd
 import lv.cebbys.languages.ctd.types.meta as Meta
 from lv.cebbys.languages.ctd.resolver.linker.resolver import TypespecResolverApi
+from lv.cebbys.languages.ctd.resolver.manager import (
+    CtdDeclarationStorage
+)
+from typing import (
+    Any
+)
 
 import lv.cebbys.languages.ctd.utility.logging as Logging
 LOGGER = Logging.get_logger(__name__)
@@ -32,6 +38,37 @@ def resolve_typespec(
     if len(results) > 1:
         LOGGER.warning(f"Ambiguous type '{typespec}': {len(results)} matches found, using first")
     return results[0]
+
+def resolve_typespec_in_namespace(
+    typespec: Meta.TypespecMeta,
+    namespace: Ctd.Namespace
+):
+    base_paths = [namespace.path, *namespace.meta.uses]
+    typename = str(typespec).removeprefix("un").removeprefix("signed ")
+
+    found:list[Any] = []
+    result = try_resolve(typename)
+    if result:
+        found.append(result)
+    
+    for path in base_paths:
+        typeref = f"{path}::{typename}"
+        result = try_resolve(typeref)
+        if result:
+            found.append(result)
+
+    count = len(found)
+    if count == 0:
+        raise BaseException(f"Reference '{typename}' not found with namespace prefixes {base_paths}")
+    elif count > 1:
+        raise BaseException(f"Reference '{typename}' resolved into multiple declarations {found}")
+    return found[0]
+
+def try_resolve(typeref:str):
+    try:
+        return CtdDeclarationStorage.resolve(typeref)
+    except:
+        return None
 
 
 def resolve_integer_range(decl: Ctd.Declaration) -> tuple[int, int] | None:

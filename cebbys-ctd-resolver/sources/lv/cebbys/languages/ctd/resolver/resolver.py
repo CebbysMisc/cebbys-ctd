@@ -6,6 +6,9 @@ from lv.cebbys.languages.ctd.resolver.constructor import (
 from lv.cebbys.languages.ctd.resolver.linker import (
     ModuleLinker
 )
+from lv.cebbys.languages.ctd.resolver.manager import (
+    CtdDeclarationStorage
+)
 
 import lv.cebbys.languages.ctd.utility.logging as Logging
 LOGGER = Logging.get_logger(__name__)
@@ -14,14 +17,13 @@ LOGGER = Logging.get_logger(__name__)
 class CtdMetaResolver:
     @staticmethod
     def resolve(module_tree: dict[str, Meta.ModuleMeta]):
-        modules: dict[str, Ctd.Module] = {}
+        CtdDeclarationStorage.start()
 
+        modules: dict[str, Ctd.Module] = {}
         for name, module_meta in module_tree.items():
             LOGGER.debug(f"Constructing module '{name}'")
             modules[name] = ModuleConstructor.construct(name, module_meta)
+        ModuleLinker.link_all(modules)
 
-        # for module in modules.values():
-        #     LOGGER.debug(f"Resolved module:\n{module}")
-
-        linked = ModuleLinker.link(modules)
-        print(linked)
+        CtdDeclarationStorage.stop()
+        return CtdDeclarationStorage.tree()

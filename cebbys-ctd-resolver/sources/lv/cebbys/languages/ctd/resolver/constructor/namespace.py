@@ -2,6 +2,9 @@ import lv.cebbys.languages.ctd.types.meta as Meta
 import lv.cebbys.languages.ctd.types.ctd as Ctd
 import lv.cebbys.languages.ctd.utility.logging as Logging
 from lv.cebbys.languages.ctd.resolver.constructor.declaration import DeclarationConstructor
+from lv.cebbys.languages.ctd.resolver.manager import (
+    CtdDeclarationStorage
+)
 
 logger = Logging.get_logger(__name__)
 
@@ -28,6 +31,7 @@ class NamespaceConstructor:
             declaration = DeclarationConstructor.construct(declaration_meta)
             declaration.namespace = out
             out.declarations.append(declaration)
+            CtdDeclarationStorage.register(declaration)
 
         logger.debug(f"Namespace '{meta.path}' constructed with {len(out.declarations)} declaration(s)")
         

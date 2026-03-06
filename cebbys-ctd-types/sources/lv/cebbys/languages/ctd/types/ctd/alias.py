@@ -1,11 +1,12 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 from lv.cebbys.languages.ctd.types.meta import AliasMeta
 
 class Alias(Declaration[AliasMeta]):
     """Represents an alias declaration."""
     decorators: list[Decorator]
-    base: Declaration
+    base: Reference
     meta: AliasMeta
 
     def __init__(self) -> None:

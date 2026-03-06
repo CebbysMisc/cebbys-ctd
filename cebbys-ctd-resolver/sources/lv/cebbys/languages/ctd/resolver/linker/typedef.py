@@ -1,7 +1,7 @@
 import lv.cebbys.languages.ctd.types.ctd as Ctd
 import lv.cebbys.languages.ctd.types.meta as Meta
 from lv.cebbys.languages.ctd.resolver.linker.resolver import TypespecResolverApi
-from lv.cebbys.languages.ctd.resolver.linker.__api__ import resolve_typespec
+from lv.cebbys.languages.ctd.resolver.linker.__api__ import resolve_typespec_in_namespace
 
 import lv.cebbys.languages.ctd.utility.logging as Logging
 LOGGER = Logging.get_logger(__name__)
@@ -26,5 +26,5 @@ class TypedefLinker:
         if isinstance(base_spec, Meta.TypedTypespecMeta):
             declaration.signed = base_spec.signed
 
-        declaration.base = resolve_typespec(resolver, module, namespace, type_spec)
+        declaration.base = resolve_typespec_in_namespace(type_spec, namespace)
         LOGGER.debug(f"{declaration}")

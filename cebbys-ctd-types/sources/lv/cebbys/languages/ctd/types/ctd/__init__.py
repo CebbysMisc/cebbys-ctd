@@ -37,6 +37,9 @@ from lv.cebbys.languages.ctd.types.ctd.function import (
     Function,
     Parameter
 )
+from lv.cebbys.languages.ctd.types.ctd.__api__ import (
+    Reference,
+)
 
 __all__ = [
     "Declaration",
@@ -56,4 +59,5 @@ __all__ = [
     "Interface",
     "Function",
     "Parameter",
+    "Reference",
 ]

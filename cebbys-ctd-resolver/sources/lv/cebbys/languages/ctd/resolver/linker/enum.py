@@ -1,6 +1,9 @@
 import lv.cebbys.languages.ctd.types.ctd as Ctd
 from lv.cebbys.languages.ctd.resolver.linker.resolver import TypespecResolverApi
-from lv.cebbys.languages.ctd.resolver.linker.__api__ import resolve_typespec, resolve_integer_range
+from lv.cebbys.languages.ctd.resolver.linker.__api__ import resolve_typespec_in_namespace, resolve_integer_range
+from lv.cebbys.languages.ctd.resolver.manager import (
+    CtdDeclarationStorage
+)
 
 import lv.cebbys.languages.ctd.utility.logging as Logging
 LOGGER = Logging.get_logger(__name__)
@@ -16,10 +19,13 @@ class EnumLinker:
         namespace: Ctd.Namespace,
         declaration: Ctd.Enum,
     ) -> None:
-        if declaration.meta.base_type is not None:
-            declaration.base = resolve_typespec(resolver, module, namespace, declaration.meta.base_type)
+        base_type = declaration.meta.base_type
+        if base_type is None:
+            declaration.base = CtdDeclarationStorage.resolve("int")
+        else:
+            declaration.base = resolve_typespec_in_namespace(base_type, namespace)
 
-        int_range: tuple[int, int] | None = resolve_integer_range(declaration.base) if declaration.base else None
+        int_range: tuple[int, int] | None = resolve_integer_range(declaration.base.value) if declaration.base else None
 
         next_value: int = 0
         for member_meta in declaration.meta.members:

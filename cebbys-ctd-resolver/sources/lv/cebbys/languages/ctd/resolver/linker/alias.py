@@ -1,6 +1,6 @@
 import lv.cebbys.languages.ctd.types.ctd as Ctd
 from lv.cebbys.languages.ctd.resolver.linker.resolver import TypespecResolverApi
-from lv.cebbys.languages.ctd.resolver.linker.__api__ import resolve_typespec
+from lv.cebbys.languages.ctd.resolver.linker.__api__ import resolve_typespec_in_namespace
 
 import lv.cebbys.languages.ctd.utility.logging as Logging
 LOGGER = Logging.get_logger(__name__)
@@ -16,5 +16,5 @@ class AliasLinker:
         namespace: Ctd.Namespace,
         declaration: Ctd.Alias,
     ) -> None:
-        declaration.base = resolve_typespec(resolver, module, namespace, declaration.meta.type_spec)
+        declaration.base = resolve_typespec_in_namespace(declaration.meta.type_spec, namespace)
         LOGGER.debug(f"{declaration}")

@@ -1,5 +1,6 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 from lv.cebbys.languages.ctd.types.meta import (
     ParameterMeta,
     FunctionMeta
@@ -9,7 +10,7 @@ from lv.cebbys.languages.ctd.types.meta import (
 class Parameter:
     """Represents a function parameter."""
     meta: ParameterMeta
-    type: Declaration
+    type: Reference
     name: str
 
     def __str__(self) -> str:
@@ -21,7 +22,7 @@ class Parameter:
 
 class Function(Declaration[FunctionMeta]):
     """Represents a function declaration."""
-    return_type: Declaration | None
+    return_type: Reference | None
     decorators: list[Decorator]
     parameters: list[Parameter]
 

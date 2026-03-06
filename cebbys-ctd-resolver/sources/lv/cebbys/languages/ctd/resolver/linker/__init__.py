@@ -46,21 +46,10 @@ register_linkers()
 
 class ModuleLinker:
     @staticmethod
-    def link(modules: dict[str, Ctd.Module]) -> None:
+    def link_all(modules: dict[str, Ctd.Module]) -> None:
         resolver = TypespecResolverApi()
-
-        # Pass 1: wire includes and link all typedefs/aliases first so
-        # the resolver can safely erase aliases in pass 2.
         for _, module in modules.items():
             module.includes = [modules[i.path] for i in module.meta.includes]
             for namespace in module.namespaces:
                 for declaration in namespace.declarations:
-                    if isinstance(declaration, (Ctd.Typedef, Ctd.Alias)):
-                        getattr(type(declaration), LINK)(resolver, module, namespace, declaration)
-
-        # Pass 2: link remaining declaration types (aliases already resolved).
-        for _, module in modules.items():
-            for namespace in module.namespaces:
-                for declaration in namespace.declarations:
-                    if not isinstance(declaration, (Ctd.Typedef, Ctd.Alias)):
-                        getattr(type(declaration), LINK)(resolver, module, namespace, declaration)
+                    getattr(type(declaration), LINK)(resolver, module, namespace, declaration)

@@ -1,5 +1,6 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 from lv.cebbys.languages.ctd.types.meta import (
     StructureMemberMeta,
     StructureMeta
@@ -8,7 +9,7 @@ from lv.cebbys.languages.ctd.types.meta import (
 class StructureMember:
     """Represents a structure member."""
     name: str
-    type: Declaration
+    type: Reference
     meta: StructureMemberMeta
 
     def __str__(self) -> str:
@@ -21,7 +22,7 @@ class StructureMember:
 class Structure(Declaration):
     """Represents a structure declaration."""
     decorators: list[Decorator]
-    base: Declaration | None
+    base: Reference | None
     members: list[StructureMember]
     meta: StructureMeta
 

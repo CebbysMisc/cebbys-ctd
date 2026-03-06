@@ -1,13 +1,14 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
 from lv.cebbys.languages.ctd.types.ctd.function import Function
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 from lv.cebbys.languages.ctd.types.meta import InterfaceMeta
 
 
 class Interface(Declaration):
     """Represents an interface declaration."""
     decorators: list[Decorator]
-    base: Declaration | None
+    base: Reference | None
     methods: list[Function]
     meta: InterfaceMeta
 

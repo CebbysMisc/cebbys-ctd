@@ -1,5 +1,6 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 from lv.cebbys.languages.ctd.types.meta import (
     EnumMemberMeta,
     EnumMeta
@@ -22,7 +23,7 @@ class Enum(Declaration[EnumMeta]):
     """Represents an enum declaration."""
     decorators: list[Decorator]
     members: list[EnumMember]
-    base: Declaration | None
+    base: Reference | None
 
     def __init__(self) -> None:
         super().__init__()
