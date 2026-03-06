@@ -1,19 +1,11 @@
-"""Typespec Resolution with Caching
+"""Typespec Resolution
 
-This module provides cached hierarchical search for resolving type specifications
-to actual type declarations. Properly handles pointer and array wrappers, returning
-Ctd.Pointer and Ctd.Array instances.
+Resolves type specifications to Reference objects by looking up the
+CtdDeclarationManager registry directly. Named types are looked up as
+``"{namespace}::{typename}"`` for each namespace in the search path.
 
-Strategy:
-- Cache all lookups by (module, path, name)
-- First lookup: O(n * m) where n=search paths, m=declarations per namespace
-- Subsequent lookups: O(1) - cache hit
-- Stores lists of results (including empty lists for failed searches)
-
-Best for:
-- Production code with repeated type resolution
-- Large projects with many types
-- Scalable performance as codebase grows
+Since all declarations are pre-registered in the manager during construction,
+resolution is a pure key-lookup — O(k) where k = number of search paths.
 """
 
 import lv.cebbys.languages.ctd.types.ctd as Ctd
@@ -39,9 +31,9 @@ class TypespecResolverApi:
     Named types → DeclarationReference (backed by manager, auto-updates on alias erasure).
     Builtins → DirectReference(Builtin).
     Pointer/Array → DirectReference(Pointer/Array) where the wrapper's inner base
-                    is the inner DeclarationReference so alias erasure propagates.
+                    is a DeclarationReference so alias erasure propagates through it.
     """
-    
+
     # Builtin type cache (shared across all resolvers)
     _builtin_cache: Final[dict[str, Ctd.Builtin]] = {
         "char": Ctd.Builtin("char"),
@@ -52,67 +44,59 @@ class TypespecResolverApi:
         "double": Ctd.Builtin("double"),
         "void": Ctd.Builtin("void"),
     }
-    
+
     def __init__(self, manager: CtdDeclarationManager):
-        """Initialize resolver with manager and empty cache."""
+        """Initialize resolver with manager."""
         self._manager = manager
-        self._type_cache: dict[str, list[Reference]] = {}
-    
+
     def resolve(self, module: Ctd.Module, namespace: Ctd.Namespace, typespec: Meta.TypespecMeta) -> list[Reference]:
         """Resolve CTD type from typespec, returning all matching References.
 
+        Search order: namespace.path first, then each `use` declaration.
+        Each candidate is looked up directly in the manager by key
+        ``"{namespace}::{typename}"``.
+
         Args:
-            module: Module containing the namespace
+            module: Module containing the namespace (unused after manager migration,
+                    kept for API compatibility)
             namespace: Namespace the typespec was used in
             typespec: The type specification object to resolve
-            
+
         Returns:
-            List of resolved Reference objects (may wrap Pointer/Array)
-            Empty list if no matches found
-            
+            List of resolved Reference objects (may wrap Pointer/Array).
+            Empty list if no matches found.
+
         Raises:
             TypeError: If typespec type is unexpected
         """
         # Collect wrappers
         wrappers: list[Meta.TypespecMeta] = []
         current = typespec
-        
+
         while isinstance(current, (Meta.ArrayTypespecMeta, Meta.PointerTypespecMeta)):
             wrappers.append(current)
             current = current.base
-        
+
         # Resolve base
         if not isinstance(current, Meta.TypedTypespecMeta):
             raise TypeError(f"Expected TypedTypespecMeta, got {type(current)}")
-        
+
         type_name = current.qualified_name
-        
-        # Check builtins (always fast, single match)
+
+        # Check builtins first
         if type_name in self._builtin_cache:
             base_refs: list[Reference] = [DirectReference(self._builtin_cache[type_name])]
         else:
-            # Search with caching - collect all matches
+            # Search each namespace in priority order: own namespace first, then uses
             search_paths = [namespace.path, *namespace.meta.uses]
             base_refs = []
-            
+
             for path in search_paths:
-                cache_key = f"{module.name}::{path}::{type_name}"
-                
-                # Check cache
-                if cache_key in self._type_cache:
-                    cached = self._type_cache[cache_key]
-                    LOGGER.debug(f"Cache hit for '{type_name}' at '{path}'")
-                    base_refs.extend(cached)
-                    continue
-                
-                # Not cached, search
-                results = self._find_references_in_namespace(module, path, type_name)
-                self._type_cache[cache_key] = results
-                
-                if results:
-                    LOGGER.debug(f"Cached {len(results)} result(s) for '{type_name}' at '{path}'")
-                    base_refs.extend(results)
-        
+                if self._manager.contains(path, type_name):
+                    ref = self._manager.reference(path, type_name)
+                    base_refs.append(ref)
+                    LOGGER.debug(f"Resolved '{type_name}' via '{path}'")
+
         # Rebuild wrappers for each base reference
         final_refs: list[Reference] = []
         for base_ref in base_refs:
@@ -123,38 +107,6 @@ class TypespecResolverApi:
                 elif isinstance(wrapper, Meta.ArrayTypespecMeta):
                     result_ref = DirectReference(Ctd.Array(result_ref, wrapper.size))
             final_refs.append(result_ref)
-        
+
         return final_refs
-    
-    # ============================================================================
-    # Helper Methods
-    # ============================================================================
-    def _find_references_in_namespace(
-        self,
-        module: Ctd.Module,
-        namespace_path: str,
-        type_name: str
-    ) -> list[Reference]:
-        """Search for ALL type references matching name in specific namespace of module.
 
-        Returns DeclarationReference objects backed by the manager.
-        """
-        results: list[Reference] = []
-
-        for m in [module, *module.includes]:
-            for ns in m.namespaces:
-                if ns.path != namespace_path:
-                    continue
-
-                for decl in ns.declarations:
-                    if decl.name == type_name:
-                        key = f"{namespace_path}::{type_name}"
-                        ref = self._manager.reference(key)
-                        results.append(ref)
-
-        return results
-    
-    def clear_cache(self) -> None:
-        """Clear the type resolution cache."""
-        self._type_cache.clear()
-        LOGGER.debug("Type resolution cache cleared")

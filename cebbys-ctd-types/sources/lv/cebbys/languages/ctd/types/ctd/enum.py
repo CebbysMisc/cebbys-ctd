@@ -1,5 +1,5 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
-from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference, Referable
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
 from lv.cebbys.languages.ctd.types.meta import (
     EnumMemberMeta,
@@ -23,25 +23,24 @@ class Enum(Declaration[EnumMeta]):
     """Represents an enum declaration."""
     decorators: list[Decorator]
     members: list[EnumMember]
-    _base: Reference | None
+    base_reference: Reference | None
 
     def __init__(self) -> None:
         super().__init__()
         self.decorators = []
         self.members = []
-        self._base = None
+        self.base_reference = None
 
     @property
     def base(self) -> Declaration | None:
-        return self._base.value if self._base is not None else None
+        return self.base_reference.value if self.base_reference is not None else None
 
     @base.setter
-    def base(self, value) -> None:
+    def base(self, value: Referable) -> None:
         if isinstance(value, Reference):
-            self._base = value
+            self.base_reference = value
         else:
-            from lv.cebbys.languages.ctd.resolver.manager import DirectReference
-            self._base = DirectReference(value)
+            self.base_reference.key = value.typeref
 
     def __str__(self) -> str:
         try:

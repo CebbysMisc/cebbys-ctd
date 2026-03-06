@@ -9,10 +9,6 @@ from lv.cebbys.languages.ctd.resolver.manager import CtdDeclarationManager
 logger = Logging.get_logger(__name__)
 
 
-def _declaration_key(namespace_path: str, declaration_name: str) -> str:
-    return f"{namespace_path}::{declaration_name}"
-
-
 class ModuleConstructor:
     @staticmethod
     def construct(name: str, meta: Meta.ModuleMeta, manager: CtdDeclarationManager) -> Ctd.Module:
@@ -38,8 +34,7 @@ class ModuleConstructor:
             namespace = NamespaceConstructor.construct(namespace_meta)
             out.namespaces.append(namespace)
             for declaration in namespace.declarations:
-                key = _declaration_key(namespace_meta.path, declaration.name)
-                manager.register(key, declaration)
+                manager.register(namespace_meta.path, declaration.name, declaration)
 
         logger.info(f"Module '{name}' constructed with {len(out.namespaces)} namespace(s)")
         

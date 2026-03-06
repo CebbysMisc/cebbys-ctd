@@ -1,5 +1,5 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
-from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference, Referable
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
 from lv.cebbys.languages.ctd.types.meta import TypedefMeta
 
@@ -8,27 +8,24 @@ class Typedef(Declaration):
     """Represents a typedef declaration."""
     decorators: list[Decorator]
     signed: bool | None
-    _base: Reference
+    base_reference: Reference
     meta: TypedefMeta
 
     def __init__(self) -> None:
         super().__init__()
         self.decorators = []
         self.signed = None
-        self._base = None
 
     @property
     def base(self) -> Declaration:
-        return self._base.value if self._base is not None else None
+        return self.base_reference.value
 
     @base.setter
-    def base(self, value) -> None:
-        from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference as _IRef
-        if isinstance(value, _IRef):
-            self._base = value
+    def base(self, value: Referable) -> None:
+        if isinstance(value, Reference):
+            self.base_reference = value
         else:
-            from lv.cebbys.languages.ctd.resolver.manager import DirectReference
-            self._base = DirectReference(value)
+            self.base_reference.key = value.typeref
 
     def __str__(self) -> str:
         try:

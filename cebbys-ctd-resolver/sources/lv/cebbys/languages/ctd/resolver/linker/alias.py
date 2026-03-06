@@ -22,6 +22,5 @@ class AliasLinker:
         declaration.base = ref
         # Erase alias in manager: all DeclarationReferences pointing to this alias key
         # will now transparently return the resolved base type.
-        alias_key = f"{namespace.path}::{declaration.name}"
-        manager.update(alias_key, ref.value)
+        manager.update(namespace.path, declaration.name, ref.value)
         LOGGER.debug(f"{declaration}")

@@ -10,36 +10,56 @@ __all__ = ["CtdDeclarationManager", "DeclarationReference", "DirectReference"]
 
 
 class CtdDeclarationManager:
-    """Registry mapping qualified declaration names to Declaration instances.
+    """Registry mapping qualified declaration keys to Declaration instances.
+
+    Keys are always formatted as ``"{namespace}::{typename}"`` — use
+    :meth:`make_key` to construct them consistently.
 
     All named declarations are pre-registered during construction.
     AliasLinker updates entries to erase aliases after resolution.
     """
 
+    @staticmethod
+    def make_key(namespace: str, typename: str) -> str:
+        """Return the canonical registry key for a declaration."""
+        return f"{namespace}::{typename}"
+
     def __init__(self) -> None:
         self._registry: dict[str, object] = {}
 
-    def register(self, key: str, declaration: object) -> None:
+    def register(self, namespace: str, typename: str, declaration: object) -> None:
+        key = CtdDeclarationManager.make_key(namespace, typename)
         if key in self._registry:
             LOGGER.warning(f"Overwriting existing registration for '{key}'")
         self._registry[key] = declaration
         LOGGER.debug(f"Registered '{key}'")
 
-    def get(self, key: str) -> object | None:
+    def get(self, namespace: str, typename: str) -> object | None:
+        return self._registry.get(CtdDeclarationManager.make_key(namespace, typename))
+
+    def get_by_key(self, key: str) -> object | None:
         return self._registry.get(key)
 
-    def update(self, key: str, declaration: object) -> None:
+    def update(self, namespace: str, typename: str, declaration: object) -> None:
+        key = CtdDeclarationManager.make_key(namespace, typename)
         if key not in self._registry:
             LOGGER.warning(f"Updating unregistered key '{key}'")
         self._registry[key] = declaration
         LOGGER.debug(f"Updated '{key}' -> {declaration!r}")
 
-    def reference(self, key: str) -> "DeclarationReference":
-        """Create a Reference pointing to the given registry key."""
+    def update_by_key(self, key: str, declaration: object) -> None:
+        if key not in self._registry:
+            LOGGER.warning(f"Updating unregistered key '{key}'")
+        self._registry[key] = declaration
+        LOGGER.debug(f"Updated '{key}' -> {declaration!r}")
+
+    def reference(self, namespace: str, typename: str) -> "DeclarationReference":
+        """Create a Reference pointing to the given namespace::typename key."""
+        key = CtdDeclarationManager.make_key(namespace, typename)
         return DeclarationReference(self, key)
 
-    def contains(self, key: str) -> bool:
-        return key in self._registry
+    def contains(self, namespace: str, typename: str) -> bool:
+        return CtdDeclarationManager.make_key(namespace, typename) in self._registry
 
 
 class DeclarationReference(Generic[T]):
@@ -54,12 +74,20 @@ class DeclarationReference(Generic[T]):
         self._key = key
 
     @property
+    def key(self) -> str:
+        return self._key
+
+    @key.setter
+    def key(self, new_key: str) -> None:
+        self._key = new_key
+
+    @property
     def value(self) -> T:
-        return self._manager.get(self._key)  # type: ignore[return-value]
+        return self._manager.get_by_key(self._key)  # type: ignore[return-value]
 
     @value.setter
     def value(self, declaration: T) -> None:
-        self._manager.update(self._key, declaration)
+        self._manager.update_by_key(self._key, declaration)
 
     def __str__(self) -> str:
         v = self.value
@@ -78,6 +106,15 @@ class DirectReference(Generic[T]):
 
     def __init__(self, declaration: T) -> None:
         self._value = declaration
+        self._key = ""
+
+    @property
+    def key(self) -> str:
+        return self._key
+
+    @key.setter
+    def key(self, new_key: str) -> None:
+        self._key = new_key
 
     @property
     def value(self) -> T:

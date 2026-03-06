@@ -1,10 +1,10 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
-from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
+from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference, Referable
 
 class Builtin(Declaration):
     """Represents a builtin member."""
 
-    def __init__(self, name:str) -> None:
+    def __init__(self, name: str) -> None:
         super().__init__()
         self.name = name
 
@@ -15,24 +15,23 @@ class Builtin(Declaration):
         return f"Builtin({self.name!r})"
 
 class Array(Declaration):
-    _base: Reference
+    base_reference: Reference
 
-    def __init__(self, base, size: int) -> None:
+    def __init__(self, base: Referable, size: int) -> None:
         super().__init__()
         self.size = size
-        self.base = base  # use setter
+        self.base = base
 
     @property
     def base(self) -> Declaration:
-        return self._base.value if self._base is not None else None
+        return self.base_reference.value
 
     @base.setter
-    def base(self, value) -> None:
+    def base(self, value: Referable) -> None:
         if isinstance(value, Reference):
-            self._base = value
+            self.base_reference = value
         else:
-            from lv.cebbys.languages.ctd.resolver.manager import DirectReference
-            self._base = DirectReference(value)
+            self.base_reference.key = value.typeref
 
     def __str__(self) -> str:
         return f"{self.base}[{self.size}]"
@@ -41,23 +40,22 @@ class Array(Declaration):
         return f"Array({self.base!r}, {self.size})"
 
 class Pointer(Declaration):
-    _base: Reference
+    base_reference: Reference
 
-    def __init__(self, base) -> None:
+    def __init__(self, base: Referable) -> None:
         super().__init__()
-        self.base = base  # use setter
+        self.base = base
 
     @property
     def base(self) -> Declaration:
-        return self._base.value if self._base is not None else None
+        return self.base_reference.value
 
     @base.setter
-    def base(self, value) -> None:
+    def base(self, value: Referable) -> None:
         if isinstance(value, Reference):
-            self._base = value
+            self.base_reference = value
         else:
-            from lv.cebbys.languages.ctd.resolver.manager import DirectReference
-            self._base = DirectReference(value)
+            self.base_reference.key = value.typeref
 
     def __str__(self) -> str:
         return f"{self.base}*"
