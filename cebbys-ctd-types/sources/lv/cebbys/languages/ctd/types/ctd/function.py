@@ -34,9 +34,11 @@ class Function(Declaration[FunctionMeta]):
     def __str__(self) -> str:
         try:
             params = ", ".join(str(p) for p in self.parameters)
-            return f"{self.return_type} {self.namespace.path}::{self.name}({params})"
+            ns = getattr(self, "namespace", None)
+            prefix = f"{ns.path}::" if ns else ""
+            return f"{self.return_type} {prefix}{self.name}({params})"
         except:
-            return f"{self.namespace.path}::{self.name}(...)"
+            return f"Function({self.name})"
 
     def __repr__(self) -> str:
         return f"Function({self.namespace.path}::{self.name})"
