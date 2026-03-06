@@ -1,3 +1,7 @@
 namespace dummy::lib {
     typedef char[4] Chars4
+
+    alias char[8] Chars8
+
+    typedef Chars8 Ubytes8
 }

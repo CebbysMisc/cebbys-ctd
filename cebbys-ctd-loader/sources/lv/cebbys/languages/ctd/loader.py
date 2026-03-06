@@ -2,10 +2,10 @@
 
 This module handles loading and parsing CTD (Custom Type Definition) files.
 """
-import typing as Typing
 import lv.cebbys.languages.ctd.types.__api__ as Api
 import lv.cebbys.languages.ctd.types.meta as TypeMeta
 import lv.cebbys.languages.ctd.antlr4 as Antlr4
+import typing as Typing
 
 from lv.cebbys.languages.ctd.resolver.resolver import CtdMetaResolver
 from lv.cebbys.languages.ctd.meta.parser import CtdMetaParser
@@ -46,7 +46,8 @@ class CtdLoader:
         self.metas = self._convert_contexts_to_metas(self.contexts)
 
         # Stage 4: Resolve and link via ModuleConstructor + ModuleLinker
-        self._definitions = self._build_type_definitions(self.metas)
+        self.definitions = self._build_type_definitions(self.metas)
+        print(self.definitions)
 
     # =========================================================================
     # Stage 1: List all .ctd files from directories
@@ -132,8 +133,8 @@ class CtdLoader:
     def _build_type_definitions(
         self,
         module_metas: list[tuple[Api.FilePath, str, TypeMeta.ModuleMeta]]
-    ) -> Typing.Any:
-        return CtdMetaResolver.resolve({
+    ):
+        return [ d for d in CtdMetaResolver.resolve({
             module_name: module for _, module_name, module in module_metas
-        })
+        })]
 

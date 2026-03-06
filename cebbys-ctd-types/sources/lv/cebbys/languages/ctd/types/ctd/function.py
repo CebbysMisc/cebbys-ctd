@@ -1,4 +1,5 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
+from lv.cebbys.languages.ctd.types.ctd.__api__ import IReference
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
 from lv.cebbys.languages.ctd.types.meta import (
     ParameterMeta,
@@ -9,8 +10,20 @@ from lv.cebbys.languages.ctd.types.meta import (
 class Parameter:
     """Represents a function parameter."""
     meta: ParameterMeta
-    type: Declaration
+    _type: IReference
     name: str
+
+    @property
+    def type(self) -> Declaration:
+        return self._type.value if self._type is not None else None
+
+    @type.setter
+    def type(self, value) -> None:
+        if isinstance(value, IReference):
+            self._type = value
+        else:
+            from lv.cebbys.languages.ctd.resolver.manager import DirectReference
+            self._type = DirectReference(value)
 
     def __str__(self) -> str:
         return f"{self.type} {self.name}"
@@ -21,7 +34,7 @@ class Parameter:
 
 class Function(Declaration[FunctionMeta]):
     """Represents a function declaration."""
-    return_type: Declaration | None
+    _return_type: IReference | None
     decorators: list[Decorator]
     parameters: list[Parameter]
 
@@ -29,7 +42,19 @@ class Function(Declaration[FunctionMeta]):
         super().__init__()
         self.decorators = []
         self.parameters = []
-        self.base = None
+        self._return_type = None
+
+    @property
+    def return_type(self) -> Declaration | None:
+        return self._return_type.value if self._return_type is not None else None
+
+    @return_type.setter
+    def return_type(self, value) -> None:
+        if isinstance(value, IReference):
+            self._return_type = value
+        else:
+            from lv.cebbys.languages.ctd.resolver.manager import DirectReference
+            self._return_type = DirectReference(value)
 
     def __str__(self) -> str:
         try:

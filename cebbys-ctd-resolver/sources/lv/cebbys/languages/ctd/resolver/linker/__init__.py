@@ -7,6 +7,7 @@ from lv.cebbys.languages.ctd.resolver.linker.flag import FlagLinker
 from lv.cebbys.languages.ctd.resolver.linker.structure import StructureLinker
 from lv.cebbys.languages.ctd.resolver.linker.function import FunctionLinker
 from lv.cebbys.languages.ctd.resolver.linker.interface import InterfaceLinker
+from lv.cebbys.languages.ctd.resolver.manager import CtdDeclarationManager
 from typing import (
     Protocol,
     Any
@@ -24,7 +25,8 @@ class DeclarationLinker(Protocol):
         resolver: TypespecResolverApi,
         module: Ctd.Module,
         namespace: Ctd.Namespace,
-        declaration: Any
+        declaration: Any,
+        manager: CtdDeclarationManager,
     ) -> None: ...
 
 LINK = f"link-{uuid4()}"
@@ -46,21 +48,11 @@ register_linkers()
 
 class ModuleLinker:
     @staticmethod
-    def link(modules: dict[str, Ctd.Module]) -> None:
-        resolver = TypespecResolverApi()
+    def link(modules: dict[str, Ctd.Module], manager: CtdDeclarationManager) -> None:
+        resolver = TypespecResolverApi(manager)
 
-        # Pass 1: wire includes and link all typedefs/aliases first so
-        # the resolver can safely erase aliases in pass 2.
         for _, module in modules.items():
             module.includes = [modules[i.path] for i in module.meta.includes]
             for namespace in module.namespaces:
                 for declaration in namespace.declarations:
-                    if isinstance(declaration, (Ctd.Typedef, Ctd.Alias)):
-                        getattr(type(declaration), LINK)(resolver, module, namespace, declaration)
-
-        # Pass 2: link remaining declaration types (aliases already resolved).
-        for _, module in modules.items():
-            for namespace in module.namespaces:
-                for declaration in namespace.declarations:
-                    if not isinstance(declaration, (Ctd.Typedef, Ctd.Alias)):
-                        getattr(type(declaration), LINK)(resolver, module, namespace, declaration)
+                    getattr(type(declaration), LINK)(resolver, module, namespace, declaration, manager)
