@@ -69,7 +69,7 @@ def test_loader_with_existing_resources() -> None:
     TestLogger.info(f"Found {len(loader.ctds)} files")
     TestLogger.info(f"Parsed {len(loader.contexts)} contexts")
     TestLogger.info(f"Converted {len(loader.metas)} metas")
-    assert loader.definitions is not None or True, "Definitions resolved without error"
+    assert loader._definitions is not None or True, "Definitions resolved without error"
     
     TestLogger.success("Loaded successfully")
     TestLogger.complete("Test passed")

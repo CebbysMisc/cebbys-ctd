@@ -1,5 +1,4 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
-from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference, Referable
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
 from lv.cebbys.languages.ctd.types.meta import (
     ParameterMeta,
@@ -10,23 +9,8 @@ from lv.cebbys.languages.ctd.types.meta import (
 class Parameter:
     """Represents a function parameter."""
     meta: ParameterMeta
-    type_reference: Reference
+    type: Declaration
     name: str
-    decorators: list[Decorator]
-
-    def __init__(self) -> None:
-        self.decorators = []
-
-    @property
-    def type(self) -> Declaration:
-        return self.type_reference.value
-
-    @type.setter
-    def type(self, value: Referable) -> None:
-        if isinstance(value, Reference):
-            self.type_reference = value
-        else:
-            self.type_reference.key = value.typeref
 
     def __str__(self) -> str:
         return f"{self.type} {self.name}"
@@ -37,7 +21,7 @@ class Parameter:
 
 class Function(Declaration[FunctionMeta]):
     """Represents a function declaration."""
-    return_type_reference: Reference | None
+    return_type: Declaration | None
     decorators: list[Decorator]
     parameters: list[Parameter]
 
@@ -45,18 +29,7 @@ class Function(Declaration[FunctionMeta]):
         super().__init__()
         self.decorators = []
         self.parameters = []
-        self.return_type_reference = None
-
-    @property
-    def return_type(self) -> Declaration | None:
-        return self.return_type_reference.value if self.return_type_reference is not None else None
-
-    @return_type.setter
-    def return_type(self, value: Referable) -> None:
-        if isinstance(value, Reference):
-            self.return_type_reference = value
-        else:
-            self.return_type_reference.key = value.typeref
+        self.base = None
 
     def __str__(self) -> str:
         try:

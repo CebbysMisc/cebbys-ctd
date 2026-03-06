@@ -1,5 +1,4 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
-from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference, Referable
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
 from lv.cebbys.languages.ctd.types.meta import (
     StructureMemberMeta,
@@ -9,19 +8,8 @@ from lv.cebbys.languages.ctd.types.meta import (
 class StructureMember:
     """Represents a structure member."""
     name: str
-    type_reference: Reference
+    type: Declaration
     meta: StructureMemberMeta
-
-    @property
-    def type(self) -> Declaration:
-        return self.type_reference.value
-
-    @type.setter
-    def type(self, value: Referable) -> None:
-        if isinstance(value, Reference):
-            self.type_reference = value
-        else:
-            self.type_reference.key = value.typeref
 
     def __str__(self) -> str:
         return f"{self.type} {self.name}"
@@ -33,7 +21,7 @@ class StructureMember:
 class Structure(Declaration):
     """Represents a structure declaration."""
     decorators: list[Decorator]
-    base_reference: Reference | None
+    base: Declaration | None
     members: list[StructureMember]
     meta: StructureMeta
 
@@ -41,18 +29,7 @@ class Structure(Declaration):
         super().__init__()
         self.decorators = []
         self.members = []
-        self.base_reference = None
-
-    @property
-    def base(self) -> Declaration | None:
-        return self.base_reference.value if self.base_reference is not None else None
-
-    @base.setter
-    def base(self, value: Referable) -> None:
-        if isinstance(value, Reference):
-            self.base_reference = value
-        else:
-            self.base_reference.key = value.typeref
+        self.base = None
 
     def __str__(self) -> str:
         try:

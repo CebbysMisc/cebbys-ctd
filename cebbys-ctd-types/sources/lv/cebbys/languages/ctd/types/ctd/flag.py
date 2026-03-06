@@ -1,5 +1,4 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
-from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference, Referable
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
 from lv.cebbys.languages.ctd.types.meta import (
     FlagMemberMeta,
@@ -24,24 +23,13 @@ class Flag(Declaration[FlagMeta]):
     """Represents a flag declaration."""
     decorators: list[Decorator]
     members: list[FlagMember]
-    base_reference: Reference | None
+    base: Declaration | None
 
     def __init__(self) -> None:
         super().__init__()
         self.decorators = []
         self.members = []
-        self.base_reference = None
-
-    @property
-    def base(self) -> Declaration | None:
-        return self.base_reference.value if self.base_reference is not None else None
-
-    @base.setter
-    def base(self, value: Referable) -> None:
-        if isinstance(value, Reference):
-            self.base_reference = value
-        else:
-            self.base_reference.key = value.typeref
+        self.base = None
 
     def __str__(self) -> str:
         try:

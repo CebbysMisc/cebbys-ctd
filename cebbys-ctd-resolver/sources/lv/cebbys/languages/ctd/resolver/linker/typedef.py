@@ -2,7 +2,6 @@ import lv.cebbys.languages.ctd.types.ctd as Ctd
 import lv.cebbys.languages.ctd.types.meta as Meta
 from lv.cebbys.languages.ctd.resolver.linker.resolver import TypespecResolverApi
 from lv.cebbys.languages.ctd.resolver.linker.__api__ import resolve_typespec
-from lv.cebbys.languages.ctd.resolver.manager import CtdDeclarationManager
 
 import lv.cebbys.languages.ctd.utility.logging as Logging
 LOGGER = Logging.get_logger(__name__)
@@ -17,7 +16,6 @@ class TypedefLinker:
         module: Ctd.Module,
         namespace: Ctd.Namespace,
         declaration: Ctd.Typedef,
-        manager: CtdDeclarationManager,
     ) -> None:
         type_spec = declaration.meta.type_spec
 

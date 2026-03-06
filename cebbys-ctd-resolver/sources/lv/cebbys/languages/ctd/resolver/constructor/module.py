@@ -4,20 +4,18 @@ import lv.cebbys.languages.ctd.utility.logging as Logging
 from lv.cebbys.languages.ctd.resolver.constructor.namespace import (
     NamespaceConstructor
 )
-from lv.cebbys.languages.ctd.resolver.manager import CtdDeclarationManager
 
 logger = Logging.get_logger(__name__)
 
 
 class ModuleConstructor:
     @staticmethod
-    def construct(name: str, meta: Meta.ModuleMeta, manager: CtdDeclarationManager) -> Ctd.Module:
-        """Construct a CTD module from metadata and pre-register all named declarations.
+    def construct(name: str, meta: Meta.ModuleMeta) -> Ctd.Module:
+        """Construct a CTD module from metadata.
         
         Args:
             name: Module name (typically the file path)
             meta: Module metadata to construct from
-            manager: Declaration manager for pre-registration
             
         Returns:
             Constructed module object
@@ -31,10 +29,7 @@ class ModuleConstructor:
         out.namespaces = []
 
         for namespace_meta in meta.namespaces:
-            namespace = NamespaceConstructor.construct(namespace_meta)
-            out.namespaces.append(namespace)
-            for declaration in namespace.declarations:
-                manager.register(namespace_meta.path, declaration.name, declaration)
+            out.namespaces.append(NamespaceConstructor.construct(namespace_meta))
 
         logger.info(f"Module '{name}' constructed with {len(out.namespaces)} namespace(s)")
         

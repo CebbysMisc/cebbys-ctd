@@ -1,21 +1,23 @@
-"""Typespec Resolution
+"""Typespec Resolution with Caching
 
-Resolves type specifications to Reference objects by looking up the
-CtdDeclarationManager registry directly. Named types are looked up as
-``"{namespace}::{typename}"`` for each namespace in the search path.
+This module provides cached hierarchical search for resolving type specifications
+to actual type declarations. Properly handles pointer and array wrappers, returning
+Ctd.Pointer and Ctd.Array instances.
 
-Since all declarations are pre-registered in the manager during construction,
-resolution is a pure key-lookup — O(k) where k = number of search paths.
+Strategy:
+- Cache all lookups by (module, path, name)
+- First lookup: O(n * m) where n=search paths, m=declarations per namespace
+- Subsequent lookups: O(1) - cache hit
+- Stores lists of results (including empty lists for failed searches)
+
+Best for:
+- Production code with repeated type resolution
+- Large projects with many types
+- Scalable performance as codebase grows
 """
 
 import lv.cebbys.languages.ctd.types.ctd as Ctd
 import lv.cebbys.languages.ctd.types.meta as Meta
-from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
-from lv.cebbys.languages.ctd.resolver.manager import (
-    CtdDeclarationManager,
-    DeclarationReference,
-    DirectReference,
-)
 from typing import Final
 
 import lv.cebbys.languages.ctd.utility.logging as Logging
@@ -26,14 +28,13 @@ __all__ = ['TypespecResolverApi']
 
 
 class TypespecResolverApi:
-    """Resolves type specifications to Reference[Declaration].
-
-    Named types → DeclarationReference (backed by manager, auto-updates on alias erasure).
-    Builtins → DirectReference(Builtin).
-    Pointer/Array → DirectReference(Pointer/Array) where the wrapper's inner base
-                    is a DeclarationReference so alias erasure propagates through it.
+    """Base class for typespec resolution strategies.
+    
+    Resolves type specifications to actual type declarations by searching
+    through module namespaces based on use declarations and imports.
+    Properly constructs Pointer and Array wrappers for extension types.
     """
-
+    
     # Builtin type cache (shared across all resolvers)
     _builtin_cache: Final[dict[str, Ctd.Builtin]] = {
         "char": Ctd.Builtin("char"),
@@ -44,69 +45,148 @@ class TypespecResolverApi:
         "double": Ctd.Builtin("double"),
         "void": Ctd.Builtin("void"),
     }
+    
+    def __init__(self):
+        """Initialize resolver with empty cache."""
+        self._type_cache: dict[str, list[Ctd.Declaration]] = {}
+    
+    def resolve(self, module: Ctd.Module, namespace: Ctd.Namespace, typespec: Meta.TypespecMeta) -> list[Ctd.Declaration]:
+        """Resolve CTD type from typespec, returning all matching declarations.
 
-    def __init__(self, manager: CtdDeclarationManager):
-        """Initialize resolver with manager."""
-        self._manager = manager
+        Since a type name may exist in multiple namespaces that are in the search
+        path, this method returns ALL matching types found across all search paths.
 
-    def resolve(self, module: Ctd.Module, namespace: Ctd.Namespace, typespec: Meta.TypespecMeta) -> list[Reference]:
-        """Resolve CTD type from typespec, returning all matching References.
+        Example module
+        ```
+        // Module uses namespaces from two other modules
+        import "std/collections"
+        import "std/types"
+        
+        namespace lv::cebbys::app {
+            // In this namespace use type suffix for type specs
+            use std::collection
+            use std
 
-        Search order: namespace.path first, then each `use` declaration.
-        Each candidate is looked up directly in the manager by key
-        ``"{namespace}::{typename}"``.
+            structure Fruit {
+                String name     // Type spec String could be std::collection::String or std::String
+                                // Both would be returned if both exist
+                String color    
+                int count       // This is a builtin type - returns single match
+            }
+
+            typedef List Fruits  // If List exists in multiple namespaces, all are returned
+        }
+        ```
+        With the example above, if String exists in both std::collection and std,
+        both declarations would be returned in the list.
 
         Args:
-            module: Module containing the namespace (unused after manager migration,
-                    kept for API compatibility)
+            module: Module containing the namespace
             namespace: Namespace the typespec was used in
             typespec: The type specification object to resolve
-
+            
         Returns:
-            List of resolved Reference objects (may wrap Pointer/Array).
-            Empty list if no matches found.
-
+            List of resolved type declarations (may be wrapped in Pointer/Array)
+            Empty list if no matches found
+            
         Raises:
             TypeError: If typespec type is unexpected
         """
         # Collect wrappers
         wrappers: list[Meta.TypespecMeta] = []
         current = typespec
-
+        
         while isinstance(current, (Meta.ArrayTypespecMeta, Meta.PointerTypespecMeta)):
             wrappers.append(current)
             current = current.base
-
+        
         # Resolve base
         if not isinstance(current, Meta.TypedTypespecMeta):
             raise TypeError(f"Expected TypedTypespecMeta, got {type(current)}")
-
+        
         type_name = current.qualified_name
-
-        # Check builtins first
+        
+        # Check builtins (always fast, single match)
         if type_name in self._builtin_cache:
-            base_refs: list[Reference] = [DirectReference(self._builtin_cache[type_name])]
+            base_declarations = [self._builtin_cache[type_name]]
         else:
-            # Search each namespace in priority order: own namespace first, then uses
+            # Search with caching - collect all matches
             search_paths = [namespace.path, *namespace.meta.uses]
-            base_refs = []
-
+            base_declarations: list[Ctd.Declaration] = []
+            
             for path in search_paths:
-                if self._manager.contains(path, type_name):
-                    ref = self._manager.reference(path, type_name)
-                    base_refs.append(ref)
-                    LOGGER.debug(f"Resolved '{type_name}' via '{path}'")
+                cache_key = f"{module.name}::{path}::{type_name}"
+                
+                # Check cache
+                if cache_key in self._type_cache:
+                    cached = self._type_cache[cache_key]
+                    LOGGER.debug(f"Cache hit for '{type_name}' at '{path}'")
+                    base_declarations.extend(cached)
+                    continue
+                
+                # Not cached, search
+                results = self._find_all_in_namespace(module, path, type_name)
+                self._type_cache[cache_key] = results if results else []
+                
+                if results:
+                    LOGGER.debug(f"Cached {len(results)} result(s) for '{type_name}' at '{path}'")
+                    base_declarations.extend(results)
+        
+        # Rebuild wrappers for each base declaration
+        final_results: list[Ctd.Declaration] = []
+        for base_decl in base_declarations:
+            # Erase aliases — resolve to underlying type
+            resolved = base_decl
+            visited_aliases: set[int] = set()
+            while isinstance(resolved, Ctd.Alias):
+                if id(resolved) in visited_aliases:
+                    break
+                visited_aliases.add(id(resolved))
+                resolved = resolved.base
 
-        # Rebuild wrappers for each base reference
-        final_refs: list[Reference] = []
-        for base_ref in base_refs:
-            result_ref: Reference = base_ref
+            result = resolved
             for wrapper in reversed(wrappers):
                 if isinstance(wrapper, Meta.PointerTypespecMeta):
-                    result_ref = DirectReference(Ctd.Pointer(result_ref))
+                    result = Ctd.Pointer(result)
                 elif isinstance(wrapper, Meta.ArrayTypespecMeta):
-                    result_ref = DirectReference(Ctd.Array(result_ref, wrapper.size))
-            final_refs.append(result_ref)
+                    result = Ctd.Array(result, wrapper.size)
+            final_results.append(result)
+        
+        return final_results
+    
+    # ============================================================================
+    # Helper Methods
+    # ============================================================================
+    def _find_all_in_namespace(
+        self,
+        module: Ctd.Module,
+        namespace_path: str,
+        type_name: str
+    ) -> list[Ctd.Declaration]:
+        """Search for ALL types matching name in specific namespace of module.
+        
+        Args:
+            module: Module to search
+            namespace_path: Namespace path (e.g., "std::collection")
+            type_name: Simple type name to find
+            
+        Returns:
+            List of all matching declarations (empty if none found)
+        """
+        results: list[Ctd.Declaration] = []
 
-        return final_refs
+        for m in [module, *module.includes]:
+            for ns in m.namespaces:
+                if ns.path != namespace_path:
+                    continue
 
+                for decl in ns.declarations:
+                    if decl.name == type_name:
+                        results.append(decl)
+
+        return results
+    
+    def clear_cache(self) -> None:
+        """Clear the type resolution cache."""
+        self._type_cache.clear()
+        LOGGER.debug("Type resolution cache cleared")
