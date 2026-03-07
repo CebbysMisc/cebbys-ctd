@@ -1,6 +1,5 @@
 import lv.cebbys.languages.ctd.types.ctd as Ctd
 import lv.cebbys.languages.ctd.types.meta as Meta
-from lv.cebbys.languages.ctd.resolver.linker.resolver import TypespecResolverApi
 from lv.cebbys.languages.ctd.resolver.manager import (
     CtdDeclarationStorage
 )
@@ -12,7 +11,6 @@ import lv.cebbys.languages.ctd.utility.logging as Logging
 LOGGER = Logging.get_logger(__name__)
 
 __all__ = [
-    "resolve_typespec",
     "resolve_integer_range",
     "next_flag_value",
 ]
@@ -24,20 +22,6 @@ _BUILTIN_BITS: dict[str, int] = {
     "int":   32,
     "long":  64,
 }
-
-
-def resolve_typespec(
-    resolver: TypespecResolverApi,
-    module: Ctd.Module,
-    namespace: Ctd.Namespace,
-    typespec: Meta.TypespecMeta,
-) -> Ctd.Declaration:
-    results = resolver.resolve(module, namespace, typespec)
-    if not results:
-        raise BaseException(f"Type '{typespec}' not found in module '{module.name}'")
-    if len(results) > 1:
-        LOGGER.warning(f"Ambiguous type '{typespec}': {len(results)} matches found, using first")
-    return results[0]
 
 def resolve_typespec_in_namespace(
     typespec: Meta.TypespecMeta,

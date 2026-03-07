@@ -10,8 +10,17 @@ import lv.cebbys.languages.ctd.antlr4 as Antlr4
 from lv.cebbys.languages.ctd.resolver.resolver import CtdMetaResolver
 from lv.cebbys.languages.ctd.meta.parser import CtdMetaParser
 
-__all__ = ['CtdLoader']
+from lv.cebbys.languages.ctd.loader.file import (
+    CtdFileCtxLoader
+)
+from lv.cebbys.languages.ctd.loader.antlr import (
+    CtdAntlrCtxLoader
+)
+from lv.cebbys.languages.ctd.loader.meta import (
+    CtdMetaLoader
+)
 
+__all__ = ['CtdLoader']
 
 class CtdLoader:
     """Loads and parses CTD module files.
@@ -23,54 +32,25 @@ class CtdLoader:
     4. Resolve and link types via CtdMetaResolver (ModuleConstructor + ModuleLinker)
     """
 
-    def __init__(self, dirs: list[Api.FilePath]):
+    def __init__(self, roots: list[Api.FilePath]):
         """Initialize the loader with directories to search.
 
         Args:
             dirs: List of directory paths to search for .ctd files
         """
         # Input directories
-        self._dirs: Typing.Final[list[Api.FilePath]]
-        self._dirs = dirs
+        self._roots: Typing.Final[list[Api.FilePath]]
+        self._roots = roots
 
         # Stage 1: Gather all .ctd file paths from directories
-        self.ctds: list[tuple[Api.FilePath, str]]
-        self.ctds = self._list_ctd_from_dirs(dirs)
-
+        ctds = CtdFileCtxLoader.load(self._roots)
         # Stage 2: Parse each file to ANTLR4 ModuleDeclarationContext
-        self.contexts: list[tuple[Api.FilePath, str, Antlr4.CtdGrammar.ModuleDeclarationContext]]
-        self.contexts = self._parse_files_to_contexts(self.ctds)
-
+        contexts = CtdAntlrCtxLoader.load(ctds)
         # Stage 3: Convert each context to ModuleMeta
-        self.metas: list[tuple[Api.FilePath, str, TypeMeta.ModuleMeta]]
-        self.metas = self._convert_contexts_to_metas(self.contexts)
+        metas = CtdMetaLoader.load(contexts)
 
         # Stage 4: Resolve and link via ModuleConstructor + ModuleLinker
-        self.definitions, self.tree = self._build_type_definitions(self.metas)
-
-    # =========================================================================
-    # Stage 1: List all .ctd files from directories
-    # =========================================================================
-
-    def _list_ctd_from_dirs(self, dirs: list[Api.FilePath]) -> list[tuple[Api.FilePath, str]]:
-        ctd_files: list[tuple[Api.FilePath, str]]
-        directory: Api.FilePath
-        ctd_file: Api.FilePath
-
-        ctd_files = []
-
-        for directory in dirs:
-            if not directory.is_dir():
-                continue
-
-            for ctd_file in directory.rglob('*.ctd'):
-                if ctd_file.is_file():
-                    name = str(ctd_file.absolute())
-                    name = name.removeprefix(str(directory))[1:-4]
-                    name = name.replace("\\", "/")
-                    ctd_files.append((ctd_file, name))
-
-        return ctd_files
+        self.definitions, self.tree = self._build_type_definitions([(m.path, m.name, m) for m in metas])
 
     # =========================================================================
     # Stage 2: Parse files to ANTLR4 contexts

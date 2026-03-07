@@ -1,5 +1,4 @@
 import lv.cebbys.languages.ctd.types.ctd as Ctd
-from lv.cebbys.languages.ctd.resolver.linker.resolver import TypespecResolverApi
 from lv.cebbys.languages.ctd.resolver.linker.typedef import TypedefLinker
 from lv.cebbys.languages.ctd.resolver.linker.alias import AliasLinker
 from lv.cebbys.languages.ctd.resolver.linker.enum import EnumLinker
@@ -21,8 +20,6 @@ __all__ = ["ModuleLinker"]
 class DeclarationLinker(Protocol):
     @staticmethod
     def link(
-        resolver: TypespecResolverApi,
-        module: Ctd.Module,
         namespace: Ctd.Namespace,
         declaration: Any
     ) -> None: ...
@@ -47,9 +44,8 @@ register_linkers()
 class ModuleLinker:
     @staticmethod
     def link_all(modules: dict[str, Ctd.Module]) -> None:
-        resolver = TypespecResolverApi()
         for _, module in modules.items():
             module.includes = [modules[i.path] for i in module.meta.includes]
             for namespace in module.namespaces:
                 for declaration in namespace.declarations:
-                    getattr(type(declaration), LINK)(resolver, module, namespace, declaration)
+                    getattr(type(declaration), LINK)(namespace, declaration)

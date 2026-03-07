@@ -44,7 +44,8 @@ class CtdParser:
     ```
     """
 
-    def _parse(self, content: str) -> GeneratedCtdParser.CtdParser:
+    @staticmethod
+    def _parse(content: str) -> GeneratedCtdParser.CtdParser:
         """Create an ANTLR4 parser for the given content.
 
         Args:
@@ -62,7 +63,8 @@ class CtdParser:
     # Top-level parsing methods
     # =========================================================================
 
-    def moduleDeclaration(self, content: str) -> GeneratedCtdParser.CtdParser.ModuleDeclarationContext:
+    @staticmethod
+    def moduleDeclaration(content: str) -> GeneratedCtdParser.CtdParser.ModuleDeclarationContext:
         """Parse a complete CTD source file.
 
         Args:
@@ -71,7 +73,7 @@ class CtdParser:
         Returns:
             ModuleDeclarationContext parse tree
         """
-        return self._parse(content).moduleDeclaration()
+        return CtdParser._parse(content).moduleDeclaration()
 
     def namespaceDeclaration(self, content: str) -> GeneratedCtdParser.CtdParser.NamespaceDeclarationContext:
         """Parse a namespace declaration.
@@ -82,7 +84,7 @@ class CtdParser:
         Returns:
             NamespaceDeclarationContext parse tree
         """
-        return self._parse(content).namespaceDeclaration()
+        return CtdParser._parse(content).namespaceDeclaration()
 
     def importDeclaration(self, content: str) -> GeneratedCtdParser.CtdParser.ImportDeclarationContext:
         """Parse an import declaration.
@@ -93,7 +95,7 @@ class CtdParser:
         Returns:
             ImportDeclarationContext parse tree
         """
-        return self._parse(content).importDeclaration()
+        return CtdParser._parse(content).importDeclaration()
 
     def useDeclaration(self, content: str) -> GeneratedCtdParser.CtdParser.UseDeclarationContext:
         """Parse a use declaration.
@@ -104,7 +106,7 @@ class CtdParser:
         Returns:
             UseDeclarationContext parse tree
         """
-        return self._parse(content).useDeclaration()
+        return CtdParser._parse(content).useDeclaration()
 
     def declaration(self, content: str) -> GeneratedCtdParser.CtdParser.DeclarationContext:
         """Parse any declaration (typedef, enum, struct, interface, function, etc.).
@@ -115,7 +117,7 @@ class CtdParser:
         Returns:
             DeclarationContext parse tree
         """
-        return self._parse(content).declaration()
+        return CtdParser._parse(content).declaration()
 
     # =========================================================================
     # Type declaration parsing methods
@@ -130,7 +132,7 @@ class CtdParser:
         Returns:
             TypedefDeclarationContext parse tree
         """
-        return self._parse(content).typedefDeclaration()
+        return CtdParser._parse(content).typedefDeclaration()
 
     def aliasDeclaration(self, content: str) -> GeneratedCtdParser.CtdParser.AliasDeclarationContext:
         """Parse an alias declaration.
@@ -141,7 +143,7 @@ class CtdParser:
         Returns:
             AliasDeclarationContext parse tree
         """
-        return self._parse(content).aliasDeclaration()
+        return CtdParser._parse(content).aliasDeclaration()
 
     def enumDeclaration(self, content: str) -> GeneratedCtdParser.CtdParser.EnumDeclarationContext:
         """Parse an enum declaration.
@@ -152,7 +154,7 @@ class CtdParser:
         Returns:
             EnumDeclarationContext parse tree
         """
-        return self._parse(content).enumDeclaration()
+        return CtdParser._parse(content).enumDeclaration()
 
     def flagDeclaration(self, content: str) -> GeneratedCtdParser.CtdParser.FlagDeclarationContext:
         """Parse a flag declaration.
@@ -163,7 +165,7 @@ class CtdParser:
         Returns:
             FlagDeclarationContext parse tree
         """
-        return self._parse(content).flagDeclaration()
+        return CtdParser._parse(content).flagDeclaration()
 
     def structureDeclaration(self, content: str) -> GeneratedCtdParser.CtdParser.StructureDeclarationContext:
         """Parse a structure declaration.
@@ -174,7 +176,7 @@ class CtdParser:
         Returns:
             StructureDeclarationContext parse tree
         """
-        return self._parse(content).structureDeclaration()
+        return CtdParser._parse(content).structureDeclaration()
 
     def interfaceDeclaration(self, content: str) -> GeneratedCtdParser.CtdParser.InterfaceDeclarationContext:
         """Parse an interface declaration.
@@ -185,7 +187,7 @@ class CtdParser:
         Returns:
             InterfaceDeclarationContext parse tree
         """
-        return self._parse(content).interfaceDeclaration()
+        return CtdParser._parse(content).interfaceDeclaration()
 
     def functionDeclaration(self, content: str) -> GeneratedCtdParser.CtdParser.FunctionDeclarationContext:
         """Parse a function declaration.
@@ -196,7 +198,7 @@ class CtdParser:
         Returns:
             FunctionDeclarationContext parse tree
         """
-        return self._parse(content).functionDeclaration()
+        return CtdParser._parse(content).functionDeclaration()
 
     # =========================================================================
     # Component parsing methods
@@ -211,4 +213,4 @@ class CtdParser:
         Returns:
             TypeSpecContext parse tree
         """
-        return self._parse(content).typeSpec()
+        return CtdParser._parse(content).typeSpec()

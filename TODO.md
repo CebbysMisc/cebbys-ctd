@@ -8,3 +8,5 @@ This is an idea dump — a checklist of features and improvements that come to m
 - [ ] Decorators are missing — decorators defined in CTD source shall be accessible on the resolved `Ctd` instances.
 - [ ] Column and row must be traceable to any level of parsing — issues that appear during resolution (e.g. missing types, ambiguous references) should be traceable back to the exact file, line, and column that caused them.
 - [ ] Keywords cannot be used in namespace path, and if used then namespace can have path element which then is resolved to none/empty and its valid but it shall not be valid
+- [ ] Review all classes to add code comments
+- [ ] There are TODO comments in types/meta module
