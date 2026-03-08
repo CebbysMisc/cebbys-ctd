@@ -31,7 +31,8 @@ def create_server() -> LanguageServer:
     @server.feature(LspTypes.TEXT_DOCUMENT_DID_CLOSE)
     def did_close(ls: LanguageServer, params: LspTypes.DidCloseTextDocumentParams) -> None:
         # Clear diagnostics when the file is closed
-        ls.publish_diagnostics(params.text_document.uri, [])
+        pass
+        # ls.publish_diagnostics(params.text_document.uri, [])
 
     return server
 
@@ -58,7 +59,8 @@ def _validate_workspace(ls: LanguageServer, document_uri: str) -> None:
         diagnostics_by_uri[document_uri] = []
 
     for uri, diagnostics in diagnostics_by_uri.items():
-        ls.publish_diagnostics(uri, diagnostics)
+        # ls.publish_diagnostics(uri, diagnostics)
+        pass
 
 
 def _collect_diagnostics(folder_path: Pathlib.Path) -> dict[str, list[LspTypes.Diagnostic]]:
@@ -68,9 +70,9 @@ def _collect_diagnostics(folder_path: Pathlib.Path) -> dict[str, list[LspTypes.D
     try:
         loader: Loader.CtdLoader = Loader.CtdLoader([folder_path])
         # If loading succeeds, clear all diagnostics
-        for ctd_file, *_ in loader.ctds:
-            diagnostics[_path_to_uri(ctd_file)] = []
-
+        # for ctd_file, *_ in loader.ctds:
+        #     diagnostics[_path_to_uri(ctd_file)] = []
+        pass
     except Exception as exc:
         LOGGER.error(f"Error loading workspace: {exc}")
         # Attempt to attribute the error to a specific file
@@ -131,18 +133,18 @@ def _find_workspace_folder(
     ls: LanguageServer, document_uri: str
 ) -> LspTypes.WorkspaceFolder | None:
     """Return the workspace folder that is the closest ancestor of the document."""
-    workspace: Any = ls.workspace
-    folders: list[LspTypes.WorkspaceFolder] = list(
-        (workspace.folders or {}).values()
-    ) if workspace else []
+    # workspace: Any = ls.workspace
+    # folders: list[LspTypes.WorkspaceFolder] = list(
+    #     (workspace.folders or {}).values()
+    # ) if workspace else []
 
-    best: LspTypes.WorkspaceFolder | None = None
-    for folder in folders:
-        if document_uri.startswith(folder.uri):
-            if best is None or len(folder.uri) > len(best.uri):
-                best = folder
-    return best
-
+    # best: LspTypes.WorkspaceFolder | None = None
+    # for folder in folders:
+    #     if document_uri.startswith(folder.uri):
+    #         if best is None or len(folder.uri) > len(best.uri):
+    #             best = folder
+    # return best
+    pass
 
 def _uri_to_path(uri: str) -> str:
     """Convert a file:// URI to a local filesystem path string."""

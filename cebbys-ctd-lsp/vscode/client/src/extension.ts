@@ -13,18 +13,25 @@ import {
  * Each client spawns its own Python server process scoped to that workspace folder.
  */
 const clients: Map<string, LanguageClient> = new Map();
+let outputChannel: vscode.OutputChannel;
 
 export function activate(context: vscode.ExtensionContext): void {
+    outputChannel = vscode.window.createOutputChannel("CTD Language Server");
+    context.subscriptions.push(outputChannel);
+
+    const pythonPath = resolvePythonPath(context);
+    outputChannel.appendLine(`[CTD] Using Python: ${pythonPath}`);
+
     // Start a server for every workspace folder that already exists
     for (const folder of vscode.workspace.workspaceFolders ?? []) {
-        startClientForFolder(context, folder);
+        startClientForFolder(context, folder, pythonPath);
     }
 
     // React to workspace folder changes
     context.subscriptions.push(
         vscode.workspace.onDidChangeWorkspaceFolders((event) => {
             for (const folder of event.added) {
-                startClientForFolder(context, folder);
+                startClientForFolder(context, folder, pythonPath);
             }
             for (const folder of event.removed) {
                 stopClientForFolder(folder);
@@ -43,14 +50,14 @@ export async function deactivate(): Promise<void> {
 
 function startClientForFolder(
     context: vscode.ExtensionContext,
-    folder: vscode.WorkspaceFolder
+    folder: vscode.WorkspaceFolder,
+    pythonPath: string
 ): void {
     if (clients.has(folder.uri.toString())) {
         return; // Already running for this folder
     }
 
-    // Resolve the Python interpreter from the workspace virtual environment
-    const pythonPath = resolvePythonPath(context);
+    outputChannel.appendLine(`[CTD] Starting server for: ${folder.uri.fsPath}`);
 
     const serverOptions: ServerOptions = {
         command: pythonPath,
@@ -76,6 +83,7 @@ function startClientForFolder(
                 new vscode.RelativePattern(folder, "**/*.ctd")
             ),
         },
+        outputChannel,
     };
 
     const client = new LanguageClient(
@@ -102,18 +110,27 @@ async function stopClientForFolder(folder: vscode.WorkspaceFolder): Promise<void
  * Resolve the Python interpreter path.
  *
  * Priority:
- *   1. Project .venv — navigate up from the extension dir (cebbys-ctd-lsp/vscode → cebbys-ctd)
- *   2. Each workspace folder's .venv
- *   3. python.defaultInterpreterPath setting (if it's already an absolute path)
- *   4. "python" on PATH
+ *   1. cebbys-ctd.pythonPath setting (explicit user override)
+ *   2. Project .venv — navigate up from the extension dir (cebbys-ctd-lsp/vscode → cebbys-ctd)
+ *   3. Each workspace folder's .venv
+ *   4. "python" on PATH (last resort — may fail on Windows)
  */
 function resolvePythonPath(context: vscode.ExtensionContext): string {
     const isWindows = process.platform === "win32";
     const pythonBin = isWindows ? "python.exe" : "python";
 
+    // 1. Explicit setting — highest priority, never auto-detected
+    const configuredPath = vscode.workspace
+        .getConfiguration("cebbys-ctd")
+        .get<string>("pythonPath");
+    if (configuredPath && configuredPath.trim() !== "") {
+        outputChannel.appendLine(`[CTD] Python path from settings: ${configuredPath}`);
+        return configuredPath.trim();
+    }
+
     const candidates: string[] = [];
 
-    // 1. Navigate from the extension install path back to the workspace root.
+    // 2. Navigate from the extension install path back to the workspace root.
     //    Extension path: <workspace>/cebbys-ctd-lsp/vscode
     //    Project root:   <workspace>  (two levels up)
     const projectRoot = path.resolve(context.extensionPath, "..", "..");
@@ -123,7 +140,7 @@ function resolvePythonPath(context: vscode.ExtensionContext): string {
             : path.join(projectRoot, ".venv", "bin", pythonBin)
     );
 
-    // 2. Each open workspace folder's .venv
+    // 3. Each open workspace folder's .venv
     for (const folder of vscode.workspace.workspaceFolders ?? []) {
         candidates.push(
             isWindows
@@ -133,18 +150,15 @@ function resolvePythonPath(context: vscode.ExtensionContext): string {
     }
 
     for (const candidate of candidates) {
+        outputChannel.appendLine(`[CTD] Checking: ${candidate}`);
         if (fs.existsSync(candidate)) {
             return candidate;
         }
     }
 
-    // 3. python.defaultInterpreterPath (only if already resolved — no ${...} variables)
-    const interpreterPath = vscode.workspace
-        .getConfiguration("python")
-        .get<string>("defaultInterpreterPath");
-    if (interpreterPath && !interpreterPath.includes("${")) {
-        return interpreterPath;
-    }
-
+    outputChannel.appendLine(
+        `[CTD] WARNING: Could not find .venv Python. ` +
+        `Set "cebbys-ctd.pythonPath" in settings to the absolute path of your Python interpreter.`
+    );
     return "python";
 }
