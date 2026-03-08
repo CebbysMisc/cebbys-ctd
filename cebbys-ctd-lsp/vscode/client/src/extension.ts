@@ -1,4 +1,5 @@
 import * as path from "path";
+import * as fs from "fs";
 import * as vscode from "vscode";
 import {
     LanguageClient,
@@ -101,31 +102,48 @@ async function stopClientForFolder(folder: vscode.WorkspaceFolder): Promise<void
  * Resolve the Python interpreter path.
  *
  * Priority:
- *   1. The workspace .venv (standard uv layout)
- *   2. Fall back to the Python interpreter from the Python extension
- *   3. Fall back to "python" on PATH
+ *   1. Project .venv — navigate up from the extension dir (cebbys-ctd-lsp/vscode → cebbys-ctd)
+ *   2. Each workspace folder's .venv
+ *   3. python.defaultInterpreterPath setting (if it's already an absolute path)
+ *   4. "python" on PATH
  */
 function resolvePythonPath(context: vscode.ExtensionContext): string {
-    // Try workspace-relative .venv first (works for uv workspaces)
-    const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-    if (workspaceRoot) {
-        const isWindows = process.platform === "win32";
-        const venvPython = isWindows
-            ? path.join(workspaceRoot, ".venv", "Scripts", "python.exe")
-            : path.join(workspaceRoot, ".venv", "bin", "python");
-        if (require("fs").existsSync(venvPython)) {
-            return venvPython;
+    const isWindows = process.platform === "win32";
+    const pythonBin = isWindows ? "python.exe" : "python";
+
+    const candidates: string[] = [];
+
+    // 1. Navigate from the extension install path back to the workspace root.
+    //    Extension path: <workspace>/cebbys-ctd-lsp/vscode
+    //    Project root:   <workspace>  (two levels up)
+    const projectRoot = path.resolve(context.extensionPath, "..", "..");
+    candidates.push(
+        isWindows
+            ? path.join(projectRoot, ".venv", "Scripts", pythonBin)
+            : path.join(projectRoot, ".venv", "bin", pythonBin)
+    );
+
+    // 2. Each open workspace folder's .venv
+    for (const folder of vscode.workspace.workspaceFolders ?? []) {
+        candidates.push(
+            isWindows
+                ? path.join(folder.uri.fsPath, ".venv", "Scripts", pythonBin)
+                : path.join(folder.uri.fsPath, ".venv", "bin", pythonBin)
+        );
+    }
+
+    for (const candidate of candidates) {
+        if (fs.existsSync(candidate)) {
+            return candidate;
         }
     }
 
-    // Fall back to the Python extension's selected interpreter
-    const pythonExt = vscode.extensions.getExtension("ms-python.python");
-    if (pythonExt?.isActive) {
-        const interpreterPath: string | undefined =
-            pythonExt.exports?.settings?.getExecutionDetails?.()?.execCommand?.[0];
-        if (interpreterPath) {
-            return interpreterPath;
-        }
+    // 3. python.defaultInterpreterPath (only if already resolved — no ${...} variables)
+    const interpreterPath = vscode.workspace
+        .getConfiguration("python")
+        .get<string>("defaultInterpreterPath");
+    if (interpreterPath && !interpreterPath.includes("${")) {
+        return interpreterPath;
     }
 
     return "python";
