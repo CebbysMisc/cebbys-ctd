@@ -1,0 +1,26 @@
+[project]
+name = "cebbys-ctd-lsp"
+version = "0.1.0"
+description = "Language Server Protocol implementation for the CTD language"
+requires-python = ">=3.13"
+dependencies = [
+    "cebbys-ctd-loader",
+    "pygls>=2.0.1",
+]
+
+[project.scripts]
+cebbys-ctd-lsp = "lv.cebbys.languages.ctd.lsp.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["sources/lv"]
+
+[tool.uv.sources]
+cebbys-ctd-loader = { workspace = true }
+
+[tool.pytest.ini_options]
+pythonpath = ["sources", ".."]
+addopts = "--color=yes"

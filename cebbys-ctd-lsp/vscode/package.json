@@ -1,0 +1,43 @@
+{
+    "name": "cebbys-ctd",
+    "displayName": "Cebbys CTD",
+    "description": "Language support for the CTD (Custom Type Definition) language",
+    "version": "0.1.0",
+    "engines": {
+        "vscode": "^1.90.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "activationEvents": [
+        "workspaceContains:**/*.ctd"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "languages": [
+            {
+                "id": "ctd",
+                "aliases": [
+                    "CTD",
+                    "Custom Type Definition"
+                ],
+                "extensions": [
+                    ".ctd"
+                ]
+            }
+        ]
+    },
+    "scripts": {
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "vscode:prepublish": "npm run compile"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "@types/vscode": "^1.90.0",
+        "typescript": "^5.4.0"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^9.0.1"
+    }
+}
