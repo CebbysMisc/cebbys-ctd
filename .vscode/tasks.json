@@ -28,6 +28,43 @@
                 "clear": true
             },
             "problemMatcher": []
+        },
+        {
+            "label": "lsp: compile typescript",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "compile"],
+            "options": {
+                "cwd": "${workspaceFolder}/cebbys-ctd-lsp/vscode"
+            },
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "clear": false
+            },
+            "problemMatcher": ["$tsc"]
+        },
+        {
+            "label": "lsp: watch typescript",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "watch"],
+            "options": {
+                "cwd": "${workspaceFolder}/cebbys-ctd-lsp/vscode"
+            },
+            "isBackground": true,
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "clear": false
+            },
+            "problemMatcher": ["$tsc-watch"]
         }
     ]
 }

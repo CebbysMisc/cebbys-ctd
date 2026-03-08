@@ -23,6 +23,10 @@
 		{
 			"name": "📦 loader",
 			"path": "cebbys-ctd-loader"
+		},
+		{
+			"name": "📦 lsp",
+			"path": "cebbys-ctd-lsp"
 		}
 	],
 	"settings": {

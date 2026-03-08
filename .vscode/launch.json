@@ -1,0 +1,40 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // Launches the Extension Development Host with the CTD extension loaded.
+            // Press F5 to start — a new VSCode window opens with the extension active.
+            "name": "Launch CTD Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}/cebbys-ctd-lsp/vscode"
+            ],
+            "preLaunchTask": "lsp: compile typescript"
+        },
+        {
+            // Attach to the Python LSP server process for server-side debugging.
+            // Add `debugpy.listen(5678); debugpy.wait_for_client()` at the top of __main__.py,
+            // start the extension, then attach with this configuration.
+            "name": "Attach to CTD Language Server",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "127.0.0.1",
+                "port": 5678
+            },
+            "justMyCode": true
+        }
+    ],
+    "compounds": [
+        {
+            // Launch the extension and immediately attach to the Python server.
+            // Requires debugpy mode — see comment in "Attach" config above.
+            "name": "Launch + Attach Server",
+            "configurations": [
+                "Launch CTD Extension",
+                "Attach to CTD Language Server"
+            ]
+        }
+    ]
+}
