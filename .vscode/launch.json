@@ -8,7 +8,9 @@
             "type": "extensionHost",
             "request": "launch",
             "args": [
-                "--extensionDevelopmentPath=${workspaceFolder}/cebbys-ctd-lsp/vscode"
+                "--extensionDevelopmentPath=${workspaceFolder}/cebbys-ctd-lsp/vscode",
+                "--log=ms-python.vscode-python-envs:trace",
+                "--log=ms-python.python:trace"
             ],
             "preLaunchTask": "lsp: compile typescript"
         },

@@ -5,6 +5,15 @@ from lv.cebbys.languages.ctd.types.meta import (
     EnumMemberMeta,
     EnumMeta
 )
+from typing import (
+    TYPE_CHECKING
+)
+
+if TYPE_CHECKING:
+    from lv.cebbys.languages.ctd.types.ctd.namespace import (
+        Declaration,
+        Namespace
+    )
 
 class EnumMember:
     """Represents an enum member."""
@@ -25,8 +34,12 @@ class Enum(Declaration[EnumMeta]):
     members: list[EnumMember]
     base: Reference | None
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(
+        self,
+        namespace: "Namespace",
+        meta: "EnumMeta"
+    ) -> None: 
+        super().__init__(namespace, meta)
         self.decorators = []
         self.members = []
         self.base = None

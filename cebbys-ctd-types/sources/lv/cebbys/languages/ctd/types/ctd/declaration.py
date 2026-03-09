@@ -12,10 +12,31 @@ if TYPE_CHECKING:
 M = TypeVar("M", bound=DeclarationMeta, default=Any)
 
 class Declaration(Generic[M]):
-    namespace: "Namespace"
-    meta: "M"
-    name: "str"
-
     @property
     def typeref(self):
         return f"{self.namespace.path}::{self.name}"
+    
+
+    def __init__(
+        self,
+        namespace: "Namespace",
+        meta: "M"
+    ) -> None:
+        super().__init__()
+        if namespace:
+            self._namespace = namespace
+        if meta:
+            self._meta = meta
+            
+        
+    @property
+    def namespace(self):
+        return self._namespace
+        
+    @property
+    def meta(self):
+        return self._meta
+        
+    @property
+    def name(self):
+        return self.meta.name

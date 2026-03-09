@@ -23,11 +23,12 @@
 		{
 			"name": "📦 loader",
 			"path": "cebbys-ctd-loader"
-		},
-		{
-			"name": "📦 lsp",
-			"path": "cebbys-ctd-lsp"
 		}
+		//,
+		// {
+		// 	"name": "📦 lsp",
+		// 	"path": "cebbys-ctd-lsp"
+		// }
 	],
 	"settings": {
 		// Python interpreter
@@ -68,6 +69,7 @@
 			"**/cebbys-ctd-types/**": true,
 			"**/cebbys-ctd-utility/**": true,
 			"**/cebbys-ctd-loader/**": true,
+			"**/cebbys-ctd-lsp/**": true,
 			"**/.pytest_cache": true,
 			"**/__pycache__": true,
 			"**/.venv": true

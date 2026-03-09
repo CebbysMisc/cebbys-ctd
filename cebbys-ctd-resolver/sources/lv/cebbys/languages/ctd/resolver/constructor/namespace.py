@@ -6,12 +6,20 @@ from lv.cebbys.languages.ctd.resolver.manager import (
     CtdDeclarationStorage
 )
 
+from lv.cebbys.languages.ctd.types.meta import (
+    NamespaceMeta
+)
+from lv.cebbys.languages.ctd.types.ctd import (
+    Namespace,
+    Module,
+)
+
 logger = Logging.get_logger(__name__)
 
 
 class NamespaceConstructor:
     @staticmethod
-    def construct(meta: Meta.NamespaceMeta) -> Ctd.Namespace:
+    def construct(module: Module, meta:NamespaceMeta) -> Namespace:
         """Construct a CTD namespace from metadata.
         
         Args:
@@ -22,18 +30,14 @@ class NamespaceConstructor:
         """
         logger.trace(f"Constructing namespace: {meta.path}")
         
-        out = Ctd.Namespace()
-        out.path = meta.path
-        out.meta = meta
+        namespace = Ctd.Namespace(module, meta)
 
-        out.declarations = []
+        namespace.declarations = []
         for declaration_meta in meta.declarations:
-            declaration = DeclarationConstructor.construct(declaration_meta)
-            declaration.namespace = out
-            out.declarations.append(declaration)
+            declaration = DeclarationConstructor.construct(namespace, declaration_meta)
+            namespace.declarations.append(declaration)
             CtdDeclarationStorage.register(declaration)
 
-        logger.debug(f"Namespace '{meta.path}' constructed with {len(out.declarations)} declaration(s)")
+        logger.debug(f"Namespace '{meta.path}' constructed with {len(namespace.declarations)} declaration(s)")
         
-        return out
-
+        return namespace

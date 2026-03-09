@@ -1,0 +1,24 @@
+from lv.cebbys.languages.ctd.types.ctd import (
+    Interface,
+    Structure,
+    Function,
+    Typedef,
+    Alias,
+    Enum,
+    Flag,
+)
+
+class CtdEventListener:
+    def handle_construct_interface(self, value: Interface): ...
+
+    def handle_construct_structure(self, value: Structure): ...
+
+    def handle_construct_function(self, value: Function): ...
+
+    def handle_construct_typedef(self, value: Typedef): ...
+
+    def handle_construct_alias(self, value: Alias): ...
+
+    def handle_construct_enum(self, value: Enum): ...
+
+    def handle_construct_flag(self, value: Flag): ...

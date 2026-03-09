@@ -1,5 +1,8 @@
 import lv.cebbys.languages.ctd.antlr4 as Antlr4
 import lv.cebbys.languages.ctd.types.meta as Meta
+from pathlib import (
+    Path as _Path
+)
 
 __all__ = ['CtdMetaParser']
 
@@ -12,7 +15,7 @@ class CtdMetaParser:
     # Context parser methods
 
     @staticmethod
-    def parse_module(ctx: Antlr4.CtdGrammar.ModuleDeclarationContext) -> Meta.ModuleMeta: ...
+    def parse_module(root:_Path, path:_Path, name:str, ctx: Antlr4.CtdGrammar.ModuleDeclarationContext) -> Meta.ModuleMeta: ...
 
     @staticmethod
     def parse_namespace(ctx: Antlr4.CtdGrammar.NamespaceDeclarationContext) -> Meta.NamespaceMeta: ...

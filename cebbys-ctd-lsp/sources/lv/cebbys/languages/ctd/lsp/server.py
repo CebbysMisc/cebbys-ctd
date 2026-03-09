@@ -17,24 +17,26 @@ SERVER_NAME = "cebbys-ctd-lsp"
 SERVER_VERSION = "0.1.0"
 
 
-def create_server() -> LanguageServer:
-    server: LanguageServer = LanguageServer(SERVER_NAME, SERVER_VERSION)
+def create_server():
+    registry = LanguageServer(SERVER_NAME, SERVER_VERSION)
 
-    @server.feature(LspTypes.TEXT_DOCUMENT_DID_OPEN)
-    def did_open(ls: LanguageServer, params: LspTypes.DidOpenTextDocumentParams) -> None:
-        _validate_workspace(ls, params.text_document.uri)
+    
+    def did_open(ls: LanguageServer, params: LspTypes.DidOpenTextDocumentParams):
+        print(f"[{ls.name}|{ls.process_id}] Did open ({params})")
+    registry.feature(LspTypes.TEXT_DOCUMENT_DID_OPEN)(did_open)
 
-    @server.feature(LspTypes.TEXT_DOCUMENT_DID_SAVE)
-    def did_save(ls: LanguageServer, params: LspTypes.DidSaveTextDocumentParams) -> None:
-        _validate_workspace(ls, params.text_document.uri)
+        
+    def did_save(ls: LanguageServer, params: LspTypes.DidSaveTextDocumentParams):
+        print(f"[{ls.name}|{ls.process_id}] Did save ({params})")
+    registry.feature(LspTypes.TEXT_DOCUMENT_DID_SAVE)(did_save)
 
-    @server.feature(LspTypes.TEXT_DOCUMENT_DID_CLOSE)
-    def did_close(ls: LanguageServer, params: LspTypes.DidCloseTextDocumentParams) -> None:
-        # Clear diagnostics when the file is closed
-        pass
-        # ls.publish_diagnostics(params.text_document.uri, [])
+        
+    def did_close(ls: LanguageServer, params: LspTypes.DidCloseTextDocumentParams):
+        print(f"[{ls.name}|{ls.process_id}] Did close ({params})")
+    registry.feature(LspTypes.TEXT_DOCUMENT_DID_CLOSE)(did_close)
 
-    return server
+
+    return registry
 
 
 def _validate_workspace(ls: LanguageServer, document_uri: str) -> None:

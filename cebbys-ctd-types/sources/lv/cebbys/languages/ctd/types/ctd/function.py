@@ -5,6 +5,15 @@ from lv.cebbys.languages.ctd.types.meta import (
     ParameterMeta,
     FunctionMeta
 )
+from typing import (
+    TYPE_CHECKING
+)
+
+if TYPE_CHECKING:
+    from lv.cebbys.languages.ctd.types.ctd.namespace import (
+        Declaration,
+        Namespace
+    )
 
 
 class Parameter:
@@ -26,8 +35,12 @@ class Function(Declaration[FunctionMeta]):
     decorators: list[Decorator]
     parameters: list[Parameter]
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(
+        self,
+        namespace: "Namespace",
+        meta: "FunctionMeta"
+    ) -> None: 
+        super().__init__(namespace, meta)
         self.decorators = []
         self.parameters = []
         self.base = None

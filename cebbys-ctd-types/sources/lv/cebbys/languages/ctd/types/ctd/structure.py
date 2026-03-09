@@ -5,6 +5,15 @@ from lv.cebbys.languages.ctd.types.meta import (
     StructureMemberMeta,
     StructureMeta
 )
+from typing import (
+    TYPE_CHECKING
+)
+
+if TYPE_CHECKING:
+    from lv.cebbys.languages.ctd.types.ctd.namespace import (
+        Declaration,
+        Namespace
+    )
 
 class StructureMember:
     """Represents a structure member."""
@@ -24,10 +33,13 @@ class Structure(Declaration):
     decorators: list[Decorator]
     base: Reference | None
     members: list[StructureMember]
-    meta: StructureMeta
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(
+        self,
+        namespace: "Namespace",
+        meta: "StructureMeta"
+    ) -> None: 
+        super().__init__(namespace, meta)
         self.decorators = []
         self.members = []
         self.base = None

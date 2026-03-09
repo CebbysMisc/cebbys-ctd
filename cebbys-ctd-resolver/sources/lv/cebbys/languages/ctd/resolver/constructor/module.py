@@ -22,16 +22,11 @@ class ModuleConstructor:
         """
         logger.debug(f"Constructing module: {name}")
         
-        out = Ctd.Module()
-        out.meta = meta
-        out.name = name
-        out.includes = []
-        out.namespaces = []
-
+        module = Ctd.Module(meta)
         for namespace_meta in meta.namespaces:
-            out.namespaces.append(NamespaceConstructor.construct(namespace_meta))
+            module.namespaces.append(NamespaceConstructor.construct(module, namespace_meta))
 
-        logger.info(f"Module '{name}' constructed with {len(out.namespaces)} namespace(s)")
+        logger.info(f"Module '{name}' constructed with {len(module.namespaces)} namespace(s)")
         
-        return out
+        return module
 

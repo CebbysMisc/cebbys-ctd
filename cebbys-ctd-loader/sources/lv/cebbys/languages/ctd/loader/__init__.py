@@ -5,11 +5,10 @@ This module handles loading and parsing CTD (Custom Type Definition) files.
 import typing as Typing
 import lv.cebbys.languages.ctd.types.__api__ as Api
 import lv.cebbys.languages.ctd.types.meta as TypeMeta
-import lv.cebbys.languages.ctd.antlr4 as Antlr4
 
-from lv.cebbys.languages.ctd.resolver.resolver import CtdMetaResolver
-from lv.cebbys.languages.ctd.meta.parser import CtdMetaParser
-
+from lv.cebbys.languages.ctd.resolver.resolver import (
+    CtdMetaResolver
+)
 from lv.cebbys.languages.ctd.loader.file import (
     CtdFileCtxLoader
 )
@@ -52,58 +51,6 @@ class CtdLoader:
         # Stage 4: Resolve and link via ModuleConstructor + ModuleLinker
         self.definitions, self.tree = self._build_type_definitions([(m.path, m.name, m) for m in metas])
 
-    # =========================================================================
-    # Stage 2: Parse files to ANTLR4 contexts
-    # =========================================================================
-
-    def _parse_files_to_contexts(
-        self,
-        ctd_files: list[tuple[Api.FilePath, str]]
-    ) -> list[tuple[Api.FilePath, str, Antlr4.CtdGrammar.ModuleDeclarationContext]]:
-        contexts: list[tuple[Api.FilePath, str, Antlr4.CtdGrammar.ModuleDeclarationContext]]
-        ctd_file: Api.FilePath
-        content: str
-        parser: Antlr4.CtdParser
-        context: Antlr4.CtdGrammar.ModuleDeclarationContext
-
-        contexts = []
-
-        for (ctd_file, module_name) in ctd_files:
-            try:
-                content = ctd_file.read_text(encoding='utf-8')
-                parser = Antlr4.CtdParser()
-                context = parser.moduleDeclaration(content)
-                contexts.append((ctd_file, module_name, context))
-            except Exception:
-                pass
-
-        return contexts
-
-    # =========================================================================
-    # Stage 3: Convert ANTLR4 contexts to Meta objects
-    # =========================================================================
-
-    def _convert_contexts_to_metas(
-        self,
-        module_contexts: list[tuple[Api.FilePath, str, Antlr4.CtdGrammar.ModuleDeclarationContext]]
-    ) -> list[tuple[Api.FilePath, str, TypeMeta.ModuleMeta]]:
-        module_context: Antlr4.CtdGrammar.ModuleDeclarationContext
-        module_metas: list[tuple[Api.FilePath, str, TypeMeta.ModuleMeta]]
-        ctd_file: Api.FilePath
-
-        module_metas = []
-
-        for ctd_file, module_name, module_context in module_contexts:
-            try:
-                module_metas.append((
-                    ctd_file,
-                    module_name,
-                    CtdMetaParser.parse_module(module_context)
-                ))
-            except Exception:
-                pass
-
-        return module_metas
 
     # =========================================================================
     # Stage 4: Resolve and link types

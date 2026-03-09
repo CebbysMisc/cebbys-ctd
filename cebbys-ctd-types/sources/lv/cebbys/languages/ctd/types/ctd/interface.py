@@ -3,17 +3,28 @@ from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
 from lv.cebbys.languages.ctd.types.ctd.function import Function
 from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 from lv.cebbys.languages.ctd.types.meta import InterfaceMeta
+from typing import (
+    TYPE_CHECKING
+)
 
+if TYPE_CHECKING:
+    from lv.cebbys.languages.ctd.types.ctd.namespace import (
+        Declaration,
+        Namespace
+    )
 
 class Interface(Declaration):
     """Represents an interface declaration."""
     decorators: list[Decorator]
     base: Reference | None
     methods: list[Function]
-    meta: InterfaceMeta
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(
+        self,
+        namespace: "Namespace",
+        meta: "InterfaceMeta"
+    ) -> None: 
+        super().__init__(namespace, meta)
         self.decorators = []
         self.base = None
         self.methods = []

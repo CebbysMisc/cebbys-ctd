@@ -14,9 +14,9 @@ class CtdMetaLoader:
         contexts: list[ModuleMeta] = []
         for ctx in ctxs:
             try:
-                content = ctx.path.read_text(encoding='utf-8')
-                module = CtdMetaParser.parse_module(ctx.root, ctx.path, ctx.name, ctx.ctx)
-                contexts.append(module)
+                contexts.append(
+                    CtdMetaParser.parse_module(ctx.root, ctx.path, ctx.name, ctx.ctx)
+                )
             except Exception as e:
                 raise BaseException(f"Failed to process module '{ctx.name}' from '{ctx.path}'") from e
         return contexts

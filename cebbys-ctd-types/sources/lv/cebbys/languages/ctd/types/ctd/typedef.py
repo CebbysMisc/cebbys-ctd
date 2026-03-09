@@ -2,17 +2,28 @@ from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
 from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
 from lv.cebbys.languages.ctd.types.ctd.__api__ import Reference
 from lv.cebbys.languages.ctd.types.meta import TypedefMeta
+from typing import (
+    TYPE_CHECKING
+)
 
+if TYPE_CHECKING:
+    from lv.cebbys.languages.ctd.types.ctd.namespace import (
+        Declaration,
+        Namespace
+    )
 
 class Typedef(Declaration):
     """Represents a typedef declaration."""
     decorators: list[Decorator]
     signed: bool|None
     base: Reference
-    meta: TypedefMeta
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(
+        self,
+        namespace: "Namespace",
+        meta: "TypedefMeta"
+    ) -> None: 
+        super().__init__(namespace, meta)
         self.decorators = []
         self.signed = None
 

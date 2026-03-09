@@ -6,8 +6,12 @@ if TYPE_CHECKING:
     from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
 
 
-class Reference:
+
+class Ref[T]:
     key: "str"
 
     @property
-    def value(self) -> "Declaration": ...
+    def value(self) -> "T": ...
+
+class Reference(Ref["Declaration"]):
+    ...

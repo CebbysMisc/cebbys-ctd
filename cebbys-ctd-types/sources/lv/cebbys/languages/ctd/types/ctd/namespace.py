@@ -4,12 +4,34 @@ from lv.cebbys.languages.ctd.types.meta import NamespaceMeta
 
 if TYPE_CHECKING:
     from lv.cebbys.languages.ctd.types.ctd.declaration import Declaration
+    from lv.cebbys.languages.ctd.types.ctd.module import Module
 
 
 class Namespace:
-    declarations: list["Declaration"]
-    meta: NamespaceMeta
-    path: str
+    declarations: "list[Declaration]"
+    _meta: NamespaceMeta
+
+    def __init__(
+        self,
+        module:"Module", 
+        meta: NamespaceMeta
+    ) -> None:
+        self._module = module
+        self._meta = meta
+        
+        self.declarations = []
+
+    @property
+    def module(self):
+        return self._module
+
+    @property
+    def path(self):
+        return self._meta.path
+
+    @property
+    def meta(self):
+        return self._meta
 
     def __str__(self) -> str:
         return f"{self.path} {{ {len(self.declarations)} declarations }}"

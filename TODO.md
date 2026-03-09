@@ -10,3 +10,4 @@ This is an idea dump — a checklist of features and improvements that come to m
 - [ ] Keywords cannot be used in namespace path, and if used then namespace can have path element which then is resolved to none/empty and its valid but it shall not be valid
 - [ ] Review all classes to add code comments
 - [ ] There are TODO comments in types/meta module
+- [ ] Review types/ctd builtin.py Array and Pointer types, they belong to Declarations which require namespaces, which is not correct
