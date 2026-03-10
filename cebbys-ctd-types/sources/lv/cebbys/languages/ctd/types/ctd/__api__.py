@@ -15,3 +15,6 @@ class Ref[T]:
 
 class Reference(Ref["Declaration"]):
     ...
+
+class References[T](tuple[Ref[T], ...]):
+    ...

@@ -8,9 +8,6 @@ if TYPE_CHECKING:
     from lv.cebbys.languages.ctd.types.meta import (
         ModuleMeta
     )
-    # from lv.cebbys.languages.ctd.types.ctd.__api__ import (
-    #     Ref as Reference
-    # )
 
 class Module:
     def __init__(self, meta: "ModuleMeta") -> None:
