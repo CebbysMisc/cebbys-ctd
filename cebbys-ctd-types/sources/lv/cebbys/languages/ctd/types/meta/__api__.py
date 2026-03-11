@@ -5,11 +5,14 @@ This module contains common types for metadata classes.
 import lv.cebbys.languages.ctd.types.__api__ as Api
 from lv.cebbys.languages.ctd.types.meta.typespec import *
 
+from typing import (
+    overload
+)
+
 __all__ = ['ModulePath', 'Meta', 'DecoratorMeta', 'DecoratableMeta', 'DeclarationMeta']
 
 # Re-export ModulePath for use in meta classes
 ModulePath = Api.ModulePath
-
 
 class Meta:
     """Metadata base type."""
@@ -103,3 +106,49 @@ class DecoratableMeta(Meta):
 
 class DeclarationMeta(DecoratableMeta):
     ...
+
+class DocumentIndex:
+    def __init__(self, row: int, col: int) -> None:
+        self._row = row
+        self._col = col
+
+    @property
+    def row(self):
+        return self._row
+
+    @property
+    def col(self):
+        return self._col
+    
+    def is_before(self, row: int, col: int) -> bool: 
+        if row == self.row:
+            return col < self.col
+        return row < self.row
+    
+    def is_at(self, row: int, col: int) -> bool:
+        return self.row == row and self.col == col
+
+    def is_after(self, row: int, col: int) -> bool: 
+        if row == self.row:
+            return col > self.col
+        return row > self.row
+        
+
+class DocumentRange:
+    def __init__(self, start: DocumentIndex, end: DocumentIndex) -> None:
+        self._start = start
+        self._end = end
+
+    @property
+    def start(self):
+        return self._start
+
+    @property
+    def end(self):
+        return self._end
+    
+    def is_inside(self, row: int, col: int):
+        return self.start.is_after(row, col) and self.end.is_before(row, col)
+    
+    def is_outside(self, row: int, col: int):
+        return self.start.is_before(row, col) or self.end.is_after(row, col)

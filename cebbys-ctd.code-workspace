@@ -24,10 +24,10 @@
 			"name": "📦 loader",
 			"path": "cebbys-ctd-loader"
 		},
-		{
-			"name": "📦 lsp",
-			"path": "cebbys-ctd-lsp"
-		}
+		// {
+		// 	"name": "📦 lsp",
+		// 	"path": "cebbys-ctd-lsp"
+		// }
 	],
 	"settings": {
 		// Python interpreter

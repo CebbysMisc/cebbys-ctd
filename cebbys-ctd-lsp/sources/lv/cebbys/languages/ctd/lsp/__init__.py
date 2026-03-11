@@ -23,6 +23,9 @@ from logging import (
     INFO,
     info,
 )
+from lv.cebbys.languages.ctd.lsp.completer.module import (
+    ModuleCodeCompleter,
+)
 
 CONTEXT = CtdLspContext()
 SERVER = LanguageServer("ctd-language-server", "v1.0")
@@ -37,6 +40,9 @@ SERVER = LanguageServer("ctd-language-server", "v1.0")
 #     except BaseException as e:
 #         raise BaseException("Failed to initialize cebbys-type-definition-server") from e
 
+COMPLETER = ModuleCodeCompleter()
+
+
 @SERVER.feature(
     Completion.ID,
     Completion.Options(trigger_characters=["."])
@@ -47,23 +53,21 @@ def completions(server: LanguageServer, params: Completion.Params):
     if roots != current:
         CtdIndexer.roots(current)
 
-    document = server.workspace.get_text_document(params.text_document.uri)
-    line = document.lines[params.position.line].strip()
+    # document = server.workspace.get_text_document(params.text_document.uri)
+    # document.source
+    # line = document.lines[params.position.line].strip()
 
-    if line.startswith("include"):
-        prefix = line.removeprefix("include").strip()
-        items = list(CtdIndexer.ctds())
-        if len(prefix) > 0:
-            items = [i for i in items if i.startswith(prefix)]
-        return Completion.List(is_incomplete=True, items=[
-            Completion.Item(label=f"\"{module}\"")
-            for module in items
-        ])
+    # if line.startswith("include"):
+    #     prefix = line.removeprefix("include").strip()
+    #     items = list(CtdIndexer.ctds())
+    #     if len(prefix) > 0:
+    #         items = [i for i in items if i.startswith(prefix)]
+    #     return Completion.List(is_incomplete=True, items=[
+    #         Completion.Item(label=f"\"{module}\"")
+    #         for module in items
+    #     ])
 
-    return Completion.List(is_incomplete=True, items=[
-        Completion.Item(label="namespace "),
-        Completion.Item(label="include "),
-    ])
+    return COMPLETER.get_suggestions(server, params)
 
 def main():
     CtdIndexer.start()

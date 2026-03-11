@@ -7,16 +7,58 @@ import lv.cebbys.languages.ctd.types.meta.enum as EnumModule
 import lv.cebbys.languages.ctd.types.meta.flag as FlagModule
 import typing as Typing
 
+from lv.cebbys.languages.ctd.types.meta.__api__ import (
+    DocumentIndex,
+    DocumentRange,
+)
+from lv.cebbys.languages.ctd.antlr4 import (
+    CtdGrammar
+)
 __all__ = ['NamespaceMeta']
 
+
+class NamespaceHeaderMeta:
+    def __init__(self, ctx: CtdGrammar.NamespaceDeclarationContext) -> None:
+        start = ctx.start
+        end = ctx.getToken(CtdGrammar.T__3, 0).getSymbol()
+        self._range = DocumentRange(
+            DocumentIndex(start.getLine(), start.getCharPositionInLine()),
+            DocumentIndex(end.getLine(), end.getCharPositionInLine() - 1),
+        )
+
+    @property
+    def range(self):
+        return self._range
+
+
+
+class NamespaceBodyMeta:
+    def __init__(self, ctx: CtdGrammar.NamespaceDeclarationContext) -> None:
+        start = ctx.getToken(CtdGrammar.T__3, 0).getSymbol()
+        end = ctx.end
+        self._range = DocumentRange(
+            DocumentIndex(start.getLine(), start.getCharPositionInLine()),
+            DocumentIndex(end.getLine(), end.getCharPositionInLine()),
+        )
+
+    @property
+    def range(self):
+        return self._range
 
 class NamespaceMeta:
     # TODO: Add code comments as TypedefMeta
 
-    def __init__(self, name:str):
+    def __init__(self, name:str, ctx: CtdGrammar.NamespaceDeclarationContext):
         self._collections: list[list[Typing.Any]] = []
         self._uses: list[str] = []
         self.path = name
+        self.ctx = ctx
+        self._header = NamespaceHeaderMeta(ctx)
+        self._body = NamespaceHeaderMeta(ctx)
+        self._range = DocumentRange(
+            self.header.range.start,
+            self.body.range.end,
+        )
 
         def create_collection[T](_: type[T]) -> list[T]:
             out: list[T] = []
@@ -30,6 +72,18 @@ class NamespaceMeta:
         self._aliases = create_collection(AliasModule.AliasMeta)
         self._enums = create_collection(EnumModule.EnumMeta)
         self._flags = create_collection(FlagModule.FlagMeta)
+
+    @property
+    def header(self):
+        return self._header
+
+    @property
+    def body(self):
+        return self._body
+
+    @property
+    def range(self):
+        return self._range
 
     @property
     def uses(self):

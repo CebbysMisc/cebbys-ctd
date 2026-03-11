@@ -1,6 +1,10 @@
 from lv.cebbys.languages.ctd.resolver.event.listener import (
     CtdEventListener
 )
+from lv.cebbys.languages.ctd.types.ctd import (
+    Typedef,
+    Alias,
+)
 from typing import (
     Callable
 )
@@ -8,12 +12,11 @@ from uuid import (
     uuid4,
     UUID
 )
-
-from lv.cebbys.languages.ctd.types.ctd import Typedef
-
 class DefaultListener(CtdEventListener):
     def handle_construct_typedef(self, value: Typedef):
         print(f"Emitted typedef construction '{value}'")
+    def handle_construct_alias(self, value: Alias):
+        print(f"Emitted alias construction '{value}'")
 
 class CtdEventBridge:
     LISTENERS: dict[UUID, CtdEventListener] = {}

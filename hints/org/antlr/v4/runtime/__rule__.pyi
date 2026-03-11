@@ -1,4 +1,5 @@
 
+import org.antlr.v4.runtime.__token__ as _TokenModule
 import org.antlr.v4.runtime.tree as _TreeModule
 import typing as _Typing
 
@@ -16,6 +17,12 @@ _T = _Typing.TypeVar("_T", bound=_TreeModule.ParseTree)
 
 class ParserRuleContext(RuleContext):
     """https://www.antlr.org/api/Java/org/antlr/v4/runtime/ParserRuleContext"""
+
+    @property
+    def start(self) -> _TokenModule.Token: ...
+
+    @property
+    def end(self) -> _TokenModule.Token: ...
 
     def getToken(self, type: int, index: int) -> _TreeModule.TerminalNode: ...
 

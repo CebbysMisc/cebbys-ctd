@@ -61,6 +61,6 @@ class DeclarationConstructor:
         ctx = DeclarationConstructor.MAPPINGS[meta_type]
         declaration = ctx.factory(namespace, meta)
         logger.trace(f"Created {type(declaration).__name__}: {meta.name}")
-        # ctx.emitter.emit(out)
+        ctx.emitter.emit(declaration)
         return declaration
 

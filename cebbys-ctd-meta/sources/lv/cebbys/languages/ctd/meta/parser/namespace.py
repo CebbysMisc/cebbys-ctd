@@ -30,7 +30,7 @@ class CtdNamespaceContextParser(Api.CtdContextParserBase[Api.CtdGrammar.Namespac
 
         namespace: str = self.qualified_name(self.rule(ctx, Api.CtdGrammar.QualifiedNameContext))
 
-        out = Meta.NamespaceMeta(namespace)
+        out = Meta.NamespaceMeta(namespace, ctx)
         for use_ctx in self.rules(ctx, Api.CtdGrammar.UseDeclarationContext):
             out.add_use(self.qualified_name(self.rule(use_ctx, Api.CtdGrammar.QualifiedNameContext)))
 
