@@ -37,16 +37,7 @@ cebbys-ctd/                               # Workspace root
 │   ├── pyproject.toml
 │   └── sources/lv/cebbys/languages/ctd/types/
 │       ├── __init__.py
-│       ├── define/                       # Resolved definition types
-│       │   ├── __init__.py
-│       │   ├── __api__.py               # BaseDefinition, TypeSpec, TypeReference
-│       │   ├── typedef.py               # TypedefDefinition
-│       │   ├── enum.py                  # EnumDefinition, EnumMemberDefinition
-│       │   ├── flag.py                  # FlagDefinition, FlagMemberDefinition
-│       │   ├── structure.py             # StructureDefinition, StructureMemberDefinition
-│       │   ├── interface.py             # InterfaceDefinition
-│       │   ├── function.py              # FunctionDefinition, ParameterDefinition
-│       │   └── collection.py            # DefinitionCollection
+│       ├── ctd/                          # Resolved CTD definition types (active)
 │       └── meta/                         # Metadata types (pre-resolution)
 │           ├── __init__.py
 │           ├── __api__.py               # Meta base class, ModulePath
@@ -72,15 +63,13 @@ cebbys-ctd/                               # Workspace root
 ├── cebbys-ctd-resolver/                  # Type resolution module
 │   ├── pyproject.toml
 │   ├── sources/lv/cebbys/languages/ctd/resolver/
-│   │   ├── __init__.py                  # Exports MetaResolver
-│   │   ├── __api__.py                   # BaseResolver, ResolverContext
-│   │   ├── typedef.py                   # TypedefResolver
-│   │   ├── alias.py                     # AliasResolver
-│   │   ├── enum.py                      # EnumResolver
-│   │   ├── flag.py                      # FlagResolver
-│   │   ├── structure.py                 # StructureResolver
-│   │   ├── interface.py                 # InterfaceResolver
-│   │   └── function.py                  # FunctionResolver
+│   │   ├── __init__.py                  # Exports CtdMetaResolver
+│   │   ├── resolver.py                  # CtdMetaResolver - main entry point
+│   │   ├── constructor/                 # Stage 2: declaration construction
+│   │   ├── linker/                      # Stage 3: reference linking
+│   │   ├── manager/                     # Resolution manager
+│   │   ├── storage/                     # Type cache / storage
+│   │   └── event/                       # Resolution events
 │   ├── resources/test/ctd/              # Test CTD files
 │   └── tests/                           # Stage 2-3 tests (construction & resolution)
 │
@@ -172,10 +161,10 @@ package/
 4. **Import convention**: External code imports from the package, not individual modules:
    ```python
    # Correct
-   import lv.cebbys.languages.ctd.types.define as Define
+   import lv.cebbys.languages.ctd.types.ctd as Ctd
 
    # Avoid
-   import lv.cebbys.languages.ctd.types.define.typedef as Typedef
+   import lv.cebbys.languages.ctd.types.ctd.typedef as Typedef
    ```
 
 ## Architecture
@@ -193,26 +182,26 @@ Parses CTD files and constructs metadata objects.
   - `MetaVisitor` - ANTLR4 visitor that transforms parse tree to Meta objects
   - `*Meta` classes - Lightweight metadata containers (strings, not resolved references)
 
-### Stage 2: Definition Construction (`cebbys-ctd-resolver` - Create Phase)
+### Stage 2: Declaration Construction (`cebbys-ctd-resolver` - Constructor Phase)
 
-Remaps metadata to definition objects and constructs type singletons.
+Remaps metadata to declaration objects and constructs type singletons.
 
 - **Input**: `DefinitionCollectionMeta`
-- **Output**: Type cache populated with `*Definition` singleton instances
+- **Output**: Type cache populated with `Declaration` singleton instances (`types/ctd/`)
 - **Process**:
-  - Each resolver's `create_instances()` method instantiates definitions
-  - Definitions are cached by qualified name (e.g., `std::lib::Int4`)
+  - `constructor/` subpackage instantiates declarations from meta objects
+  - Declarations are cached by qualified name (e.g., `std::lib::Int4`)
   - No type resolution occurs - references remain unresolved
 
-### Stage 3: Reference Resolution (`cebbys-ctd-resolver` - Resolve Phase)
+### Stage 3: Reference Resolution (`cebbys-ctd-resolver` - Linker Phase)
 
-Resolves all type references and establishes relationships between definitions.
+Resolves all type references and establishes relationships between declarations.
 
-- **Input**: Type cache with unresolved definitions
-- **Output**: `DefinitionCollection` with fully resolved, immutable definitions
+- **Input**: Type cache with unresolved declarations
+- **Output**: `Module` collection with fully resolved, immutable declarations
 - **Process**:
-  - Each resolver's `resolve_instances()` method resolves type references
-  - `TypeReference` objects link to cached definition singletons
+  - `linker/` subpackage resolves type references
+  - `Reference` objects link to cached declaration singletons
   - Namespace resolution applies (`use` declarations, qualified names)
 
 ### Pipeline Flow
@@ -222,11 +211,11 @@ Resolves all type references and establishes relationships between definitions.
 │                              CTD Processing Pipeline                        │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
-│  CTD Files ──► Stage 1 ──► Stage 2 ──► Stage 3 ──► DefinitionCollection     │
-│               (Loading)   (Construction) (Resolution)                       │
+│  CTD Files ──► Stage 1 ──► Stage 2 ──► Stage 3 ──► Module (collection)      │
+│               (Loading)  (Constructor) (Linker)                             │
 │                                                                             │
-│  *.ctd    ──► *Meta     ──► *Definition ──► Resolved  ──► Immutable         │
-│  files        objects       singletons      references    collection        │
+│  *.ctd    ──► *Meta     ──► Declaration ──► Resolved  ──► Immutable         │
+│  files        objects       singletons      references    module            │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -334,13 +323,13 @@ When implementing new language features, follow this incremental approach:
    - **Test**: Verify CTD files parse correctly
 
 3. **Step 3 - Definition Types** (`cebbys-ctd-types`):
-   - Add `UnionDefinition` class to `types/define/union.py`
-   - Update `types/define/__init__.py` to export it
+   - Add `Union` class to `types/ctd/union.py`
+   - Update `types/ctd/__init__.py` to export it
 
 4. **Step 4 - Resolver** (`cebbys-ctd-resolver`):
    - Add `UnionResolver` to `resolver/union.py`
    - Update `MetaResolver` to use it
    - **Test**: Verify definitions are created and resolved
 
-5. **Step 5 - Collection** (`cebbys-ctd-types`):
-   - Update `DefinitionCollection` to include unions
+5. **Step 5 - Module** (`cebbys-ctd-types`):
+   - Update `Module` in `types/ctd/` to include unions
