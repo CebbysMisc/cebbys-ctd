@@ -42,7 +42,7 @@ class CtdFlagContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGrammar.F
                 member_value = self._parse_member_value(member_ctx)
                 members.append(Meta.FlagMemberMeta(member_name, member_value))
 
-        return Meta.FlagMeta(name, namespace, base_type, members, decorators)
+        return Meta.FlagMeta(name, namespace, base_type, members, decorators, ctx)
 
     def _parse_member_value(self, ctx: Api.CtdGrammar.FlagMemberContext) -> int | None:
         """Parse optional member value (integer or hex literal)."""

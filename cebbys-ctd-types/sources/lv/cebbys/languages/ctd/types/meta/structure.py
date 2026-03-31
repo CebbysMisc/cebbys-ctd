@@ -73,7 +73,8 @@ class StructureMeta(Api.DeclarationMeta):
         namespace: Api.ModulePath,
         base_type: Api.TypespecMeta | None = None,
         members: list[StructureMemberMeta] = [],
-        decorators: list[Api.DecoratorMeta] = []
+        decorators: list[Api.DecoratorMeta] = [],
+        ctx=None
     ):
         """Initialize structure metadata.
 
@@ -83,8 +84,9 @@ class StructureMeta(Api.DeclarationMeta):
             base_type: Optional base type specification
             members: List of structure members
             decorators: List of decorators
+            ctx: ANTLR4 parse context
         """
-        super().__init__(namespace, name, decorators)
+        super().__init__(namespace, name, decorators, ctx)
         self._base_type = base_type
         self._members = list(members)
 

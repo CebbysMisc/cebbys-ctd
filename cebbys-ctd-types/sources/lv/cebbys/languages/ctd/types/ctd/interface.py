@@ -13,19 +13,18 @@ if TYPE_CHECKING:
         Namespace
     )
 
-class Interface(Declaration):
+class Interface(Declaration[InterfaceMeta]):
     """Represents an interface declaration."""
-    decorators: list[Decorator]
     base: Reference | None
     methods: list[Function]
 
     def __init__(
         self,
         namespace: "Namespace",
-        meta: "InterfaceMeta"
-    ) -> None: 
-        super().__init__(namespace, meta)
-        self.decorators = []
+        meta: "InterfaceMeta",
+        decorators: list[Decorator] | None = None,
+    ) -> None:
+        super().__init__(namespace, meta, decorators)
         self.base = None
         self.methods = []
 

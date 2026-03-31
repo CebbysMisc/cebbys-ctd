@@ -32,16 +32,15 @@ class Parameter:
 class Function(Declaration[FunctionMeta]):
     """Represents a function declaration."""
     return_type: Reference | None
-    decorators: list[Decorator]
     parameters: list[Parameter]
 
     def __init__(
         self,
         namespace: "Namespace",
-        meta: "FunctionMeta"
-    ) -> None: 
-        super().__init__(namespace, meta)
-        self.decorators = []
+        meta: "FunctionMeta",
+        decorators: list[Decorator] | None = None,
+    ) -> None:
+        super().__init__(namespace, meta, decorators)
         self.parameters = []
         self.base = None
 

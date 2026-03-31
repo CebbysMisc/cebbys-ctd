@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     )
 
 
-class Typedef(Declaration):
+class Typedef(Declaration[TypedefMeta]):
     """Represents a typedef declaration."""
     signed: bool | None
     base: Reference
@@ -24,11 +24,7 @@ class Typedef(Declaration):
         meta: "TypedefMeta",
         decorators: list[Decorator] | None = None,
     ) -> None:
-        super().__init__(namespace, meta)
-        if decorators is not None:
-            self._decorators = tuple(decorators)
-        else:
-            self._decorators = tuple()
+        super().__init__(namespace, meta, decorators)
         self.signed = None
 
     def __str__(self) -> str:
@@ -39,7 +35,3 @@ class Typedef(Declaration):
 
     def __repr__(self) -> str:
         return f"Typedef({self.namespace.path}::{self.name})"
-
-    @property
-    def decorators(self) -> tuple[Decorator, ...]:
-        return self._decorators

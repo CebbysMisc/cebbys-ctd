@@ -30,17 +30,16 @@ class EnumMember:
 
 class Enum(Declaration[EnumMeta]):
     """Represents an enum declaration."""
-    decorators: list[Decorator]
     members: list[EnumMember]
     base: Reference | None
 
     def __init__(
         self,
         namespace: "Namespace",
-        meta: "EnumMeta"
-    ) -> None: 
-        super().__init__(namespace, meta)
-        self.decorators = []
+        meta: "EnumMeta",
+        decorators: list[Decorator] | None = None,
+    ) -> None:
+        super().__init__(namespace, meta, decorators)
         self.members = []
         self.base = None
 

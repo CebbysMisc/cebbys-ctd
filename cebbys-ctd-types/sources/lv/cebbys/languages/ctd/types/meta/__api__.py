@@ -105,7 +105,19 @@ class DecoratableMeta(Meta):
 
 
 class DeclarationMeta(DecoratableMeta):
-    ...
+    def __init__(
+        self,
+        namespace: ModulePath,
+        name: str,
+        decorators: list['DecoratorMeta'] = [],
+        ctx=None
+    ) -> None:
+        super().__init__(namespace, name, decorators)
+        self._ctx = ctx
+
+    @property
+    def ctx(self):
+        return self._ctx
 
 class DocumentIndex:
     def __init__(self, row: int, col: int) -> None:

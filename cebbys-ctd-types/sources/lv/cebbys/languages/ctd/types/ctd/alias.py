@@ -22,16 +22,15 @@ if TYPE_CHECKING:
 
 class Alias(Declaration[AliasMeta]):
     """Represents an alias declaration."""
-    decorators: list[Decorator]
     base: Reference
 
     def __init__(
         self,
         namespace: "Namespace",
-        meta: "AliasMeta"
+        meta: "AliasMeta",
+        decorators: list[Decorator] | None = None,
     ) -> None:
-        super().__init__(namespace, meta)
-        self.decorators = []
+        super().__init__(namespace, meta, decorators)
 
     def __str__(self) -> str:
         try:

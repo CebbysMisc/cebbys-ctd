@@ -28,19 +28,18 @@ class StructureMember:
         return f"StructureMember({self.name!r}, {self.type!r})"
 
 
-class Structure(Declaration):
+class Structure(Declaration[StructureMeta]):
     """Represents a structure declaration."""
-    decorators: list[Decorator]
     base: Reference | None
     members: list[StructureMember]
 
     def __init__(
         self,
         namespace: "Namespace",
-        meta: "StructureMeta"
-    ) -> None: 
-        super().__init__(namespace, meta)
-        self.decorators = []
+        meta: "StructureMeta",
+        decorators: list[Decorator] | None = None,
+    ) -> None:
+        super().__init__(namespace, meta, decorators)
         self.members = []
         self.base = None
 

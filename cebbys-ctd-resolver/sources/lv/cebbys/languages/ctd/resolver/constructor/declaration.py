@@ -32,16 +32,9 @@ logger = Logging.get_logger(__name__)
 
 
 class DeclarationConstructorCtx:
-    def __init__(self, factory: Callable[[Namespace, Any], Ctd.Declaration], consumer: type[Event[Any]]) -> None:
+    def __init__(self, factory: Callable[[Namespace, Any, list], Ctd.Declaration], consumer: type[Event[Any]]) -> None:
         self.emitter: Typing.Final = consumer
         self.factory: Typing.Final = factory
-
-
-def typedef_constructor(namespace: Namespace, meta: Meta.TypedefMeta) -> Ctd.Typedef:
-    return Ctd.Typedef(namespace, meta, decorators=[
-        DecoratorConstructor.construct(decorator_meta)
-        for decorator_meta in meta.decorators
-    ])
 
 
 class DeclarationConstructor:
@@ -49,7 +42,7 @@ class DeclarationConstructor:
         Meta.InterfaceMeta: DeclarationConstructorCtx(Ctd.Interface, CtdInterfaceConstructEvent),
         Meta.StructureMeta: DeclarationConstructorCtx(Ctd.Structure, CtdStructureConstructEvent),
         Meta.FunctionMeta: DeclarationConstructorCtx(Ctd.Function, CtdFunctionConstructEvent),
-        Meta.TypedefMeta: DeclarationConstructorCtx(typedef_constructor, CtdTypedefConstructEvent),
+        Meta.TypedefMeta: DeclarationConstructorCtx(Ctd.Typedef, CtdTypedefConstructEvent),
         Meta.AliasMeta: DeclarationConstructorCtx(Ctd.Alias, CtdAliasConstructEvent),
         Meta.EnumMeta: DeclarationConstructorCtx(Ctd.Enum, CtdEnumConstructEvent),
         Meta.FlagMeta: DeclarationConstructorCtx(Ctd.Flag, CtdFlagConstructEvent),
@@ -60,6 +53,7 @@ class DeclarationConstructor:
         """Construct a CTD declaration from metadata.
 
         Args:
+            namespace: Namespace the declaration belongs to
             meta: Declaration metadata to construct from
 
         Returns:
@@ -74,8 +68,13 @@ class DeclarationConstructor:
         if meta_type not in DeclarationConstructor.MAPPINGS:
             raise BaseException(f"Mapping of Meta to Ctd not implemented for {meta_type}")
 
+        decorators = [
+            DecoratorConstructor.construct(decorator_meta)
+            for decorator_meta in meta.decorators
+        ]
+
         ctx = DeclarationConstructor.MAPPINGS[meta_type]
-        declaration = ctx.factory(namespace, meta)
+        declaration = ctx.factory(namespace, meta, decorators)
         logger.trace(f"Created {type(declaration).__name__}: {meta.name}")
         ctx.emitter.emit(declaration)
         return declaration

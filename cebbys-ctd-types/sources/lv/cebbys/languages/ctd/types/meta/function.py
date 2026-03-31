@@ -78,7 +78,8 @@ class FunctionMeta(Api.DeclarationMeta):
         namespace: Api.ModulePath,
         return_type: Api.TypespecMeta,
         parameters: list[ParameterMeta] = [],
-        decorators: list[Api.DecoratorMeta] = []
+        decorators: list[Api.DecoratorMeta] = [],
+        ctx=None
     ):
         """Initialize function metadata.
 
@@ -88,8 +89,9 @@ class FunctionMeta(Api.DeclarationMeta):
             return_type: The return type specification
             parameters: List of function parameters
             decorators: List of decorators (e.g., @WinApi)
+            ctx: ANTLR4 parse context
         """
-        super().__init__(namespace, name, decorators)
+        super().__init__(namespace, name, decorators, ctx)
         self._return_type = return_type
         self._parameters = list(parameters)
 

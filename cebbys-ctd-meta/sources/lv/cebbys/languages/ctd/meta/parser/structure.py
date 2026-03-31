@@ -37,7 +37,7 @@ class CtdStructureContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGram
                 member_typespec = TypeSpecModule.CtdTypeSpecContextParser.instance().parse(member_typespec_ctx)
                 members.append(Meta.StructureMemberMeta(member_name, member_typespec))
 
-        return Meta.StructureMeta(name, namespace, base_type, members, decorators)
+        return Meta.StructureMeta(name, namespace, base_type, members, decorators, ctx)
 
 
 INSTANCE = CtdStructureContextParser()

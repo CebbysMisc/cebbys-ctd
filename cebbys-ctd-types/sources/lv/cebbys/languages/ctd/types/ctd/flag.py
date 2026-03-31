@@ -31,17 +31,16 @@ class FlagMember:
 
 class Flag(Declaration[FlagMeta]):
     """Represents a flag declaration."""
-    decorators: list[Decorator]
     members: list[FlagMember]
     base: Reference | None
 
     def __init__(
         self,
         namespace: "Namespace",
-        meta: "FlagMeta"
-    ) -> None: 
-        super().__init__(namespace, meta)
-        self.decorators = []
+        meta: "FlagMeta",
+        decorators: list[Decorator] | None = None,
+    ) -> None:
+        super().__init__(namespace, meta, decorators)
         self.members = []
         self.base = None
 

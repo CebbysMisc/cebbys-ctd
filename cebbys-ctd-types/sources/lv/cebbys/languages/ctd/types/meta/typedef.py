@@ -23,7 +23,8 @@ class TypedefMeta(Api.DeclarationMeta):
         name: str,
         type_spec: Api.TypespecMeta,
         namespace: Api.ModulePath,
-        decorators: list[Api.DecoratorMeta] = []
+        decorators: list[Api.DecoratorMeta] = [],
+        ctx=None
     ):
         """Initialize typedef metadata.
 
@@ -31,8 +32,10 @@ class TypedefMeta(Api.DeclarationMeta):
             name: The typedef identifier
             type_spec: The type specification string
             namespace: Qualified namespace path
+            decorators: List of decorators
+            ctx: ANTLR4 parse context
         """
-        super().__init__(namespace, name, decorators)
+        super().__init__(namespace, name, decorators, ctx)
         self._type_spec = type_spec
 
     @property

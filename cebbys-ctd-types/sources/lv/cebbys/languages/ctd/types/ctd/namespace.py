@@ -37,6 +37,12 @@ class Namespace:
     def meta(self):
         return self._meta
 
+    @property
+    def source(self) -> str:
+        ctx = self._meta.ctx
+        stream = ctx.start.getInputStream()
+        return stream.getText(ctx.start.start, ctx.stop.stop)
+
     def __str__(self) -> str:
         return f"{self.path} {{ {len(self.declarations)} declarations }}"
 

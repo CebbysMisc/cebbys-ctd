@@ -53,7 +53,8 @@ class CtdFunctionContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGramm
             namespace,
             return_type,
             parameters,
-            decorators
+            decorators,
+            ctx
         )
 
 

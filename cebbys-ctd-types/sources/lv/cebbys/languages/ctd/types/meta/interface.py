@@ -33,7 +33,8 @@ class InterfaceMeta(Api.DeclarationMeta):
         namespace: Api.ModulePath,
         base_type: Api.TypespecMeta | None = None,
         methods: list[FunctionModule.FunctionMeta] = [],
-        decorators: list[Api.DecoratorMeta] = []
+        decorators: list[Api.DecoratorMeta] = [],
+        ctx=None
     ):
         """Initialize interface metadata.
 
@@ -43,8 +44,9 @@ class InterfaceMeta(Api.DeclarationMeta):
             base_type: Optional base type specification
             methods: List of interface method definitions
             decorators: List of decorators
+            ctx: ANTLR4 parse context
         """
-        super().__init__(namespace, name, decorators)
+        super().__init__(namespace, name, decorators, ctx)
         self._base_type = base_type
         self._methods = list(methods)
 
