@@ -6,12 +6,5 @@
         "-v"
     ],
     "python.testing.cwd": "${workspaceFolder}",
-    "python.testing.autoTestDiscoverOnSaveEnabled": true,
-    "python-envs.pythonProjects": [
-        {
-            "path": ".",
-            "envManager": "ms-python.python:venv",
-            "packageManager": "ms-python.python:pip"
-        }
-    ]
+    "python.testing.autoTestDiscoverOnSaveEnabled": true
 }
