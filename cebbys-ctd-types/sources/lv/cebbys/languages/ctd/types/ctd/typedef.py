@@ -12,19 +12,23 @@ if TYPE_CHECKING:
         Namespace
     )
 
+
 class Typedef(Declaration):
     """Represents a typedef declaration."""
-    decorators: list[Decorator]
-    signed: bool|None
+    signed: bool | None
     base: Reference
 
     def __init__(
         self,
         namespace: "Namespace",
-        meta: "TypedefMeta"
-    ) -> None: 
+        meta: "TypedefMeta",
+        decorators: list[Decorator] | None = None,
+    ) -> None:
         super().__init__(namespace, meta)
-        self.decorators = []
+        if decorators is not None:
+            self._decorators = tuple(decorators)
+        else:
+            self._decorators = tuple()
         self.signed = None
 
     def __str__(self) -> str:
@@ -35,3 +39,7 @@ class Typedef(Declaration):
 
     def __repr__(self) -> str:
         return f"Typedef({self.namespace.path}::{self.name})"
+
+    @property
+    def decorators(self) -> tuple[Decorator, ...]:
+        return self._decorators

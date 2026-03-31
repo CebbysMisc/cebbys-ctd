@@ -1,0 +1,5 @@
+import "cebbys/std"
+
+namespace com::procyon::products::propilkki2::protocol {
+    
+}

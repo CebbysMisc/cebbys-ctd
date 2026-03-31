@@ -17,13 +17,15 @@ LOGGER = Logging.get_logger(__name__)
 class CtdMetaResolver:
     @staticmethod
     def resolve(module_tree: dict[str, Meta.ModuleMeta]):
-        CtdDeclarationStorage.start()
+        try:
+            CtdDeclarationStorage.start()
+            modules: dict[str, Ctd.Module] = {}
+            for name, module_meta in module_tree.items():
+                LOGGER.debug(f"Constructing module '{name}'")
+                modules[name] = ModuleConstructor.construct(name, module_meta)
+            ModuleLinker.link_all(modules)
 
-        modules: dict[str, Ctd.Module] = {}
-        for name, module_meta in module_tree.items():
-            LOGGER.debug(f"Constructing module '{name}'")
-            modules[name] = ModuleConstructor.construct(name, module_meta)
-        ModuleLinker.link_all(modules)
-
-        CtdDeclarationStorage.stop()
-        return CtdDeclarationStorage.storage, CtdDeclarationStorage.tree()
+            CtdDeclarationStorage.stop()
+            return CtdDeclarationStorage.storage, CtdDeclarationStorage.tree()
+        except BaseException as e:
+            raise RuntimeError("Error during meta resolution stage") from e

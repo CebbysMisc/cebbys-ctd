@@ -1,0 +1,29 @@
+namespace lv::cebbys::std {
+    @TypeId("3af4dab5-039d-4248-8924-aa638c10deb8")
+    typedef signed byte     Snt1
+    @TypeId("6bd90165-b5da-4fb2-82dc-2e2eec7fe00c")
+    typedef signed short    Snt2
+    @TypeId("c4f8f240-93c3-4cba-b497-28baf9b783bf")
+    typedef signed int      Snt4
+    @TypeId("305af625-5dde-497a-9818-10e8d755c6e2")
+    typedef signed long     Snt8
+
+    @TypeId("813495a2-cb62-4852-ad7d-4bc07b71eca1")
+    typedef unsigned byte   Unt1
+    @TypeId("0b3a5283-d14a-4082-83fa-22b6291b1b01")
+    typedef unsigned short  Unt2
+    @TypeId("90284c76-d771-4764-8561-806e1432eb27")
+    typedef unsigned int    Unt4
+    @TypeId("b6c72033-78e1-4dbd-8587-0659fdd392a9")
+    typedef unsigned long   Unt8
+
+    @TypeId("da258250-fe57-4a48-b58d-6417095b449e")
+    typedef float           Float4
+    @TypeId("d2420ab3-9274-43fb-8b72-b7fdece23dc5")
+    typedef double          Float8
+
+    @TypeId("a7e2808a-5820-4e22-8595-e0961b9775b4")
+    typedef void            Void
+    @TypeId("6acb165c-8e4d-4245-834e-59f521070022")
+    typedef Void*           Any
+}

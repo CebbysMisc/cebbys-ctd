@@ -1,6 +1,10 @@
 from lv.cebbys.languages.ctd.types.ctd.declaration import (
     Declaration
 )
+from lv.cebbys.languages.ctd.types.ctd.decorator import (
+    SupportsDecorators,
+    Decorator
+)
 from lv.cebbys.languages.ctd.types.ctd.namespace import (
     Namespace
 )
@@ -42,22 +46,24 @@ from lv.cebbys.languages.ctd.types.ctd.__api__ import (
 )
 
 __all__ = [
+    "SupportsDecorators",
+    "StructureMember",
     "Declaration",
+    "EnumMember",
+    "FlagMember",
+    "Decorator",
+    "Interface",
     "Namespace",
+    "Parameter",
+    "Reference",
+    "Structure",
+    "Function",
     "Builtin",
     "Pointer",
-    "Array",
     "Typedef",
     "Module",
     "Alias",
+    "Array",
     "Enum",
-    "EnumMember",
     "Flag",
-    "FlagMember",
-    "Structure",
-    "StructureMember",
-    "Interface",
-    "Function",
-    "Parameter",
-    "Reference",
 ]

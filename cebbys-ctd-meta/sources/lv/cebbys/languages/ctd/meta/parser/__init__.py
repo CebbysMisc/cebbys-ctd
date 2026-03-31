@@ -27,13 +27,16 @@ class CtdMetaParser:
         raise TypeError("CtdMetaParser is a static utility class and cannot be instantiated")
 
     @staticmethod
-    def parse_module(root:Path, path:Path, name:str, ctx: _Antlr4.CtdGrammar.ModuleDeclarationContext):
-        module = _ModuleModule.CtdModuleContextParser.instance().parse(ctx)
-        module.root = root
-        module.path = path
-        module.name = name
-        module.ctx = ctx
-        return module
+    def parse_module(root: Path, path: Path, name: str, ctx: _Antlr4.CtdGrammar.ModuleDeclarationContext):
+        try:
+            module = _ModuleModule.CtdModuleContextParser.instance().parse(ctx)
+            module.root = root
+            module.path = path
+            module.name = name
+            module.ctx = ctx
+            return module
+        except BaseException as e:
+            raise RuntimeError(f"Error parsing module {name} at {path}") from e
 
     @staticmethod
     def parse_namespace(ctx: _Antlr4.CtdGrammar.NamespaceDeclarationContext):
@@ -50,8 +53,8 @@ class CtdMetaParser:
     @staticmethod
     def parse_typespec(ctx: _Antlr4.CtdGrammar.TypeSpecContext):
         return _TypeSpecModule.CtdTypeSpecContextParser.instance().parse(ctx)
-    @staticmethod
 
+    @staticmethod
     def parse_declaration(namespace: str, ctx: _Antlr4.CtdGrammar.DeclarationContext):
         return _DeclarationModule.CtdDeclarationContextParser.instance().parse(namespace, ctx)
 

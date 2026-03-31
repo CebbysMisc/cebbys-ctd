@@ -3,6 +3,9 @@ import lv.cebbys.languages.ctd.types.ctd as Ctd
 import lv.cebbys.languages.ctd.utility.logging as Logging
 import typing as Typing
 
+from lv.cebbys.languages.ctd.resolver.constructor.decorator import (
+    DecoratorConstructor,
+)
 from lv.cebbys.languages.ctd.resolver.event.emitter import (
     CtdInterfaceConstructEvent,
     CtdStructureConstructEvent,
@@ -20,20 +23,33 @@ from lv.cebbys.languages.ctd.types.ctd import (
     Declaration,
     Namespace
 )
+from typing import (
+    Callable,
+    Any,
+)
 
 logger = Logging.get_logger(__name__)
 
+
 class DeclarationConstructorCtx:
-    def __init__(self, factory: type[Ctd.Declaration], consumer: type[Event[Typing.Any]]) -> None:
+    def __init__(self, factory: Callable[[Namespace, Any], Ctd.Declaration], consumer: type[Event[Any]]) -> None:
         self.emitter: Typing.Final = consumer
         self.factory: Typing.Final = factory
+
+
+def typedef_constructor(namespace: Namespace, meta: Meta.TypedefMeta) -> Ctd.Typedef:
+    return Ctd.Typedef(namespace, meta, decorators=[
+        DecoratorConstructor.construct(decorator_meta)
+        for decorator_meta in meta.decorators
+    ])
+
 
 class DeclarationConstructor:
     MAPPINGS: Typing.Final[dict[type, DeclarationConstructorCtx]] = {
         Meta.InterfaceMeta: DeclarationConstructorCtx(Ctd.Interface, CtdInterfaceConstructEvent),
         Meta.StructureMeta: DeclarationConstructorCtx(Ctd.Structure, CtdStructureConstructEvent),
         Meta.FunctionMeta: DeclarationConstructorCtx(Ctd.Function, CtdFunctionConstructEvent),
-        Meta.TypedefMeta: DeclarationConstructorCtx(Ctd.Typedef, CtdTypedefConstructEvent),
+        Meta.TypedefMeta: DeclarationConstructorCtx(typedef_constructor, CtdTypedefConstructEvent),
         Meta.AliasMeta: DeclarationConstructorCtx(Ctd.Alias, CtdAliasConstructEvent),
         Meta.EnumMeta: DeclarationConstructorCtx(Ctd.Enum, CtdEnumConstructEvent),
         Meta.FlagMeta: DeclarationConstructorCtx(Ctd.Flag, CtdFlagConstructEvent),
@@ -42,13 +58,13 @@ class DeclarationConstructor:
     @staticmethod
     def construct(namespace: Namespace, meta: DeclarationMeta) -> Declaration:
         """Construct a CTD declaration from metadata.
-        
+
         Args:
             meta: Declaration metadata to construct from
-            
+
         Returns:
             Constructed declaration object
-            
+
         Raises:
             NotImplementedError: If declaration type is not supported
         """
@@ -63,4 +79,3 @@ class DeclarationConstructor:
         logger.trace(f"Created {type(declaration).__name__}: {meta.name}")
         ctx.emitter.emit(declaration)
         return declaration
-

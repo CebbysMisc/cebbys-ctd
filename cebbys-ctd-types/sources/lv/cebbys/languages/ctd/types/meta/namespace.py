@@ -22,14 +22,13 @@ class NamespaceHeaderMeta:
         start = ctx.start
         end = ctx.getToken(CtdGrammar.T__3, 0).getSymbol()
         self._range = DocumentRange(
-            DocumentIndex(start.getLine(), start.getCharPositionInLine()),
-            DocumentIndex(end.getLine(), end.getCharPositionInLine() - 1),
+            DocumentIndex(start.line, start.column),
+            DocumentIndex(end.line, end.column - 1),
         )
 
     @property
     def range(self):
         return self._range
-
 
 
 class NamespaceBodyMeta:
@@ -37,18 +36,19 @@ class NamespaceBodyMeta:
         start = ctx.getToken(CtdGrammar.T__3, 0).getSymbol()
         end = ctx.end
         self._range = DocumentRange(
-            DocumentIndex(start.getLine(), start.getCharPositionInLine()),
-            DocumentIndex(end.getLine(), end.getCharPositionInLine()),
+            DocumentIndex(start.line, start.column),
+            DocumentIndex(end.line, end.column),
         )
 
     @property
     def range(self):
         return self._range
 
+
 class NamespaceMeta:
     # TODO: Add code comments as TypedefMeta
 
-    def __init__(self, name:str, ctx: CtdGrammar.NamespaceDeclarationContext):
+    def __init__(self, name: str, ctx: CtdGrammar.NamespaceDeclarationContext):
         self._collections: list[list[Typing.Any]] = []
         self._uses: list[str] = []
         self.path = name
@@ -123,7 +123,7 @@ class NamespaceMeta:
     def functions(self):
         """Get the list of function definitions."""
         return self._functions
-    
+
     @property
     def declarations(self):
         return [d for collection in self._collections for d in collection]

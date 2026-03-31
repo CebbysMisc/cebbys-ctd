@@ -16,7 +16,6 @@ from uuid import (
 __all__ = ["ModuleLinker"]
 
 
-
 class DeclarationLinker(Protocol):
     @staticmethod
     def link(
@@ -24,7 +23,9 @@ class DeclarationLinker(Protocol):
         declaration: Any
     ) -> None: ...
 
+
 LINK = f"link-{uuid4()}"
+
 
 def register_linkers():
     linker_registry: dict[type[Ctd.Declaration], type[DeclarationLinker]] = {
@@ -39,13 +40,25 @@ def register_linkers():
     for ctd, linker in linker_registry.items():
         setattr(ctd, LINK, linker.link)
 
+
 register_linkers()
+
 
 class ModuleLinker:
     @staticmethod
     def link_all(modules: dict[str, Ctd.Module]) -> None:
-        for _, module in modules.items():
-            module.includes = [modules[i.path] for i in module.meta.includes]
-            for namespace in module.namespaces:
-                for declaration in namespace.declarations:
-                    getattr(type(declaration), LINK)(namespace, declaration)
+        try:
+            for _, module in modules.items():
+                module.includes = link_includes(module, modules)
+                for namespace in module.namespaces:
+                    for declaration in namespace.declarations:
+                        getattr(type(declaration), LINK)(namespace, declaration)
+        except BaseException as e:
+            raise RuntimeError("Error during module linking stage") from e
+
+
+def link_includes(module: Ctd.Module, modules: dict[str, Ctd.Module]):
+    try:
+        return [modules[i.path] for i in module.meta.includes]
+    except BaseException as e:
+        raise RuntimeError(f"Error linking includes for module '{module.name}'") from e

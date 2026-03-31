@@ -28,3 +28,6 @@ cebbys-ctd-antlr4/resources/grammar/.antlr/
 *.swp
 *.swo
 **/.temp
+
+# SQLite databases
+*.db

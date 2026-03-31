@@ -13,12 +13,12 @@ class Namespace:
 
     def __init__(
         self,
-        module:"Module", 
+        module: "Module",
         meta: NamespaceMeta
     ) -> None:
         self._module = module
         self._meta = meta
-        
+
         self.declarations = []
 
     @property
@@ -27,6 +27,10 @@ class Namespace:
 
     @property
     def path(self):
+        """
+        Namespace path, e.g. "foo::bar::baz".
+        String elements are separated by "::" and represent nested namespaces.
+        """
         return self._meta.path
 
     @property

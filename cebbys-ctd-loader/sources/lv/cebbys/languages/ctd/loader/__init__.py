@@ -21,9 +21,10 @@ from lv.cebbys.languages.ctd.loader.meta import (
 
 __all__ = ['CtdLoader']
 
+
 class CtdLoader:
     """Loads and parses CTD module files.
-    
+
     Implements a four-stage transformation pipeline:
     1. list[Path] - Gather all .ctd files from directories
     2. list[ModuleDeclarationContext] - Parse files to ANTLR4 contexts
@@ -37,20 +38,40 @@ class CtdLoader:
         Args:
             dirs: List of directory paths to search for .ctd files
         """
-        # Input directories
-        self._roots: Typing.Final[list[Api.FilePath]]
-        self._roots = roots
 
-        # Stage 1: Gather all .ctd file paths from directories
-        ctds = CtdFileCtxLoader.load(self._roots)
-        # Stage 2: Parse each file to ANTLR4 ModuleDeclarationContext
-        contexts = CtdAntlrCtxLoader.load(ctds)
-        # Stage 3: Convert each context to ModuleMeta
-        metas = CtdMetaLoader.load(contexts)
+        try:
+            # Input directories
+            self._roots: Typing.Final[list[Api.FilePath]]
+            self._roots = roots
 
-        # Stage 4: Resolve and link via ModuleConstructor + ModuleLinker
-        self.definitions, self.tree = self._build_type_definitions([(m.path, m.name, m) for m in metas])
+            # Stage 1: Gather all .ctd file paths from directories
+            try:
+                ctds = CtdFileCtxLoader.load(self._roots)
+            except BaseException as e:
+                raise RuntimeError("Error during file content resolution stage") from e
 
+            # Stage 2: Parse each file to ANTLR4 ModuleDeclarationContext
+            try:
+                contexts = CtdAntlrCtxLoader.load(ctds)
+            except BaseException as e:
+                raise RuntimeError("Error during antlr4 content resolution stage") from e
+
+            # Stage 3: Convert each context to ModuleMeta
+            try:
+                metas = CtdMetaLoader.load(contexts)
+            except BaseException as e:
+                raise RuntimeError("Error during meta content resolution stage") from e
+
+            # Stage 4: Resolve and link via ModuleConstructor + ModuleLinker
+            try:
+                self.definitions, self.tree = self._build_type_definitions(
+                    [(m.path, m.name, m) for m in metas]
+                )
+            except BaseException as e:
+                raise RuntimeError("Error during type resolution stage") from e
+
+        except BaseException as e:
+            raise RuntimeError("Error during CTD loading process") from e
 
     # =========================================================================
     # Stage 4: Resolve and link types
@@ -63,4 +84,3 @@ class CtdLoader:
         return CtdMetaResolver.resolve({
             module_name: module for _, module_name, module in module_metas
         })
-
