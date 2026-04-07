@@ -1,0 +1,17 @@
+// Simple test CTD file for loader testing
+
+namespace test::simple {
+    typedef int Int4
+    typedef unsigned int Unt4
+    
+    enum Color : Int4 {
+        RED = 0
+        GREEN = 1
+        BLUE = 2
+    }
+    
+    structure Point {
+        Int4 x
+        Int4 y
+    }
+}

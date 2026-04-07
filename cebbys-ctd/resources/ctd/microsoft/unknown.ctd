@@ -1,0 +1,18 @@
+import "microsoft/wincrypt"
+import "microsoft/guiddef"
+import "std/types"
+
+namespace com::microsoft::windows {
+    use com::microsoft::windows::guid
+    use std::types
+
+    @CType("Unknown.h", "IUnknown")
+    interface IUnknown {
+        HRESULT QueryInterface(
+            REFIID interfaceId,
+            Any* vtable
+        )
+        Unt4 AddRef()
+        Unt4 Release()
+    }
+}

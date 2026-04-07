@@ -1,0 +1,73 @@
+import "std/types"
+import "dxgi"
+
+namespace com::microsoft::direct::graphics::d3d11 {
+    use com::microsoft::direct::graphics::dxgi
+    use std::types
+
+    typedef Int4 ResultCode
+    typedef Any ModuleHandle
+
+    enum DriverType : Int4 {
+        UNKNOWN
+        HARDWARE
+        REFERENCE
+        NULL
+        SOFTWARE
+        WARP
+    }
+
+    enum FeatureLevel : Unt4 {
+        LEVEL_9_1  = 0x9100
+        LEVEL_9_2  = 0x9200
+        LEVEL_9_3  = 0x9300
+        LEVEL_10_0 = 0xa000
+        LEVEL_10_1 = 0xa100
+        LEVEL_11_0 = 0xb000
+        LEVEL_11_1 = 0xb100
+        LEVEL_12_0 = 0xc000
+        LEVEL_12_1 = 0xc100
+        LEVEL_12_2 = 0xc200
+    }
+
+    flag CreateDeviceFlag : Unt4 {
+        SINGLETHREADED
+        DEBUG
+        SWITCH_TO_REF
+        PREVENT_INTERNAL_THREADING_OPTIMIZATIONS
+        BGRA_SUPPORT = 0x20
+        DEBUGGABLE
+        PREVENT_ALTERING_LAYER_SETTINGS_FROM_REGISTRY
+        DISABLE_GPU_TIMEOUT
+        VIDEO_SUPPORT
+    }
+
+    @WinApi
+    ResultCode D3D11CreateDeviceAndSwapChain(
+        @Nullable Adapter*  adapter,
+        DriverType          driverType,
+        ModuleHandle        software,
+        CreateDeviceFlag    flags,
+        FeatureLevel*       featureLevels,
+        Unt4                featureLevelsCount,
+        Unt4                sdkVersion,
+        SwapChainDesc**     swapChainDesc,
+    )
+
+    /*
+    HRESULT D3D11CreateDeviceAndSwapChain(
+        _In_opt_ IDXGIAdapter* pAdapter,
+        DriverType driverType,
+        HMODULE Software,
+        UINT Flags,
+        _In_reads_opt_( FeatureLevels ) CONST D3D_FEATURE_LEVEL* pFeatureLevels,
+        UINT FeatureLevels,
+        UINT SDKVersion,
+        _In_opt_ CONST DXGI_SWAP_CHAIN_DESC* pSwapChainDesc,
+        _COM_Outptr_opt_ IDXGISwapChain** ppSwapChain,
+        _COM_Outptr_opt_ ID3D11Device** ppDevice,
+        _Out_opt_ D3D_FEATURE_LEVEL* pFeatureLevel,
+        _COM_Outptr_opt_ ID3D11DeviceContext** ppImmediateContext 
+    )
+    */
+}

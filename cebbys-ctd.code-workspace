@@ -28,6 +28,10 @@
       "name": "📦 ghidra",
       "path": "cebbys-ctd-ghidra",
     },
+    {
+      "name": "📦 ctd",
+      "path": "cebbys-ctd",
+    },
     // {
     // 	"name": "📦 lsp",
     // 	"path": "cebbys-ctd-lsp"
@@ -45,6 +49,7 @@
       "${workspaceFolder:🏠 root}/cebbys-ctd-resolver/sources",
       "${workspaceFolder:🏠 root}/cebbys-ctd-loader/sources",
       "${workspaceFolder:🏠 root}/cebbys-ctd-ghidra/sources",
+      "${workspaceFolder:🏠 root}/cebbys-ctd/sources",
       "${workspaceFolder:🏠 root}/hints",
     ],
     "python.analysis.stubPath": "${workspaceFolder:🏠 root}/hints",
@@ -75,6 +80,7 @@
       "**/cebbys-ctd-loader/**": true,
       "**/cebbys-ctd-ghidra/**": true,
       "**/cebbys-ctd-lsp/**": true,
+      "**/cebbys-ctd/**": true,
       "**/.pytest_cache": true,
       "**/__pycache__": true,
     },
@@ -128,6 +134,7 @@
           "cebbys-ctd-utility",
           "cebbys-ctd-ghidra",
           "cebbys-ctd-lsp",
+          "cebbys-ctd",
         ],
         "format": "svg",
       },

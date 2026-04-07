@@ -1,0 +1,209 @@
+import "microsoft/wincrypt"
+import "microsoft/guiddef"
+import "microsoft/unknown"
+import "std/types"
+
+
+
+namespace com::microsoft::direct::graphics::dxgi {
+    use com::microsoft::windows::guid
+    use com::microsoft::windows
+    use std::types
+
+    // TODO These shall be implemented later
+    alias Any IDXGIOutput
+    alias Any DXGI_SWAP_CHAIN_DESC
+    alias Any DXGI_MODE_DESC
+    alias Any DXGI_FRAME_STATISTICS
+
+    @CType("DXGI_SAMPLE_DESC")
+    flag Usage : Unt4 {
+        SHADER_INPUT         = 0x10
+        RENDER_TARGET_OUTPUT
+        BACK_BUFFER
+        SHARED
+        READ_ONLY
+        DISCARD_ON_PRESENT
+        UNORDERED_ACCESS
+    }
+
+    @CType("DXGI_SAMPLE_DESC")
+    flag SwapChainFlag : Unt4 {
+        NON_PRE_RENDERED
+        ALLOW_MODE_SWITCH
+        GDI_COMPATIBLE
+        RESTRICTED_CONTENT
+        RESTRICT_SHARED_RESOURCE_DRIVER
+        DISPLAY_ONLY
+        UNORDERED_ACCESS_VIEW
+        FRAME_LATENCY_WAITABLE_OBJECT
+        FOREGROUND_LAYER
+        FULLSCREEN_VIDEO
+        YUV_VIDEO
+        HW_PROTECTED
+        ALLOW_TEARING
+        RESTRICTED_TO_ALL_HOLOGRAPHIC_DISPLAYS
+    }
+
+    enum ScanLineOrderMode : Unt4 {
+        UNSPECIFIED       = 0
+        PROGRESSIVE       = 1
+        UPPER_FIELD_FIRST = 2
+        LOWER_FIELD_FIRST = 3
+    }
+
+    enum ScalingMode : Unt4 {
+        UNSPECIFIED = 0
+        CENTERED    = 1
+        STRETCHED   = 2
+    }
+
+    enum Format : Unt4 {
+        UNKNOWN             = 0
+        R32G32B32A32_FLOAT  = 2
+        R32G32B32A32_UINT   = 3
+        R32G32B32A32_SINT   = 4
+        R16G16B16A16_FLOAT  = 10
+        R16G16B16A16_UNORM  = 11
+        R32G32_FLOAT        = 16
+        R10G10B10A2_UNORM   = 24
+        R8G8B8A8_UNORM      = 28
+        R8G8B8A8_UNORM_SRGB = 29
+        R8G8B8A8_UINT       = 30
+        B8G8R8A8_UNORM      = 87
+        B8G8R8A8_UNORM_SRGB = 91
+    }
+    
+    @CType("DXGI_SWAP_EFFECT")
+    enum SwapEffect : Unt4 {
+        DISCARD         = 0
+        SEQUENTIAL      = 1
+        FLIP_SEQUENTIAL = 3
+        FLIP_DISCARD    = 4
+    }
+
+
+    @CType("dxgi.h", "IDXGIObject")
+    interface DXGIObject : IUnknown {
+        HRESULT SetPrivateData(
+            REFGUID name,
+            Unt4 dataSize,
+            Any data
+        )
+
+        HRESULT SetPrivateDataInterface(
+            REFGUID name,
+            IUnknown* dataInterface
+        )
+
+        HRESULT GetPrivateData(
+            REFGUID name,
+            Unt4* dataSize,
+            Any data
+        )
+
+        HRESULT GetParent(
+            REFIID riid,
+            Any* parent
+        )
+    }
+
+    @CType("dxgi.h", "IDXGIObject")
+    interface IDXGIDeviceSubObject : DXGIObject {
+        HRESULT GetDevice(
+            REFIID riid,
+            Any* device
+        )
+    }
+
+    @CType("dxgi.h", "IDXGISwapChain")
+    interface IDXGISwapChain : IDXGIDeviceSubObject {
+        HRESULT Present( 
+            Unt4    SyncInterval,
+            Unt4    Flags
+        )
+        
+        HRESULT GetBuffer( 
+            Unt4    buffer,
+            REFIID  riid,
+            Any*    surface
+        )
+        
+        HRESULT SetFullscreenState( 
+            BOOL            fullscreen,
+            IDXGIOutput*    target
+        )
+        
+        HRESULT GetFullscreenState( 
+            BOOL*           fullscreen,
+            IDXGIOutput**   target
+        )
+        
+        HRESULT GetDesc( 
+            DXGI_SWAP_CHAIN_DESC *pDesc
+        )
+        
+        HRESULT ResizeBuffers( 
+            Unt4 bufferCount,
+            Unt4 width,
+            Unt4 height,
+            Format newFormat,
+            Unt4 swapChainFlags
+        )
+        
+        HRESULT ResizeTarget( 
+            DXGI_MODE_DESC *pNewTargetParameters
+        )
+        
+        HRESULT GetContainingOutput( 
+            IDXGIOutput **ppOutput
+        )
+        
+        HRESULT GetFrameStatistics( 
+            DXGI_FRAME_STATISTICS *pStats
+        )
+        
+        HRESULT GetLastPresentCount( 
+            Unt4 *pLastPresentCount
+        )
+    }
+
+
+    @CType("DXGI_RATIONAL")
+    structure Rational {
+        Unt4 numerator
+        Unt4 denominator
+    }
+
+    @CType("DXGI_SAMPLE_DESC")
+    structure SampleDesc {
+        Unt4 count
+        Unt4 quality
+    }
+
+    @CType("DXGI_MODE_DESC")
+    structure ModeDesc {
+        Unt4                width
+        Unt4                height
+        Rational            refreshRate
+        Format              format
+        ScanLineOrderMode   scanLineOrdering
+        ScalingMode         scaling
+    }
+
+    @CType("DXGI_SWAP_CHAIN_DESC")
+    structure SwapChainDesc {
+        ModeDesc        bufferDesc
+        SampleDesc      sampleDesc
+        Usage           bufferUsage
+        Unt4            bufferCount
+        Unt4            outputWindow
+        Unt4            windowed
+        SwapEffect      swapEffect
+        SwapChainFlag   flags
+    }
+
+    structure Adapter {
+        Any vtable
+    }
+}
