@@ -14,12 +14,12 @@ Custom Type Definition Language - A domain-specific language for defining custom
 
 ## Project Structure
 
-The project uses a **uv workspace** with 5 independent modules sharing a single `.venv`:
+The project uses a **uv workspace** with 8 independent modules sharing a single `.venv`:
 
 ```
 cebbys-ctd/                               # Workspace root
 ├── pyproject.toml                        # Workspace configuration
-├── conftest.py                           # Shared test fixtures and utilities
+├── conftest.py                           # Shared test utilities (TestLogger, get_workspace_root, get_module_root)
 ├── uv.lock                               # Lockfile for all workspace dependencies
 ├── .venv/                                # Shared virtual environment
 │
@@ -37,11 +37,31 @@ cebbys-ctd/                               # Workspace root
 │   ├── pyproject.toml
 │   └── sources/lv/cebbys/languages/ctd/types/
 │       ├── __init__.py
-│       ├── ctd/                          # Resolved CTD definition types (active)
+│       ├── __api__.py                    # Shared base types
+│       ├── exception/                    # Exception types
+│       │   └── __init__.py
+│       ├── ctd/                          # Resolved CTD definition types
+│       │   ├── __init__.py
+│       │   ├── __api__.py               # Base declaration types
+│       │   ├── builtin.py               # Built-in type definitions
+│       │   ├── module.py                # Module definition
+│       │   ├── namespace.py             # Namespace definition
+│       │   ├── decorator.py             # Decorator definition
+│       │   ├── declaration.py           # Declaration definition
+│       │   ├── typedef.py               # Typedef definition
+│       │   ├── alias.py                 # Alias definition
+│       │   ├── enum.py                  # Enum definition
+│       │   ├── flag.py                  # Flag definition
+│       │   ├── structure.py             # Structure definition
+│       │   ├── interface.py             # Interface definition
+│       │   └── function.py              # Function definition
 │       └── meta/                         # Metadata types (pre-resolution)
 │           ├── __init__.py
-│           ├── __api__.py               # Meta base class, ModulePath
-│           ├── decorator.py             # DecoratorMeta
+│           ├── __api__.py               # Meta base class, ModulePath, DecoratorMeta, DecoratableMeta, DeclarationMeta
+│           ├── module.py                # ModuleMeta
+│           ├── namespace.py             # NamespaceMeta
+│           ├── include.py               # IncludeMeta
+│           ├── typespec.py              # TypespecMeta, PointerTypespecMeta, ArrayTypespecMeta, TypedTypespecMeta
 │           ├── typedef.py               # TypedefMeta
 │           ├── alias.py                 # AliasMeta
 │           ├── enum.py                  # EnumMeta, EnumMemberMeta
@@ -51,14 +71,28 @@ cebbys-ctd/                               # Workspace root
 │           ├── function.py              # FunctionMeta, ParameterMeta
 │           └── collection.py            # DefinitionCollectionMeta
 │
-├── cebbys-ctd-meta/                      # Meta loading module
+├── cebbys-ctd-meta/                      # Meta parsing module
 │   ├── pyproject.toml
 │   ├── sources/lv/cebbys/languages/ctd/meta/
-│   │   ├── __init__.py                  # Exports MetaLoader, MetaVisitor
-│   │   ├── loader.py                    # MetaLoader - orchestrates file parsing
-│   │   └── visitor.py                   # MetaVisitor - ANTLR4 visitor
+│   │   ├── __init__.py                  # Re-exports from parser subpackage
+│   │   └── parser/                      # ANTLR4 context parsing subpackage
+│   │       ├── __init__.py              # CtdMetaParser - static facade
+│   │       ├── __api__.py               # Base parser classes
+│   │       ├── module.py                # Module context parser
+│   │       ├── namespace.py             # Namespace context parser
+│   │       ├── include.py               # Include/import context parser
+│   │       ├── decorator.py             # Decorator context parser
+│   │       ├── typespec.py              # TypeSpec context parser
+│   │       ├── declaration.py           # Declaration context parser
+│   │       ├── typedef.py               # Typedef context parser
+│   │       ├── alias.py                 # Alias context parser
+│   │       ├── enum.py                  # Enum context parser
+│   │       ├── flag.py                  # Flag context parser
+│   │       ├── structure.py             # Structure context parser
+│   │       ├── interface.py             # Interface context parser
+│   │       └── function.py              # Function context parser
 │   ├── resources/test/ctd/              # Test CTD files
-│   └── tests/                           # Stage 1 tests (meta loading)
+│   └── tests/                           # Stage 1 tests (meta parsing)
 │
 ├── cebbys-ctd-resolver/                  # Type resolution module
 │   ├── pyproject.toml
@@ -66,7 +100,22 @@ cebbys-ctd/                               # Workspace root
 │   │   ├── __init__.py                  # Exports CtdMetaResolver
 │   │   ├── resolver.py                  # CtdMetaResolver - main entry point
 │   │   ├── constructor/                 # Stage 2: declaration construction
+│   │   │   ├── __init__.py
+│   │   │   ├── __api__.py
+│   │   │   ├── module.py
+│   │   │   ├── namespace.py
+│   │   │   ├── declaration.py
+│   │   │   └── decorator.py
 │   │   ├── linker/                      # Stage 3: reference linking
+│   │   │   ├── __init__.py
+│   │   │   ├── __api__.py
+│   │   │   ├── alias.py
+│   │   │   ├── enum.py
+│   │   │   ├── flag.py
+│   │   │   ├── function.py
+│   │   │   ├── interface.py
+│   │   │   ├── structure.py
+│   │   │   └── typedef.py
 │   │   ├── manager/                     # Resolution manager
 │   │   ├── storage/                     # Type cache / storage
 │   │   └── event/                       # Resolution events
@@ -75,10 +124,60 @@ cebbys-ctd/                               # Workspace root
 │
 ├── cebbys-ctd-loader/                    # Main loader module (public API)
 │   ├── pyproject.toml
-│   ├── sources/lv/cebbys/languages/ctd/
+│   ├── sources/lv/cebbys/languages/ctd/loader/
+│   │   ├── __init__.py                  # CtdLoader - main entry point
+│   │   ├── file.py                      # CtdFileCtxLoader - file discovery
+│   │   ├── antlr.py                     # CtdAntlrCtxLoader - ANTLR4 parsing
+│   │   ├── meta.py                      # CtdMetaLoader - meta conversion
+│   │   ├── module.py                    # Module utilities
+│   │   └── registry/
+│   │       └── __init__.py              # Registry
+│   ├── resources/ctd/                   # Sample CTD files
+│   └── tests/
+│
+├── cebbys-ctd-utility/                   # Shared utility module
+│   ├── pyproject.toml
+│   ├── sources/lv/cebbys/languages/ctd/utility/
 │   │   ├── __init__.py
-│   │   └── loader.py                    # CtdLoader - main entry point
-│   └── resources/ctd/                   # Sample CTD files
+│   │   └── logging.py                   # Logging utilities
+│   └── tests/
+│
+├── cebbys-ctd-lsp/                       # Language Server Protocol module
+│   ├── pyproject.toml
+│   └── sources/lv/cebbys/languages/ctd/lsp/
+│       ├── __init__.py
+│       ├── __main__.py                  # Entry point (cebbys-ctd-lsp CLI)
+│       ├── server.py                    # LSP server
+│       ├── context.py                   # LSP context
+│       ├── completer/
+│       │   └── module.py               # Module completion
+│       ├── indexer/
+│       │   └── ctd.py                  # CTD indexer
+│       └── types/
+│           └── __init__.py
+│
+├── cebbys-ctd-ghidra/                    # Ghidra integration module
+│   ├── pyproject.toml
+│   ├── start-ghidra.py                  # Ghidra launch script
+│   ├── sources/lv/cebbys/languages/ctd/ghidra/
+│   │   ├── __init__.py
+│   │   ├── datatype/
+│   │   │   ├── __init__.py
+│   │   │   ├── __utility__.py
+│   │   │   ├── resolver/
+│   │   │   │   └── __init__.py
+│   │   │   └── storage/connector/
+│   │   │       ├── __init__.py
+│   │   │       ├── ghidra/
+│   │   │       │   └── __init__.py     # Ghidra datatype connector
+│   │   │       └── sqlite/
+│   │   │           ├── __init__.py     # SQLite ORM connector
+│   │   │           └── __utility__.py
+│   │   └── process/synchronize/
+│   │       ├── __init__.py
+│   │       └── thread.py               # Synchronization thread
+│   ├── resources/ctd/                   # CTD definition files (cebbys/, microsoft/, procyon/)
+│   └── tests/
 │
 └── hints/                                # Type stubs for external libraries
     └── antlr4/
@@ -88,14 +187,17 @@ cebbys-ctd/                               # Workspace root
 
 ```
 cebbys-ctd-antlr4     (no internal deps, depends on antlr4-python3-runtime)
-       ↓
 cebbys-ctd-types      (no internal deps)
+cebbys-ctd-utility    (no internal deps)
        ↓
 cebbys-ctd-meta       (depends on: antlr4, types)
        ↓
 cebbys-ctd-resolver   (depends on: meta, types)
        ↓
 cebbys-ctd-loader     (depends on: resolver, meta, types)
+       ↓
+cebbys-ctd-lsp        (depends on: loader)
+cebbys-ctd-ghidra     (depends on: antlr4, resolver, meta, types)
 ```
 
 ## Workspace Configuration
@@ -120,6 +222,9 @@ members = [
     "cebbys-ctd-meta",
     "cebbys-ctd-resolver",
     "cebbys-ctd-loader",
+    "cebbys-ctd-utility",
+    "cebbys-ctd-lsp",
+    "cebbys-ctd-ghidra",
 ]
 ```
 
@@ -171,16 +276,17 @@ package/
 
 The project consists of 3 processing stages forming a pipeline:
 
-### Stage 1: Meta Loading (`cebbys-ctd-meta`)
+### Stage 1: Meta Parsing (`cebbys-ctd-meta`)
 
 Parses CTD files and constructs metadata objects.
 
 - **Input**: CTD source files (`.ctd`)
 - **Output**: `DefinitionCollectionMeta` containing unresolved `*Meta` objects
 - **Components**:
-  - `MetaLoader` - Orchestrates file discovery and parsing
-  - `MetaVisitor` - ANTLR4 visitor that transforms parse tree to Meta objects
+  - `CtdMetaParser` - Static facade in `parser/__init__.py` that dispatches to per-type parsers
+  - Per-type parsers (`CtdTypedefContextParser`, etc.) - Transform ANTLR4 parse tree contexts to Meta objects
   - `*Meta` classes - Lightweight metadata containers (strings, not resolved references)
+- **Note**: File discovery and ANTLR4 invocation are handled by `cebbys-ctd-loader` (`CtdFileCtxLoader`, `CtdAntlrCtxLoader`, `CtdMetaLoader`)
 
 ### Stage 2: Declaration Construction (`cebbys-ctd-resolver` - Constructor Phase)
 
@@ -212,7 +318,7 @@ Resolves all type references and establishes relationships between declarations.
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
 │  CTD Files ──► Stage 1 ──► Stage 2 ──► Stage 3 ──► Module (collection)      │
-│               (Loading)  (Constructor) (Linker)                             │
+│               (Parsing)  (Constructor) (Linker)                             │
 │                                                                             │
 │  *.ctd    ──► *Meta     ──► Declaration ──► Resolved  ──► Immutable         │
 │  files        objects       singletons      references    module            │
@@ -240,6 +346,10 @@ uv run pytest -v
 uv run pytest cebbys-ctd-antlr4/tests -v
 uv run pytest cebbys-ctd-meta/tests -v
 uv run pytest cebbys-ctd-resolver/tests -v
+uv run pytest cebbys-ctd-types/tests -v
+uv run pytest cebbys-ctd-utility/tests -v
+uv run pytest cebbys-ctd-loader/tests -v
+uv run pytest cebbys-ctd-ghidra/tests -v
 
 # Add dependency to specific package
 uv add <package> --package cebbys-ctd-meta
@@ -254,19 +364,34 @@ Tests are organized by module and stage:
 
 ```
 cebbys-ctd/
-├── conftest.py                           # Shared fixtures (parse_ctd_file, TestLogger, etc.)
-├── cebbys-ctd-antlr4/tests/             # ANTLR4 import tests
-├── cebbys-ctd-meta/tests/               # Stage 1: Meta loading tests
-│   ├── test_alias.py
-│   ├── test_enum.py
-│   ├── test_flag.py
-│   ├── test_function.py
-│   ├── test_interface.py
-│   ├── test_structure.py
+├── conftest.py                           # Shared utilities (TestLogger, get_workspace_root, get_module_root)
+├── cebbys-ctd-antlr4/tests/             # ANTLR4 tests
+│   ├── test_import.py
+│   ├── test_module_declaration.py
+│   ├── test_parse_structure.py
+│   ├── test_parse_type_spec.py
+│   └── test_parse_typedef.py
+├── cebbys-ctd-meta/tests/               # Stage 1: Meta parsing tests
+│   ├── test_parse_alias.py
+│   ├── test_parse_enum.py
+│   ├── test_parse_flag.py
+│   ├── test_parse_function.py
+│   ├── test_parse_interface.py
+│   ├── test_parse_structure.py
+│   ├── test_parse_type_spec.py
+│   ├── test_parse_typedef.py
+│   ├── test_parse_typespec.py
+│   └── test_multi_extension.py
+├── cebbys-ctd-utility/tests/            # Utility tests
+│   ├── test_logging.py
+│   └── test_trace_logging.py
+├── cebbys-ctd-resolver/tests/           # Stage 2-3: Construction & resolution tests
+│   └── test_source_and_decorators.py
+├── cebbys-ctd-loader/tests/             # Loader integration tests
+│   ├── test_loader.py
 │   └── test_typedef.py
-└── cebbys-ctd-resolver/tests/           # Stage 2-3: Construction & resolution tests
-    ├── test_definition_creation.py      # Stage 2 tests
-    └── test_type_resolution.py          # Stage 3 tests
+└── cebbys-ctd-ghidra/tests/             # Ghidra integration tests
+    └── test_cursor_execute.py
 ```
 
 ### Test Imports
@@ -274,7 +399,7 @@ cebbys-ctd/
 All tests import from the root `conftest.py`:
 
 ```python
-from conftest import parse_ctd_file, TestLogger, get_resource_path
+from conftest import TestLogger, get_workspace_root, get_module_root
 ```
 
 ### Test Resources
@@ -307,7 +432,7 @@ git commit -m "message"
 
 When implementing new language features, follow this incremental approach:
 
-1. **Implement in order**: Meta Loading → Definition Construction → Reference Resolution
+1. **Implement in order**: Meta Parsing → Definition Construction → Reference Resolution
 2. **Test each stage independently** before proceeding to the next
 3. **Maintain module boundaries** so each step can be tested in isolation
 
@@ -317,8 +442,9 @@ When implementing new language features, follow this incremental approach:
    - Add `UnionMeta` class to `types/meta/union.py`
    - Update `types/meta/__init__.py` to export it
 
-2. **Step 2 - Meta Loading** (`cebbys-ctd-meta`):
-   - Update `visitor.py` to parse union declarations
+2. **Step 2 - Meta Parsing** (`cebbys-ctd-meta`):
+   - Add `union.py` parser to `meta/parser/` subpackage
+   - Register it in `CtdMetaParser` (`meta/parser/__init__.py`)
    - Update `DefinitionCollectionMeta` to store unions
    - **Test**: Verify CTD files parse correctly
 
@@ -327,8 +453,8 @@ When implementing new language features, follow this incremental approach:
    - Update `types/ctd/__init__.py` to export it
 
 4. **Step 4 - Resolver** (`cebbys-ctd-resolver`):
-   - Add `UnionResolver` to `resolver/union.py`
-   - Update `MetaResolver` to use it
+   - Add constructor in `resolver/constructor/` for union declarations
+   - Add linker in `resolver/linker/` for union reference resolution
    - **Test**: Verify definitions are created and resolved
 
 5. **Step 5 - Module** (`cebbys-ctd-types`):
