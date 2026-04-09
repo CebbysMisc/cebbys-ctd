@@ -1,0 +1,19 @@
+import "microsoft/guiddef"
+import "cebbys/std"
+
+namespace com::microsoft::unknownbase {
+    use com::microsoft::guiddef
+    use lv::cebbys::std
+
+    @TypeId("18c13679-d29f-433f-bae6-1327e1670c75")
+    interface IUnknown {
+        @TypeId("be3b6f31-1d67-40c2-8fd2-aae9915fe608")
+        Unt8 QueryInterface(REFIID i_riid, Any* o_interface)
+
+        @TypeId("793f17f3-ab39-4add-8862-97ca461dde3a")
+        Unt8 AddRef()
+        
+        @TypeId("d15a3a59-b8cf-4676-8cd9-20affae17387")
+        Unt8 Release()
+    }
+}

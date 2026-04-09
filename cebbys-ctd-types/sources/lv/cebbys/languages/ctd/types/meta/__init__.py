@@ -20,6 +20,8 @@ from lv.cebbys.languages.ctd.types.meta.enum import EnumMemberMeta
 from lv.cebbys.languages.ctd.types.meta.enum import EnumMeta
 from lv.cebbys.languages.ctd.types.meta.flag import FlagMemberMeta
 from lv.cebbys.languages.ctd.types.meta.flag import FlagMeta
+from lv.cebbys.languages.ctd.types.meta.clazz import ClassMemberMeta
+from lv.cebbys.languages.ctd.types.meta.clazz import ClassMeta
 from lv.cebbys.languages.ctd.types.meta.typespec import (
     PointerTypespecMeta,
     ArrayTypespecMeta,
@@ -47,6 +49,9 @@ __all__ = [
     'StructureMeta',
     # Interface
     'InterfaceMeta',
+    # Class
+    'ClassMemberMeta',
+    'ClassMeta',
     # Function
     'ParameterMeta',
     'FunctionMeta',

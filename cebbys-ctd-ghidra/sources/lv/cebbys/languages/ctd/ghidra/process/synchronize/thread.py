@@ -26,28 +26,31 @@ logger = get_logger(__name__)
 
 def tick(roots: list[Path]) -> None:
     if not started():
-        logger.info("Ghidra is not started, cannot synchronize types")
+        logger.debug("Ghidra is not started, cannot synchronize types")
         return
 
     database_path = Path("ctd_types.db").resolve()
-    logger.info(f"Opening database connection at {database_path}")
+    logger.debug(f"Opening database connection at {database_path}")
     connector = DatatypeConnector(database_path)
 
-    logger.info("Ghidra is started, synchronizing types...")
+    logger.debug("Ghidra is started, synchronizing types...")
     try:
         api = get_interpreter()
         if api:
             program = api.currentProgram
-            logger.info(f"Loading CTDs with {program}...")
+            logger.debug(f"Loading CTDs with {program}...")
             loader = CtdLoader(roots)
             definitions = list(loader.definitions.values())
-            connector.synchronize(program, definitions)
+            result = connector.synchronize(program, definitions)
+            if not result:
+                sleep(10)
     except BaseException as e:
         logger.error(f"Error during synchronization: {e}", exc_info=True)
+        sleep(9)
     finally:
         connector.close()
 
-    sleep(10)
+    sleep(1)
 
 
 def get_interpreter() -> "FlatProgramAPI|None":

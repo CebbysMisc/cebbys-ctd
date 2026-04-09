@@ -33,10 +33,6 @@ PY_TO_SQL: dict[type, str] = {
 
 
 class CursorExecute:
-    def __init_subclass__(cls, **kwargs: Any) -> None:
-        super().__init_subclass__(**kwargs)
-        dataclasses.dataclass(cls)
-
     @classmethod
     def table(cls, cursor: Cursor) -> None:
         """Create the table if it does not already exist."""
@@ -68,7 +64,7 @@ class CursorExecute:
         # Build query: INSERT INTO Table (col1, col2) VALUES (?, ?)
         placeholders = ", ".join(["?"] * len(fields))
         columns = ", ".join(fields)
-        query = f"INSERT INTO {table} ({columns}) VALUES ({placeholders})"
+        query = f"INSERT OR REPLACE INTO {table} ({columns}) VALUES ({placeholders})"
 
         values = tuple(getattr(instance, f) for f in fields)
         cursor.execute(query, values)
@@ -143,16 +139,18 @@ class CursorExecute:
         """Return field names marked as primary keys."""
         if not dataclasses.is_dataclass(cls):
             return []
+
+        fields = dataclasses.fields(cls)
         return [
             f.name
-            for f in dataclasses.fields(cls)
+            for f in fields
             if f.metadata.get("primary_key") is True
         ]
 
     @staticmethod
-    def primary_key(default: Any = None) -> Any:
+    def primary_key() -> Any:
         """Return a dataclass field descriptor marked as a primary key."""
-        return field(default=default, metadata={"primary_key": True})
+        return field(metadata={"primary_key": True})
 
     @classmethod
     def get_table_name(cls):

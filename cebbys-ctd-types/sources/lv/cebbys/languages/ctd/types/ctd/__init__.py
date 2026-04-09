@@ -37,6 +37,10 @@ from lv.cebbys.languages.ctd.types.ctd.structure import (
 from lv.cebbys.languages.ctd.types.ctd.interface import (
     Interface
 )
+from lv.cebbys.languages.ctd.types.ctd.clazz import (
+    Class,
+    ClassMember
+)
 from lv.cebbys.languages.ctd.types.ctd.function import (
     Function,
     Parameter
@@ -66,4 +70,6 @@ __all__ = [
     "Array",
     "Enum",
     "Flag",
+    "Class",
+    "ClassMember",
 ]

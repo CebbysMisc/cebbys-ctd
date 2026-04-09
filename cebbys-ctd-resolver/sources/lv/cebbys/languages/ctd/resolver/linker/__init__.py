@@ -6,6 +6,7 @@ from lv.cebbys.languages.ctd.resolver.linker.flag import FlagLinker
 from lv.cebbys.languages.ctd.resolver.linker.structure import StructureLinker
 from lv.cebbys.languages.ctd.resolver.linker.function import FunctionLinker
 from lv.cebbys.languages.ctd.resolver.linker.interface import InterfaceLinker
+from lv.cebbys.languages.ctd.resolver.linker.clazz import ClassLinker
 from typing import (
     Protocol,
     Any
@@ -35,7 +36,8 @@ def register_linkers():
         Ctd.Typedef: TypedefLinker,
         Ctd.Alias: AliasLinker,
         Ctd.Enum: EnumLinker,
-        Ctd.Flag: FlagLinker
+        Ctd.Flag: FlagLinker,
+        Ctd.Class: ClassLinker,
     }
     for ctd, linker in linker_registry.items():
         setattr(ctd, LINK, linker.link)

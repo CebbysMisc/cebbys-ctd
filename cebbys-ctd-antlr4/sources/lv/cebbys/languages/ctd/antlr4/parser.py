@@ -200,6 +200,17 @@ class CtdParser:
         """
         return CtdParser._parse(content).functionDeclaration()
 
+    def classDeclaration(self, content: str) -> GeneratedCtdParser.CtdParser.ClassDeclarationContext:
+        """Parse a class declaration.
+
+        Args:
+            content: Class declaration (e.g., "class Foo : Bar, IBaz { Int4 x void move() }")
+
+        Returns:
+            ClassDeclarationContext parse tree
+        """
+        return CtdParser._parse(content).classDeclaration()
+
     # =========================================================================
     # Component parsing methods
     # =========================================================================

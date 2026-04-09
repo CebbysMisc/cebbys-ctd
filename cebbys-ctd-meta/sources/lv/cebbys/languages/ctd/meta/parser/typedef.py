@@ -26,7 +26,7 @@ class CtdTypedefContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGramma
             self.rules(ctx, Api.CtdGrammar.DecoratorContext)
         )
         # Create and add typedef metadata
-        return Meta.TypedefMeta(name, typespec, namespace, decorators, ctx)
+        return Meta.TypedefMeta(name, typespec, namespace, ctx, decorators)
 
 
 INSTANCE = CtdTypedefContextParser()

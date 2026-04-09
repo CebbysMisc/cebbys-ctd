@@ -1,10 +1,14 @@
 """Typedef Meta Module"""
 import lv.cebbys.languages.ctd.types.meta.__api__ as Api
 
+from lv.cebbys.languages.ctd.antlr4 import (
+    CtdGrammar,
+)
+
 __all__ = ['TypedefMeta']
 
 
-class TypedefMeta(Api.DeclarationMeta):
+class TypedefMeta(Api.DeclarationMeta[CtdGrammar.TypedefDeclarationContext]):
     """Metadata for a typedef declaration.
 
     Typedef provide metadata for simple type definition by creating new instances.
@@ -23,8 +27,8 @@ class TypedefMeta(Api.DeclarationMeta):
         name: str,
         type_spec: Api.TypespecMeta,
         namespace: Api.ModulePath,
-        decorators: list[Api.DecoratorMeta] = [],
-        ctx=None
+        ctx: CtdGrammar.TypedefDeclarationContext,
+        decorators: list[Api.DecoratorMeta] = []
     ):
         """Initialize typedef metadata.
 
@@ -35,7 +39,7 @@ class TypedefMeta(Api.DeclarationMeta):
             decorators: List of decorators
             ctx: ANTLR4 parse context
         """
-        super().__init__(namespace, name, decorators, ctx)
+        super().__init__(namespace, name, ctx, decorators)
         self._type_spec = type_spec
 
     @property

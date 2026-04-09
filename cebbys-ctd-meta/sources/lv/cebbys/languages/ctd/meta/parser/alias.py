@@ -29,7 +29,7 @@ class CtdAliasContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGrammar.
         decorators = DecoratorModule.CtdDecoratorContextParser.instance().parse_all(
             self.rules(ctx, Api.CtdGrammar.DecoratorContext)
         )
-        out = Meta.AliasMeta(name, typespec, namespace, decorators, ctx)
+        out = Meta.AliasMeta(name, typespec, namespace, ctx, decorators)
         return out
 
 INSTANCE = CtdAliasContextParser()

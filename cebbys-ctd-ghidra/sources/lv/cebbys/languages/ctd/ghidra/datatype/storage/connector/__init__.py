@@ -1,3 +1,4 @@
+
 from lv.cebbys.languages.ctd.ghidra.datatype.storage.connector.ghidra import (
     GhidraConnector,
 )
@@ -8,8 +9,14 @@ from lv.cebbys.languages.ctd.ghidra.datatype.resolver import (
     DatatypeResolver,
 )
 from lv.cebbys.languages.ctd.types.ctd import (
-    SupportsDecorators,
     Declaration,
+    Builtin,
+    Pointer,
+    Alias,
+    Array,
+)
+from lv.cebbys.languages.ctd.utility import (
+    get_logger,
 )
 from ghidra.program.model.listing import (  # type: ignore
     Program,
@@ -18,19 +25,22 @@ from ghidra.program.model.data import (  # type: ignore
     DataType,
     DataTypeManager,
 )
-from sqlite3 import (
-    Connection,
-    PARSE_DECLTYPES,
-)
 from pyghidra import (
     transaction,
 )
 from pathlib import (
     Path,
 )
+from sqlite3 import (
+    Connection,
+    PARSE_DECLTYPES,
+    Cursor,
+)
 from uuid import (
     UUID as Uuid,
 )
+
+logger = get_logger(__name__)
 
 
 class DatatypeConnector:
@@ -40,10 +50,18 @@ class DatatypeConnector:
         CtdTypeMapping.table(self._cursor)
         self._connection.commit()
 
-    def synchronize(self, program: Program, declarations: list[Declaration]) -> None:
-        modified = [declaration for declaration in declarations if is_modified(declaration)]
+    def synchronize(self, program: Program, declarations: list[Declaration]) -> bool:
+        modified = [
+            declaration
+            for declaration in declarations
+            if is_modified(self._cursor, declaration)
+        ]
         if not modified:
-            return
+            return False
+        uuids = [get_type_uuid(declaration) for declaration in modified]
+        if len(uuids) != len(set(uuids)):
+            raise ValueError("Duplicate type UUIDs found in modified declarations")
+
         resolved = resolve(modified)
 
         existing = set(filter(self.is_existing, resolved))
@@ -54,10 +72,12 @@ class DatatypeConnector:
                 manager = program.getDataTypeManager()
                 self.create_datatypes(manager, new)
                 self.update_datatypes(manager, existing)
-            self._connection.commit()
-        except Exception:
+                self._connection.commit()
+        except Exception as e:
             self._connection.rollback()
-            raise
+            logger.error(f"Error during synchronization: {e}", exc_info=True)
+            return False
+        return True
 
     def is_existing(self, entry: tuple[Declaration, DataType]) -> bool:
         declaration, _ = entry
@@ -78,7 +98,7 @@ class DatatypeConnector:
             ghidra_uuid = GhidraConnector.create(manager, datatype)
             type_uuid = get_type_uuid(declaration)
             CtdTypeMapping.insert(self._cursor, CtdTypeMapping(
-                type_uuid=type_uuid, ghidra_uuid=ghidra_uuid
+                type_uuid=type_uuid, type_path=declaration.typeref, ghidra_uuid=ghidra_uuid, sha256=declaration.sha256()
             ))
 
     def update_datatypes(
@@ -98,18 +118,28 @@ class DatatypeConnector:
                     f"Expected existing CtdTypeMapping for type_uuid {type_uuid}, but ghidra_uuid is missing"
                 )
             GhidraConnector.update(manager, mapping.ghidra_uuid, datatype)
+            CtdTypeMapping.insert(self._cursor, CtdTypeMapping(
+                type_uuid=type_uuid, type_path=declaration.typeref, ghidra_uuid=mapping.ghidra_uuid, sha256=declaration.sha256()
+            ))
 
     def close(self) -> None:
         self._connection.close()
 
 
-# TODO As of now keep the declarations always modified because caching in the sqlite connector is not implemented yet
-def is_modified(declaration: Declaration) -> bool:
-    if not isinstance(declaration, SupportsDecorators):
+def is_modified(cursor: Cursor, declaration: Declaration) -> bool:
+    if isinstance(declaration, (Builtin, Pointer, Alias, Array)):
         return False
-    
-    
-    return True
+
+    mapping = CtdTypeMapping.select(
+        cursor,
+        CtdTypeMapping(type_uuid=get_type_uuid(declaration)),
+        mode="one",
+    )
+    if mapping is None:
+        return True
+
+    sha256 = mapping.sha256
+    return sha256 != declaration.sha256()
 
 
 def resolve(declarations: list[Declaration]) -> set[tuple[Declaration, DataType]]:
@@ -120,7 +150,7 @@ def resolve(declarations: list[Declaration]) -> set[tuple[Declaration, DataType]
 
 
 def get_type_uuid(declaration: Declaration) -> Uuid:
-    if not isinstance(declaration, SupportsDecorators):
+    if isinstance(declaration, Builtin):
         raise ValueError(f"Declaration {declaration} does not support decorators")
     decorators = declaration.decorators
     if not decorators:

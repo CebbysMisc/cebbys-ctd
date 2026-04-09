@@ -38,3 +38,4 @@ CtdTypedefConstructEvent = create_construct_event(lambda l: l.handle_construct_t
 CtdAliasConstructEvent = create_construct_event(lambda l: l.handle_construct_alias)
 CtdEnumConstructEvent = create_construct_event(lambda l: l.handle_construct_enum)
 CtdFlagConstructEvent = create_construct_event(lambda l: l.handle_construct_flag)
+CtdClassConstructEvent = create_construct_event(lambda l: l.handle_construct_class)

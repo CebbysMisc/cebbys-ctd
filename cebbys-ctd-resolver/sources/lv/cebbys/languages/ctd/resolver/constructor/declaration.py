@@ -5,6 +5,7 @@ import typing as Typing
 
 from lv.cebbys.languages.ctd.resolver.constructor.decorator import (
     DecoratorConstructor,
+    Decorator,
 )
 from lv.cebbys.languages.ctd.resolver.event.emitter import (
     CtdInterfaceConstructEvent,
@@ -14,6 +15,7 @@ from lv.cebbys.languages.ctd.resolver.event.emitter import (
     CtdAliasConstructEvent,
     CtdEnumConstructEvent,
     CtdFlagConstructEvent,
+    CtdClassConstructEvent,
     Event,
 )
 from lv.cebbys.languages.ctd.types.meta import (
@@ -32,7 +34,7 @@ logger = Logging.get_logger(__name__)
 
 
 class DeclarationConstructorCtx:
-    def __init__(self, factory: Callable[[Namespace, Any, list], Ctd.Declaration], consumer: type[Event[Any]]) -> None:
+    def __init__(self, factory: Callable[[Namespace, Any, list[Decorator]], Ctd.Declaration], consumer: type[Event[Any]]) -> None:
         self.emitter: Typing.Final = consumer
         self.factory: Typing.Final = factory
 
@@ -46,6 +48,7 @@ class DeclarationConstructor:
         Meta.AliasMeta: DeclarationConstructorCtx(Ctd.Alias, CtdAliasConstructEvent),
         Meta.EnumMeta: DeclarationConstructorCtx(Ctd.Enum, CtdEnumConstructEvent),
         Meta.FlagMeta: DeclarationConstructorCtx(Ctd.Flag, CtdFlagConstructEvent),
+        Meta.ClassMeta: DeclarationConstructorCtx(Ctd.Class, CtdClassConstructEvent),
     }
 
     @staticmethod
@@ -76,5 +79,4 @@ class DeclarationConstructor:
         ctx = DeclarationConstructor.MAPPINGS[meta_type]
         declaration = ctx.factory(namespace, meta, decorators)
         logger.trace(f"Created {type(declaration).__name__}: {meta.name}")
-        ctx.emitter.emit(declaration)
         return declaration

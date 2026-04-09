@@ -1,6 +1,10 @@
 """Flag Meta Module"""
 import lv.cebbys.languages.ctd.types.meta.__api__ as Api
 
+from lv.cebbys.languages.ctd.antlr4 import (
+    CtdGrammar,
+)
+
 __all__ = ['FlagMemberMeta', 'FlagMeta']
 
 
@@ -45,7 +49,7 @@ class FlagMemberMeta:
         return self._value
 
 
-class FlagMeta(Api.DeclarationMeta):
+class FlagMeta(Api.DeclarationMeta[CtdGrammar.FlagDeclarationContext]):
     """Metadata for a flag declaration.
 
     Flags are similar to enums but with bit-shifted values.
@@ -70,10 +74,10 @@ class FlagMeta(Api.DeclarationMeta):
         self,
         name: str,
         namespace: Api.ModulePath,
+        ctx: CtdGrammar.FlagDeclarationContext,
         base_type: Api.TypespecMeta | None = None,
         members: list[FlagMemberMeta] = [],
-        decorators: list[Api.DecoratorMeta] = [],
-        ctx=None
+        decorators: list[Api.DecoratorMeta] = []
     ):
         """Initialize flag metadata.
 
@@ -85,7 +89,7 @@ class FlagMeta(Api.DeclarationMeta):
             decorators: List of decorators
             ctx: ANTLR4 parse context
         """
-        super().__init__(namespace, name, decorators, ctx)
+        super().__init__(namespace, name, ctx, decorators)
         self._base_type = base_type
         self._members = list(members)
 

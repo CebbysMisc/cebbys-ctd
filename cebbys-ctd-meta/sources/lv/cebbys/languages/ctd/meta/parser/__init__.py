@@ -11,6 +11,7 @@ import lv.cebbys.languages.ctd.meta.parser.flag as _FlagModule
 import lv.cebbys.languages.ctd.meta.parser.structure as _StructureModule
 import lv.cebbys.languages.ctd.meta.parser.interface as _InterfaceModule
 import lv.cebbys.languages.ctd.meta.parser.function as _FunctionModule
+import lv.cebbys.languages.ctd.meta.parser.clazz as _ClazzModule
 import lv.cebbys.languages.ctd.antlr4 as _Antlr4
 
 from pathlib import (
@@ -85,3 +86,7 @@ class CtdMetaParser:
     @staticmethod
     def parse_function(namespace: str, ctx: _Antlr4.CtdGrammar.FunctionDeclarationContext):
         return _FunctionModule.CtdFunctionContextParser.instance().parse(namespace, ctx)
+
+    @staticmethod
+    def parse_class(namespace: str, ctx: _Antlr4.CtdGrammar.ClassDeclarationContext):
+        return _ClazzModule.CtdClassContextParser.instance().parse(namespace, ctx)

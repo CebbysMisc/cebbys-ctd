@@ -2,10 +2,13 @@ import lv.cebbys.languages.ctd.types.meta as Meta
 import lv.cebbys.languages.ctd.types.ctd as Ctd
 import lv.cebbys.languages.ctd.utility.logging as Logging
 from lv.cebbys.languages.ctd.resolver.constructor.declaration import DeclarationConstructor
+from lv.cebbys.languages.ctd.resolver.constructor.decorator import (
+    DecoratorConstructor,
+    Decorator,
+)
 from lv.cebbys.languages.ctd.resolver.manager import (
     CtdDeclarationStorage
 )
-
 from lv.cebbys.languages.ctd.types.meta import (
     NamespaceMeta
 )
@@ -19,17 +22,17 @@ logger = Logging.get_logger(__name__)
 
 class NamespaceConstructor:
     @staticmethod
-    def construct(module: Module, meta:NamespaceMeta) -> Namespace:
+    def construct(module: Module, meta: NamespaceMeta) -> Namespace:
         """Construct a CTD namespace from metadata.
-        
+
         Args:
             meta: Namespace metadata to construct from
-            
+
         Returns:
             Constructed namespace object
         """
         logger.trace(f"Constructing namespace: {meta.path}")
-        
+
         namespace = Ctd.Namespace(module, meta)
 
         namespace.declarations = []
@@ -38,6 +41,37 @@ class NamespaceConstructor:
             namespace.declarations.append(declaration)
             CtdDeclarationStorage.register(declaration)
 
-        logger.debug(f"Namespace '{meta.path}' constructed with {len(namespace.declarations)} declaration(s)")
-        
+            if isinstance(declaration, Ctd.Interface):
+                for function_meta in declaration.meta.methods:
+                    decorators = [
+                        DecoratorConstructor.construct(decorator_meta)
+                        for decorator_meta in function_meta.decorators
+                    ]
+                    function = Ctd.Function(
+                        namespace,
+                        function_meta,
+                        decorators=decorators,
+                        parent=declaration
+                    )
+                    declaration.methods.append(function)
+                    CtdDeclarationStorage.register(function)
+
+            if isinstance(declaration, Ctd.Class):
+                for function_meta in declaration.meta.methods:
+                    decorators = [
+                        DecoratorConstructor.construct(decorator_meta)
+                        for decorator_meta in function_meta.decorators
+                    ]
+                    function = Ctd.Function(
+                        namespace,
+                        function_meta,
+                        decorators=decorators,
+                        parent=declaration
+                    )
+                    declaration.methods.append(function)
+                    CtdDeclarationStorage.register(function)
+
+        logger.debug(
+            f"Namespace '{meta.path}' constructed with {len(namespace.declarations)} declaration(s)")
+
         return namespace

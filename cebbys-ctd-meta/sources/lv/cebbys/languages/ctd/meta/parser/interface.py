@@ -36,7 +36,7 @@ class CtdInterfaceContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGram
             for method_ctx in self.rules(method_list_ctx, Api.CtdGrammar.FunctionDeclarationContext):
                 methods.append(function_parser.parse(namespace, method_ctx))
 
-        return Meta.InterfaceMeta(name, namespace, base_type, methods, decorators, ctx)
+        return Meta.InterfaceMeta(name, namespace, ctx, base_type, methods, decorators)
 
 
 INSTANCE = CtdInterfaceContextParser()

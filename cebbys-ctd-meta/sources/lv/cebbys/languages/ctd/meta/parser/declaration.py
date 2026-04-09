@@ -6,6 +6,7 @@ import lv.cebbys.languages.ctd.meta.parser.typedef as TypedefModule
 import lv.cebbys.languages.ctd.meta.parser.alias as AliasModule
 import lv.cebbys.languages.ctd.meta.parser.enum as EnumModule
 import lv.cebbys.languages.ctd.meta.parser.flag as FlagModule
+import lv.cebbys.languages.ctd.meta.parser.clazz as ClazzModule
 import lv.cebbys.languages.ctd.types.meta as Meta
 import typing as Typing
 
@@ -42,5 +43,6 @@ INSTANCE = CtdDeclarationContextParser({
     Api.CtdGrammar.FlagDeclarationContext: FlagModule.CtdFlagContextParser,
     Api.CtdGrammar.StructureDeclarationContext: StructureModule.CtdStructureContextParser,
     Api.CtdGrammar.InterfaceDeclarationContext: InterfaceModule.CtdInterfaceContextParser,
-    Api.CtdGrammar.FunctionDeclarationContext: FunctionModule.CtdFunctionContextParser
+    Api.CtdGrammar.FunctionDeclarationContext: FunctionModule.CtdFunctionContextParser,
+    Api.CtdGrammar.ClassDeclarationContext: ClazzModule.CtdClassContextParser,
 })

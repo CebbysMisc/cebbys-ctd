@@ -1,6 +1,10 @@
 """Enum Meta Module"""
 import lv.cebbys.languages.ctd.types.meta.__api__ as Api
 
+from lv.cebbys.languages.ctd.antlr4 import (
+    CtdGrammar,
+)
+
 __all__ = ['EnumMemberMeta', 'EnumMeta']
 
 
@@ -43,7 +47,7 @@ class EnumMemberMeta:
         return self._value
 
 
-class EnumMeta(Api.DeclarationMeta):
+class EnumMeta(Api.DeclarationMeta[CtdGrammar.EnumDeclarationContext]):
     """Metadata for an enum declaration.
 
     Enums provide metadata for enumerated types with named integer constants.
@@ -70,10 +74,10 @@ class EnumMeta(Api.DeclarationMeta):
         self,
         name: str,
         namespace: Api.ModulePath,
+        ctx: CtdGrammar.EnumDeclarationContext,
         base_type: Api.TypespecMeta | None = None,
         members: list[EnumMemberMeta] = [],
         decorators: list[Api.DecoratorMeta] = [],
-        ctx=None
     ):
         """Initialize enum metadata.
 
@@ -85,7 +89,7 @@ class EnumMeta(Api.DeclarationMeta):
             decorators: List of decorators
             ctx: ANTLR4 parse context
         """
-        super().__init__(namespace, name, decorators, ctx)
+        super().__init__(namespace, name, ctx, decorators)
         self._base_type = base_type
         self._members = list(members)
 

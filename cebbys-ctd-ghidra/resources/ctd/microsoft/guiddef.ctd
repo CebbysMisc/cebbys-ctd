@@ -1,0 +1,19 @@
+import "cebbys/std"
+
+namespace com::microsoft::guiddef {
+    use lv::cebbys::std
+    
+    @TypeId("c7165086-69d4-4a59-b046-7bbf9b9b2f2d")
+    structure Guid {
+        Unt8    data1
+        Unt2    data2
+        Unt2    data3
+        Unt1[8] data4
+    }
+
+    alias Guid  GUID
+    alias GUID* REFGUID
+    alias GUID  IID
+    alias IID*  REFIID
+}
+

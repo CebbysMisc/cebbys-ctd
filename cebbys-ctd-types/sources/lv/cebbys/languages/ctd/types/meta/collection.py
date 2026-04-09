@@ -6,6 +6,7 @@ import lv.cebbys.languages.ctd.types.meta.typedef as TypedefModule
 import lv.cebbys.languages.ctd.types.meta.alias as AliasModule
 import lv.cebbys.languages.ctd.types.meta.enum as EnumModule
 import lv.cebbys.languages.ctd.types.meta.flag as FlagModule
+import lv.cebbys.languages.ctd.types.meta.clazz as ClazzModule
 import typing as Typing
 
 __all__ = ['DefinitionCollectionMeta']
@@ -30,6 +31,7 @@ class DefinitionCollectionMeta:
         self._aliases = create_collection(AliasModule.AliasMeta)
         self._enums = create_collection(EnumModule.EnumMeta)
         self._flags = create_collection(FlagModule.FlagMeta)
+        self._classes = create_collection(ClazzModule.ClassMeta)
 
     @property
     def typedefs(self):
@@ -121,6 +123,19 @@ class DefinitionCollectionMeta:
             function: FunctionMeta instance to add
         """
         self._functions.append(function)
+
+    @property
+    def classes(self):
+        """Get the list of class definitions."""
+        return self._classes
+
+    def add_class(self, clazz: ClazzModule.ClassMeta) -> None:
+        """Add a class to the collection.
+
+        Args:
+            clazz: ClassMeta instance to add
+        """
+        self._classes.append(clazz)
 
     def add_all(self, collection: 'DefinitionCollectionMeta') -> None:
         """Adds all definitions from collection to the collection.

@@ -1,10 +1,14 @@
 """Alias Meta Module"""
 import lv.cebbys.languages.ctd.types.meta.__api__ as Api
 
+from lv.cebbys.languages.ctd.antlr4 import (
+    CtdGrammar,
+)
+
 __all__ = ['AliasMeta']
 
 
-class AliasMeta(Api.DeclarationMeta):
+class AliasMeta(Api.DeclarationMeta[CtdGrammar.AliasDeclarationContext]):
     """Metadata for an alias declaration.
 
     Alias provide metadata for simple type renaming without creating a new type.
@@ -24,8 +28,8 @@ class AliasMeta(Api.DeclarationMeta):
         name: str,
         type_spec: Api.TypespecMeta,
         namespace: Api.ModulePath,
+        ctx: CtdGrammar.AliasDeclarationContext,
         decorators: list[Api.DecoratorMeta] = [],
-        ctx=None
     ) -> None:
         """Initialize alias metadata.
 
@@ -36,12 +40,10 @@ class AliasMeta(Api.DeclarationMeta):
             decorators: List of decorators
             ctx: ANTLR4 parse context
         """
-        super().__init__(namespace, name, decorators, ctx)
+        super().__init__(namespace, name, ctx, decorators)
         self._type_spec = type_spec
 
     @property
     def type_spec(self) -> Api.TypespecMeta:
         """Get the type specification."""
         return self._type_spec
-    
-

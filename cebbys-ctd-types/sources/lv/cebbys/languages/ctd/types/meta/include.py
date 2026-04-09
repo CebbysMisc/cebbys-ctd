@@ -1,3 +1,7 @@
+from lv.cebbys.languages.ctd.antlr4 import (
+    CtdGrammar,
+)
+
 __all__ = ['IncludeMeta']
 
 

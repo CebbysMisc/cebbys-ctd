@@ -6,6 +6,7 @@ from lv.cebbys.languages.ctd.types.ctd import (
     Alias,
     Enum,
     Flag,
+    Class,
 )
 
 class CtdEventListener:
@@ -22,5 +23,7 @@ class CtdEventListener:
     def handle_construct_enum(self, value: Enum): ...
 
     def handle_construct_flag(self, value: Flag): ...
+
+    def handle_construct_class(self, value: Class): ...
 
     def handle_initialize_interface(self, value: Interface): ...

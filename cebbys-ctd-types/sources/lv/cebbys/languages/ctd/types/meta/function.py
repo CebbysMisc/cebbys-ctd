@@ -1,6 +1,10 @@
 """Function Meta Module"""
 import lv.cebbys.languages.ctd.types.meta.__api__ as Api
 
+from lv.cebbys.languages.ctd.antlr4 import (
+    CtdGrammar,
+)
+
 __all__ = ['ParameterMeta', 'FunctionMeta']
 
 
@@ -52,7 +56,7 @@ class ParameterMeta:
         return self._decorators
 
 
-class FunctionMeta(Api.DeclarationMeta):
+class FunctionMeta(Api.DeclarationMeta[CtdGrammar.FunctionDeclarationContext]):
     """Metadata for a function declaration.
 
     Functions define callable signatures with a return type, name, and parameters.
@@ -77,9 +81,9 @@ class FunctionMeta(Api.DeclarationMeta):
         name: str,
         namespace: Api.ModulePath,
         return_type: Api.TypespecMeta,
+        ctx: CtdGrammar.FunctionDeclarationContext,
         parameters: list[ParameterMeta] = [],
-        decorators: list[Api.DecoratorMeta] = [],
-        ctx=None
+        decorators: list[Api.DecoratorMeta] = []
     ):
         """Initialize function metadata.
 
@@ -91,7 +95,7 @@ class FunctionMeta(Api.DeclarationMeta):
             decorators: List of decorators (e.g., @WinApi)
             ctx: ANTLR4 parse context
         """
-        super().__init__(namespace, name, decorators, ctx)
+        super().__init__(namespace, name, ctx, decorators)
         self._return_type = return_type
         self._parameters = list(parameters)
 

@@ -1,6 +1,10 @@
 """Structure Meta Module"""
 import lv.cebbys.languages.ctd.types.meta.__api__ as Api
 
+from lv.cebbys.languages.ctd.antlr4 import (
+    CtdGrammar,
+)
+
 __all__ = ['StructureMemberMeta', 'StructureMeta']
 
 
@@ -40,7 +44,7 @@ class StructureMemberMeta:
         return self._type_spec
 
 
-class StructureMeta(Api.DeclarationMeta):
+class StructureMeta(Api.DeclarationMeta[CtdGrammar.StructureDeclarationContext]):
     """Metadata for a structure declaration.
 
     Structures define composite types with named member fields.
@@ -71,10 +75,10 @@ class StructureMeta(Api.DeclarationMeta):
         self,
         name: str,
         namespace: Api.ModulePath,
+        ctx: CtdGrammar.StructureDeclarationContext,
         base_type: Api.TypespecMeta | None = None,
         members: list[StructureMemberMeta] = [],
-        decorators: list[Api.DecoratorMeta] = [],
-        ctx=None
+        decorators: list[Api.DecoratorMeta] = []
     ):
         """Initialize structure metadata.
 
@@ -86,7 +90,7 @@ class StructureMeta(Api.DeclarationMeta):
             decorators: List of decorators
             ctx: ANTLR4 parse context
         """
-        super().__init__(namespace, name, decorators, ctx)
+        super().__init__(namespace, name, ctx, decorators)
         self._base_type = base_type
         self._members = list(members)
 

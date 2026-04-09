@@ -1,11 +1,15 @@
+from lv.cebbys.languages.ctd.types.meta import (
+    DeclarationMeta,
+)
+from hashlib import (
+    sha256,
+)
 from typing import (
     TYPE_CHECKING,
     Generic,
     TypeVar,
     Any
 )
-from lv.cebbys.languages.ctd.types.meta import DeclarationMeta
-
 if TYPE_CHECKING:
     from lv.cebbys.languages.ctd.types.ctd.decorator import Decorator
     from lv.cebbys.languages.ctd.types.ctd.namespace import Namespace
@@ -56,3 +60,7 @@ class Declaration(Generic[M]):
 
     def hash(self) -> int:
         return hash(self.typeref)
+
+    def sha256(self) -> str:
+        data = (self.typeref + self.source).encode()
+        return sha256(data).hexdigest()

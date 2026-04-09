@@ -17,7 +17,8 @@ declaration:
     | flagDeclaration
     | structureDeclaration
     | interfaceDeclaration
-    | functionDeclaration;
+    | functionDeclaration
+    | classDeclaration;
 
 typedefDeclaration: decorator* 'typedef' typeSpec IDENTIFIER;
 
@@ -44,6 +45,15 @@ interfaceDeclaration:
     decorator* 'interface' IDENTIFIER (':' typeSpec)? '{' interfaceMethodList? '}';
 
 interfaceMethodList: functionDeclaration functionDeclaration*;
+
+classDeclaration:
+    decorator* 'class' IDENTIFIER (':' typeSpec (',' typeSpec)*)? '{' classMemberList? classMethodList? '}';
+
+classMemberList: classMember classMember*;
+
+classMember: decorator* typeSpec IDENTIFIER;
+
+classMethodList: functionDeclaration functionDeclaration*;
 
 structureMemberList: structureMember structureMember*;
 

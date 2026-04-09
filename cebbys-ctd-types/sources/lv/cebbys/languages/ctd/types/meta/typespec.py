@@ -1,8 +1,14 @@
 import typing as Typing
 
+from lv.cebbys.languages.ctd.antlr4 import (
+    CtdGrammar,
+)
+
+
 class TypespecMeta:
     def __repr__(self):
         return f"{type(self).__name__}[\"{self.__str__()}\"]"
+
 
 class PointerTypespecMeta(TypespecMeta):
     base: Typing.Final[TypespecMeta]
@@ -13,6 +19,7 @@ class PointerTypespecMeta(TypespecMeta):
 
     def __str__(self) -> str:
         return f"{self.base}*"
+
 
 class ArrayTypespecMeta(TypespecMeta):
     base: Typing.Final[TypespecMeta]
@@ -25,6 +32,7 @@ class ArrayTypespecMeta(TypespecMeta):
 
     def __str__(self) -> str:
         return f"{self.base}[{self.size}]"
+
 
 class TypedTypespecMeta(TypespecMeta):
     qualified_name: Typing.Final[str]

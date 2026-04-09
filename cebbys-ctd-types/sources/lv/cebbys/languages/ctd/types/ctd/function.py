@@ -39,10 +39,12 @@ class Function(Declaration[FunctionMeta]):
         namespace: "Namespace",
         meta: "FunctionMeta",
         decorators: list[Decorator] | None = None,
+        parent: "Declaration|None" = None
     ) -> None:
         super().__init__(namespace, meta, decorators)
         self.parameters = []
         self.base = None
+        self._parent = parent
 
     def __str__(self) -> str:
         try:
@@ -55,3 +57,21 @@ class Function(Declaration[FunctionMeta]):
 
     def __repr__(self) -> str:
         return f"Function({self.namespace.path}::{self.name})"
+
+    @property
+    def name(self) -> str:
+        if self.parent:
+            return f"{self.parent.name}_{self.meta.name}"
+        else:
+            return self.meta.name
+
+    @property
+    def namespace(self):
+        if self.parent:
+            return self.parent.namespace
+        else:
+            return super().namespace
+
+    @property
+    def parent(self):
+        return self._parent

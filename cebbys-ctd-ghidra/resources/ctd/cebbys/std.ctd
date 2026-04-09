@@ -26,4 +26,34 @@ namespace lv::cebbys::std {
     typedef void            Void
     @TypeId("6acb165c-8e4d-4245-834e-59f521070022")
     typedef Void*           Any
+
+    @TypeId("81633128-b3b9-4e1e-8202-a876e49783fb")
+    typedef char            Char
+    @TypeId("0afe2d55-0911-433e-9a98-13921852480f")
+    typedef wchar           Whar
+
+    @TypeId("1ca21159-fd05-41f3-8603-e1fb3297a817")
+    typedef char*           Cstring
+    @TypeId("aa041540-cf4c-4ce9-a6ef-70b1146728eb")
+    typedef wchar*          Wstring
+
+    @TypeId("feb52cec-2775-4c4f-86fc-a6f9de70b6c8")
+    enum Bool1 : Unt1 {
+        TRUE = 0x1
+        FALSE = 0x0
+    }
+    @TypeId("247e7182-6705-4221-b2ab-7c69598a586b")
+    enum Bool2 : Unt2 {
+        TRUE = 0x1
+        FALSE = 0x0
+    }
+    @TypeId("9fc9f410-094b-4038-a5f4-e0c3597e44d6")
+    enum Bool4 : Unt4 {
+        TRUE = 0x1
+        FALSE = 0x0
+    }
+}
+
+namespace lv::cebbys::std::logic {
+    use lv::cebbys::std
 }

@@ -18,7 +18,8 @@ class GhidraConnector:
         existing = GhidraConnector.get(manager, ghidra_uuid)
         if not existing:
             raise ValueError(f"Cannot update datatype, no datatype with uuid {ghidra_uuid} found")
-        manager.replaceDataType(existing, declaration, False)
+        existing.replaceWith(declaration)  # type: ignore
+        existing.setCategoryPath(declaration.getCategoryPath())  # type: ignore
 
     @staticmethod
     def create(manager: DataTypeManager, declaration: DataType) -> int:

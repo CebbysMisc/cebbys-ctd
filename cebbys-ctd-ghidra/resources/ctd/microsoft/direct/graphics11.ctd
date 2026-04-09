@@ -1,0 +1,8 @@
+import "cebbys/std"
+
+namespace com::microsoft::direct::graphics {
+    use lv::cebbys::std
+
+    // @TypeId("457cc49c-8b14-439c-bea8-d7b0ca47ae22")
+    // Any D3D11CreateDeviceAndSwapChain()
+}

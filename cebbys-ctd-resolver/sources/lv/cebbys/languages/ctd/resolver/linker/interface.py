@@ -9,8 +9,7 @@ from lv.cebbys.languages.ctd.utility.logging import (
 )
 from lv.cebbys.languages.ctd.types.ctd import (
     Namespace,
-    Interface,
-    Function
+    Interface
 )
 LOGGER = get_logger(__name__)
 
@@ -26,11 +25,7 @@ class InterfaceLinker:
         if declaration.meta.base_type is not None:
             declaration.base = resolve_typespec_in_namespace(declaration.meta.base_type, namespace)
 
-        for method_meta in declaration.meta.methods:
-            method = Function()
-            method.meta = method_meta
-            method.name = method_meta.name
+        for method in declaration.methods:
             FunctionLinker.link(namespace, method)
-            declaration.methods.append(method)
 
         LOGGER.debug(f"{declaration}")

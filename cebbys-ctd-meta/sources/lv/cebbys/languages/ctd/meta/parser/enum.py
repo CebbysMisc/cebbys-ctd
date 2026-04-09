@@ -42,7 +42,7 @@ class CtdEnumContextParser(Api.CtdDeclaractionContextParserBase[Api.CtdGrammar.E
                 member_value = self._parse_member_value(member_ctx)
                 members.append(Meta.EnumMemberMeta(member_name, member_value))
 
-        return Meta.EnumMeta(name, namespace, base_type, members, decorators, ctx)
+        return Meta.EnumMeta(name, namespace, ctx, base_type, members, decorators)
 
     def _parse_member_value(self, ctx: Api.CtdGrammar.EnumMemberContext) -> int | None:
         """Parse optional member value (integer or hex literal)."""

@@ -1,0 +1,51 @@
+// Test file: Class declarations
+import "std-types"
+
+namespace test::classes {
+    use std::lib
+
+    // Simple class with only members (no methods)
+    class Point {
+        Int4 x
+        Int4 y
+    }
+
+    // Class with members and methods
+    class Shape {
+        Unt4 color
+        Int4 GetColor()
+        void SetColor(Unt4 color)
+    }
+
+    // Class extending a single base
+    class Point3D : Point {
+        Int4 z
+        Int4 GetZ()
+    }
+
+    // Class with multiple base types
+    class ComObject : IUnknown, BaseObject {
+        Any* data
+        Unt4 refCount
+        Int4 QueryInterface(Unt4 interfaceId, Any* vtable)
+        Unt4 AddRef()
+        Unt4 Release()
+    }
+
+    // Class with decorated members
+    class Node {
+        @Nullable Node* next
+        Int4 value
+        Node* GetNext()
+    }
+
+    // Class with decorated methods
+    class Service {
+        Unt4 id
+        @WinApi Int4 Start()
+        @WinApi void Stop()
+    }
+
+    // Empty class
+    class Empty {}
+}
